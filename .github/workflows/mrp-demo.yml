@@ -1,0 +1,52 @@
+name: ERP MRP Demo CI
+
+on:
+  push:
+    branches: [ "revision-erp-mrp" ]
+  pull_request:
+    branches: [ "development", "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: erp_user
+          POSTGRES_PASSWORD: erp_password
+          POSTGRES_DB: techassembly_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+      neo4j:
+        image: neo4j:5
+        env:
+          NEO4J_AUTH: neo4j/mrp_password
+        ports:
+          - 7687:7687
+          - 7474:7474
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Esperar a los contenedores
+        run: sleep 15
+      - name: Scripts de Base de Datos
+        run: |
+          python scripts/create_schema.py
+          python scripts/seed_data.py
+          python scripts/run_mrp.py
+      - name: Pytest
+        run: pytest tests/ -v

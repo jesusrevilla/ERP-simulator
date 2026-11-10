@@ -7,7 +7,7 @@ def calculate_mrp(product, quantity):
     
     with driver.session() as session:
         query = """
-        MATCH (p:Producto {nombre: $producto})-[(r:REQUIERE)]->(c:Componente)
+        MATCH (p:Producto {nombre: $producto})-[r:REQUIERE]->(c:Componente)
         RETURN c.nombre AS componente, r.cantidad AS cantidad_unitaria
         """
         records = session.run(query, producto=product)

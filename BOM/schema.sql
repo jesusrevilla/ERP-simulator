@@ -108,3 +108,17 @@ CREATE TABLE orden_bom_snapshots (
     costo_unitario_historico NUMERIC(14, 4) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- AUDITORIA --
+
+CREATE TABLE auditoria_bom (
+    auditoria_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    entidad_afectada VARCHAR(50) NOT NULL,
+    registro_id VARCHAR(50) NOT NULL,
+    accion VARCHAR(10) NOT NULL CHECK (accion IN ('INSERT', 'UPDATE', 'DELETE')),
+    usuario VARCHAR(100) NOT NULL DEFAULT CURRENT_USER,
+    fecha_hora TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    valores_anteriores JSONB NULL,
+    valores_nuevos JSONB NULL,
+    direccion_ip INET NULL
+);

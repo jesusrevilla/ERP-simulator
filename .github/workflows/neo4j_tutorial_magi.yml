@@ -1,0 +1,30 @@
+name: Neo4j tutorial Magi 174702
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "neo4j_tutorial_magi/**"
+      - ".github/workflows/neo4j_tutorial_magi.yml"
+  workflow_dispatch:
+
+jobs:
+  tutorial:
+    runs-on: ubuntu-latest
+    env:
+      NEO4J_URI: ${{ secrets.NEO4J_URI }}
+      NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+      NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+      NEO4J_DATABASE: ${{ secrets.NEO4J_DATABASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install neo4j python-dotenv pytest
+      - name: Pruebas unitarias (sin base de datos)
+        run: pytest neo4j_tutorial_magi -v
+      - name: Conexion a Aura (solo si hay secrets)
+        if: ${{ env.NEO4J_URI != '' }}
+        working-directory: neo4j_tutorial_magi
+        run: python -m neo4j_tutorial_magi.tutorial_neo4j

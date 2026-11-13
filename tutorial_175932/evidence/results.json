@@ -1,0 +1,176 @@
+{
+  "executed_at_utc": "2026-11-12T23:07:37.524574+00:00",
+  "tutorial": "https://www.datacamp.com/tutorial/neo4j-tutorial",
+  "dataset_commit": "b0948cb558c927c357db4067eac5b37b96d0e4bb",
+  "source_commit": "ef72de1a177b541d24d56e7ccc857600ef0a117e",
+  "run_url": "https://github.com/armekmc54-ops/ERP-simulator/actions/runs/43326039416",
+  "python": "3.12.16",
+  "neo4j_driver": "5.28.2",
+  "connectivity": "passed",
+  "server": [
+    {
+      "name": "Neo4j Kernel",
+      "versions": [
+        "5.26.33"
+      ],
+      "edition": "community"
+    }
+  ],
+  "csv_rows": {
+    "matches": 49940,
+    "goals": 47914,
+    "shootouts": 700
+  },
+  "nodes_by_label": [
+    {
+      "label": "City",
+      "count": 2098
+    },
+    {
+      "label": "Country",
+      "count": 269
+    },
+    {
+      "label": "Match",
+      "count": 49939
+    },
+    {
+      "label": "Player",
+      "count": 15344
+    },
+    {
+      "label": "Team",
+      "count": 337
+    },
+    {
+      "label": "Tournament",
+      "count": 225
+    }
+  ],
+  "relationships_by_type": [
+    {
+      "type": "DREW",
+      "count": 22680
+    },
+    {
+      "type": "HAD_SHOOTOUT",
+      "count": 699
+    },
+    {
+      "type": "LOCATED_IN",
+      "count": 2223
+    },
+    {
+      "type": "LOST",
+      "count": 38600
+    },
+    {
+      "type": "PART_OF",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_AWAY",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_HOME",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_IN",
+      "count": 49939
+    },
+    {
+      "type": "SCORED_FOR",
+      "count": 47914
+    },
+    {
+      "type": "SCORED_IN",
+      "count": 47914
+    },
+    {
+      "type": "WON",
+      "count": 38600
+    }
+  ],
+  "world_cup_winner": [
+    {
+      "Team": "Brazil",
+      "MatchesWon": 79
+    }
+  ],
+  "euro_top_3": [
+    {
+      "Team": "Germany",
+      "MatchesWon": 30
+    },
+    {
+      "Team": "Spain",
+      "MatchesWon": 28
+    },
+    {
+      "Team": "France",
+      "MatchesWon": 23
+    }
+  ],
+  "create_coach": {
+    "nodes_created": 1,
+    "relationships_created": 1
+  },
+  "coach": [
+    {
+      "coach": "Lionel Scaloni",
+      "team": "Argentina",
+      "start_date": "2018-06-01T00:00:00"
+    }
+  ],
+  "merge_nodes_created": [
+    1,
+    0
+  ],
+  "world_cup_scorers": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ],
+  "expected_scorers_from_csv": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,384 @@
+Connection successful!
+INFO:ingest_football_data:Loading football data...
+INFO:ingest_football_data:Indexes created.
+
+Ingesting matches:   0%|          | 0/10 [00:00<?, ?it/s]
+Ingesting matches:  10%|█         | 1/10 [00:03<00:31,  3.52s/it]
+Ingesting matches:  20%|██        | 2/10 [00:05<00:22,  2.76s/it]
+Ingesting matches:  30%|███       | 3/10 [00:07<00:15,  2.27s/it]
+Ingesting matches:  40%|████      | 4/10 [00:09<00:13,  2.19s/it]
+Ingesting matches:  50%|█████     | 5/10 [00:11<00:10,  2.01s/it]
+Ingesting matches:  60%|██████    | 6/10 [00:12<00:07,  1.82s/it]
+Ingesting matches:  70%|███████   | 7/10 [00:13<00:04,  1.56s/it]
+Ingesting matches:  80%|████████  | 8/10 [00:14<00:02,  1.38s/it]
+Ingesting matches:  90%|█████████ | 9/10 [00:15<00:01,  1.26s/it]
+Ingesting matches: 100%|██████████| 10/10 [00:16<00:00,  1.16s/it]
+Ingesting matches: 100%|██████████| 10/10 [00:16<00:00,  1.66s/it]
+
+Ingesting goals:   0%|          | 0/10 [00:00<?, ?it/s]
+Ingesting goals:  10%|█         | 1/10 [00:01<00:12,  1.37s/it]
+Ingesting goals:  20%|██        | 2/10 [00:02<00:09,  1.20s/it]
+Ingesting goals:  30%|███       | 3/10 [00:03<00:07,  1.07s/it]
+Ingesting goals:  40%|████      | 4/10 [00:04<00:06,  1.04s/it]
+Ingesting goals:  50%|█████     | 5/10 [00:05<00:05,  1.06s/it]
+Ingesting goals:  60%|██████    | 6/10 [00:06<00:04,  1.08s/it]
+Ingesting goals:  70%|███████   | 7/10 [00:07<00:03,  1.00s/it]
+Ingesting goals:  80%|████████  | 8/10 [00:08<00:01,  1.08it/s]
+Ingesting goals:  90%|█████████ | 9/10 [00:08<00:00,  1.14it/s]
+Ingesting goals: 100%|██████████| 10/10 [00:09<00:00,  1.33it/s]
+Ingesting goals: 100%|██████████| 10/10 [00:09<00:00,  1.06it/s]
+
+Ingesting shootouts:   0%|          | 0/1 [00:00<?, ?it/s]
+Ingesting shootouts: 100%|██████████| 1/1 [00:00<00:00,  4.50it/s]
+Ingesting shootouts: 100%|██████████| 1/1 [00:00<00:00,  4.50it/s]
+{
+  "executed_at_utc": "2026-11-12T23:07:37.524574+00:00",
+  "tutorial": "https://www.datacamp.com/tutorial/neo4j-tutorial",
+  "dataset_commit": "b0948cb558c927c357db4067eac5b37b96d0e4bb",
+  "source_commit": "ef72de1a177b541d24d56e7ccc857600ef0a117e",
+  "run_url": "https://github.com/armekmc54-ops/ERP-simulator/actions/runs/43326039416",
+  "python": "3.12.16",
+  "neo4j_driver": "5.28.2",
+  "connectivity": "passed",
+  "server": [
+    {
+      "name": "Neo4j Kernel",
+      "versions": [
+        "5.26.33"
+      ],
+      "edition": "community"
+    }
+  ],
+  "csv_rows": {
+    "matches": 49940,
+    "goals": 47914,
+    "shootouts": 700
+  },
+  "nodes_by_label": [
+    {
+      "label": "City",
+      "count": 2098
+    },
+    {
+      "label": "Country",
+      "count": 269
+    },
+    {
+      "label": "Match",
+      "count": 49939
+    },
+    {
+      "label": "Player",
+      "count": 15344
+    },
+    {
+      "label": "Team",
+      "count": 337
+    },
+    {
+      "label": "Tournament",
+      "count": 225
+    }
+  ],
+  "relationships_by_type": [
+    {
+      "type": "DREW",
+      "count": 22680
+    },
+    {
+      "type": "HAD_SHOOTOUT",
+      "count": 699
+    },
+    {
+      "type": "LOCATED_IN",
+      "count": 2223
+    },
+    {
+      "type": "LOST",
+      "count": 38600
+    },
+    {
+      "type": "PART_OF",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_AWAY",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_HOME",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_IN",
+      "count": 49939
+    },
+    {
+      "type": "SCORED_FOR",
+      "count": 47914
+    },
+    {
+      "type": "SCORED_IN",
+      "count": 47914
+    },
+    {
+      "type": "WON",
+      "count": 38600
+    }
+  ],
+  "world_cup_winner": [
+    {
+      "Team": "Brazil",
+      "MatchesWon": 79
+    }
+  ],
+  "euro_top_3": [
+    {
+      "Team": "Germany",
+      "MatchesWon": 30
+    },
+    {
+      "Team": "Spain",
+      "MatchesWon": 28
+    },
+    {
+      "Team": "France",
+      "MatchesWon": 23
+    }
+  ],
+  "create_coach": {
+    "nodes_created": 1,
+    "relationships_created": 1
+  },
+  "coach": [
+    {
+      "coach": "Lionel Scaloni",
+      "team": "Argentina",
+      "start_date": "2018-06-01T00:00:00"
+    }
+  ],
+  "merge_nodes_created": [
+    1,
+    0
+  ],
+  "world_cup_scorers": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ],
+  "expected_scorers_from_csv": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ]
+}
+{
+  "executed_at_utc": "2026-11-12T23:07:37.524574+00:00",
+  "tutorial": "https://www.datacamp.com/tutorial/neo4j-tutorial",
+  "dataset_commit": "b0948cb558c927c357db4067eac5b37b96d0e4bb",
+  "source_commit": "ef72de1a177b541d24d56e7ccc857600ef0a117e",
+  "run_url": "https://github.com/armekmc54-ops/ERP-simulator/actions/runs/43326039416",
+  "python": "3.12.16",
+  "neo4j_driver": "5.28.2",
+  "connectivity": "passed",
+  "server": [
+    {
+      "name": "Neo4j Kernel",
+      "versions": [
+        "5.26.33"
+      ],
+      "edition": "community"
+    }
+  ],
+  "csv_rows": {
+    "matches": 49940,
+    "goals": 47914,
+    "shootouts": 700
+  },
+  "nodes_by_label": [
+    {
+      "label": "City",
+      "count": 2098
+    },
+    {
+      "label": "Country",
+      "count": 269
+    },
+    {
+      "label": "Match",
+      "count": 49939
+    },
+    {
+      "label": "Player",
+      "count": 15344
+    },
+    {
+      "label": "Team",
+      "count": 337
+    },
+    {
+      "label": "Tournament",
+      "count": 225
+    }
+  ],
+  "relationships_by_type": [
+    {
+      "type": "DREW",
+      "count": 22680
+    },
+    {
+      "type": "HAD_SHOOTOUT",
+      "count": 699
+    },
+    {
+      "type": "LOCATED_IN",
+      "count": 2223
+    },
+    {
+      "type": "LOST",
+      "count": 38600
+    },
+    {
+      "type": "PART_OF",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_AWAY",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_HOME",
+      "count": 49939
+    },
+    {
+      "type": "PLAYED_IN",
+      "count": 49939
+    },
+    {
+      "type": "SCORED_FOR",
+      "count": 47914
+    },
+    {
+      "type": "SCORED_IN",
+      "count": 47914
+    },
+    {
+      "type": "WON",
+      "count": 38600
+    }
+  ],
+  "world_cup_winner": [
+    {
+      "Team": "Brazil",
+      "MatchesWon": 79
+    }
+  ],
+  "euro_top_3": [
+    {
+      "Team": "Germany",
+      "MatchesWon": 30
+    },
+    {
+      "Team": "Spain",
+      "MatchesWon": 28
+    },
+    {
+      "Team": "France",
+      "MatchesWon": 23
+    }
+  ],
+  "create_coach": {
+    "nodes_created": 1,
+    "relationships_created": 1
+  },
+  "coach": [
+    {
+      "coach": "Lionel Scaloni",
+      "team": "Argentina",
+      "start_date": "2018-06-01T00:00:00"
+    }
+  ],
+  "merge_nodes_created": [
+    1,
+    0
+  ],
+  "world_cup_scorers": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ],
+  "expected_scorers_from_csv": [
+    {
+      "Player": "Kylian Mbappé",
+      "Goals": 22
+    },
+    {
+      "Player": "Lionel Messi",
+      "Goals": 21
+    },
+    {
+      "Player": "Miroslav Klose",
+      "Goals": 16
+    },
+    {
+      "Player": "Ronaldo",
+      "Goals": 15
+    },
+    {
+      "Player": "Gerd Müller",
+      "Goals": 14
+    }
+  ],
+  "status": "passed"
+}

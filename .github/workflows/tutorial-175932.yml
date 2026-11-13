@@ -1,0 +1,56 @@
+name: Tutorial Neo4j 175932
+
+on:
+  push:
+    branches: ['175932']
+    paths: ['tutorial_175932/**', '.github/workflows/tutorial-175932.yml']
+  pull_request:
+    paths: ['tutorial_175932/**', '.github/workflows/tutorial-175932.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tutorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/tutorial175932
+          NEO4J_server_memory_heap_initial__size: 512m
+          NEO4J_server_memory_heap_max__size: 1G
+          NEO4J_server_memory_pagecache_size: 512m
+        ports: ['7687:7687']
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p tutorial175932 'RETURN 1;'"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 20
+    env:
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: tutorial175932
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install tutorial dependencies
+        run: pip install -r tutorial_175932/requirements.txt
+      - name: Check syntax
+        run: python -m py_compile tutorial_175932/*.py
+      - name: Run tutorial and capture evidence
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p tutorial_175932/evidence
+          python -u tutorial_175932/run_tutorial.py 2>&1 | tee tutorial_175932/evidence/execution.log
+      - name: Upload real execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo4j-tutorial-175932-evidence
+          path: tutorial_175932/evidence/

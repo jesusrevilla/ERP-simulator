@@ -1,0 +1,270 @@
+{
+  "empresa": "TechAssembly S.A.",
+  "modulo": "Lead Time de Materiales y Productos Internos",
+  "producto": "Gaming PC",
+  "codigo_producto": "PC001",
+  "escenario": "Pedido simulado de 30 computadoras",
+  "estandar_referencia": "ISA-95 / IEC 62264",
+  "timestamps": "ISO 8601 UTC; datos simulados",
+  "eventos": [
+    {
+      "id": "LT-001",
+      "timestamp": "2026-11-10T14:00:15.000Z",
+      "nivel_isa95": 4,
+      "evento": "PedidoRecibido",
+      "emisor": "ERP.Ventas",
+      "receptor": "ERP.Planificacion",
+      "datos": {
+        "producto": "PC001",
+        "cantidad": 30
+      }
+    },
+    {
+      "id": "LT-002",
+      "timestamp": "2026-11-10T14:00:30.000Z",
+      "nivel_isa95": 4,
+      "evento": "EvaluacionLeadTimeSolicitada",
+      "emisor": "ERP.Planificacion",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "producto": "PC001",
+        "cantidad": 30
+      }
+    },
+    {
+      "id": "LT-003",
+      "timestamp": "2026-11-10T14:00:45.000Z",
+      "nivel_isa95": 4,
+      "evento": "ProductoValidado",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Catalogo",
+      "datos": {
+        "producto": "PC001",
+        "nombre": "Gaming PC"
+      }
+    },
+    {
+      "id": "LT-004",
+      "timestamp": "2026-11-10T14:01:00.000Z",
+      "nivel_isa95": 4,
+      "evento": "ListaMaterialesConsultada",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.BOM",
+      "datos": {
+        "producto": "PC001",
+        "componentes": 6
+      }
+    },
+    {
+      "id": "LT-005",
+      "timestamp": "2026-11-10T14:01:15.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadCPUCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "CPU001",
+        "requerido": 30
+      }
+    },
+    {
+      "id": "LT-006",
+      "timestamp": "2026-11-10T14:01:30.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadMotherboardCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "MB001",
+        "requerido": 30
+      }
+    },
+    {
+      "id": "LT-007",
+      "timestamp": "2026-11-10T14:01:45.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadRAMCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "RAM001",
+        "requerido": 60
+      }
+    },
+    {
+      "id": "LT-008",
+      "timestamp": "2026-11-10T14:02:00.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadSSDCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "SSD001",
+        "requerido": 30
+      }
+    },
+    {
+      "id": "LT-009",
+      "timestamp": "2026-11-10T14:02:15.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadFuenteCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "PSU001",
+        "requerido": 30
+      }
+    },
+    {
+      "id": "LT-010",
+      "timestamp": "2026-11-10T14:02:30.000Z",
+      "nivel_isa95": 4,
+      "evento": "NecesidadGPUCalculada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "GPU001",
+        "requerido": 30
+      }
+    },
+    {
+      "id": "LT-011",
+      "timestamp": "2026-11-10T14:02:45.000Z",
+      "nivel_isa95": 4,
+      "evento": "InventarioConsultado",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Inventario",
+      "datos": {
+        "existencias": {
+          "CPU001": 50,
+          "MB001": 45,
+          "RAM001": 200,
+          "SSD001": 75,
+          "PSU001": 40,
+          "GPU001": 20
+        }
+      }
+    },
+    {
+      "id": "LT-012",
+      "timestamp": "2026-11-10T14:03:00.000Z",
+      "nivel_isa95": 4,
+      "evento": "DisponibilidadEvaluada",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "materiales_suficientes": [
+          "CPU001",
+          "MB001",
+          "RAM001",
+          "SSD001",
+          "PSU001"
+        ]
+      }
+    },
+    {
+      "id": "LT-013",
+      "timestamp": "2026-11-10T14:03:15.000Z",
+      "nivel_isa95": 4,
+      "evento": "FaltanteDetectado",
+      "emisor": "ERP.MRP",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "GPU001",
+        "requerido": 30,
+        "disponible": 20,
+        "faltante": 10
+      }
+    },
+    {
+      "id": "LT-014",
+      "timestamp": "2026-11-10T14:03:30.000Z",
+      "nivel_isa95": 4,
+      "evento": "PlazoProveedorSolicitado",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Compras",
+      "datos": {
+        "material": "GPU001",
+        "cantidad_faltante": 10
+      }
+    },
+    {
+      "id": "LT-015",
+      "timestamp": "2026-11-10T14:03:45.000Z",
+      "nivel_isa95": 4,
+      "evento": "PlazoProveedorNoDisponible",
+      "emisor": "ERP.Compras",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "material": "GPU001",
+        "lead_time_dias": null,
+        "motivo": "No existe informacion de proveedores en el esquema actual"
+      }
+    },
+    {
+      "id": "LT-016",
+      "timestamp": "2026-11-10T14:04:00.000Z",
+      "nivel_isa95": 4,
+      "evento": "TiempoFabricacionSolicitado",
+      "emisor": "ERP.LeadTime",
+      "receptor": "MOM.PlanificacionOperaciones",
+      "datos": {
+        "producto": "PC001",
+        "cantidad": 30
+      }
+    },
+    {
+      "id": "LT-017",
+      "timestamp": "2026-11-10T14:04:15.000Z",
+      "nivel_isa95": 3,
+      "evento": "TiempoFabricacionNoDisponible",
+      "emisor": "MOM.PlanificacionOperaciones",
+      "receptor": "ERP.LeadTime",
+      "datos": {
+        "producto": "PC001",
+        "duracion_estimada": null,
+        "motivo": "No existen rutas ni tiempos de operacion en el esquema actual"
+      }
+    },
+    {
+      "id": "LT-018",
+      "timestamp": "2026-11-10T14:04:30.000Z",
+      "nivel_isa95": 4,
+      "evento": "LeadTimeNoCalculable",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Planificacion",
+      "datos": {
+        "producto": "PC001",
+        "fecha_disponibilidad_estimada": null,
+        "causas": [
+          "Falta plazo de suministro de GPU",
+          "Falta tiempo de fabricacion"
+        ]
+      }
+    },
+    {
+      "id": "LT-019",
+      "timestamp": "2026-11-10T14:04:45.000Z",
+      "nivel_isa95": 4,
+      "evento": "AdvertenciaGenerada",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Ventas",
+      "datos": {
+        "producto": "PC001",
+        "mensaje": "No es posible confirmar fecha de entrega con los datos actuales"
+      }
+    },
+    {
+      "id": "LT-020",
+      "timestamp": "2026-11-10T14:05:00.000Z",
+      "nivel_isa95": 4,
+      "evento": "EvaluacionFinalizada",
+      "emisor": "ERP.LeadTime",
+      "receptor": "ERP.Planificacion",
+      "datos": {
+        "producto": "PC001",
+        "estado": "pendiente_de_datos"
+      }
+    }
+  ]
+}

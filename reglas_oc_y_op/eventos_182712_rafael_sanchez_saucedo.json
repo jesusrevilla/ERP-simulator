@@ -1,0 +1,135 @@
+{
+  "metadata": {
+    "modulo": "Ordenes de Compra (OC) y Ordenes de Produccion (OP)",
+    "estandar": "ISA-95 (Niveles 3 MES / 4 ERP)",
+    "empresa": "TechAssembly",
+    "giro": "Ensamble y venta de PC Gamer",
+    "producto_objetivo": {
+      "codigo": "PC001",
+      "nombre": "Gaming PC",
+      "bom_componentes": ["CPU001", "MB001", "RAM001", "SSD001", "PSU001", "GPU001"]
+    },
+    "proposito": "Base de conocimiento de secuencia operativa y eventos de integridad para agentes de IA",
+    "ultima_actualizacion": "2026-11-10T20:36:44-06:00"
+  },
+  "secuencia_actividades_isa95": [
+    {
+      "paso": 1,
+      "nivel_isa95": "Nivel 4 - Planificacion Empresarial (ERP/MRP)",
+      "codigo_sap_equivalente": "MD01 / MD04",
+      "actividad": "Explosion de Materiales (BOM) y Calculo de Merma",
+      "descripcion": "Recibe demanda de Gaming PC (PC001), desglosa componentes (CPU, GPU, RAM, SSD, MB, PSU) y calcula Cantidad Bruta aplicando el porcentaje de merma nominal."
+    },
+    {
+      "paso": 2,
+      "nivel_isa95": "Nivel 4 - Gestion de Inventario y Compras (MM)",
+      "codigo_sap_equivalente": "ME21N",
+      "actividad": "Verificacion de Punto de Reorden y Emision de OC",
+      "descripcion": "Evalua si el stock disponible (excluyendo cuarentena) es menor o igual al punto de reorden. Si falta material (ej. GPU001), genera la Orden de Compra ajustada al stock optimo."
+    },
+    {
+      "paso": 3,
+      "nivel_isa95": "Nivel 3 - Operaciones de Almacen y Calidad (WMS/QMS)",
+      "codigo_sap_equivalente": "MIGO / QA32",
+      "actividad": "Recepcion en Cuarentena e Inspeccion de Calidad",
+      "descripcion": "Recibe componentes del proveedor validando tolerancia de entrega (+/- 5%), los ingresa al almacen logico de Inspeccion/Calidad y traslada a stock disponible solo los lotes aprobados."
+    },
+    {
+      "paso": 4,
+      "nivel_isa95": "Nivel 3/4 - Planificacion y Reserva de Produccion (PP)",
+      "codigo_sap_equivalente": "CO01 / MB21",
+      "actividad": "Ajuste de Lote y Reserva de Componentes por FEFO",
+      "descripcion": "Ajusta la Orden de Produccion (OP) a multiplos de manufactura y reserva lotes de componentes (ej. pasta termica, baterias CMOS, GPU001) priorizando caducidad mas proxima (FEFO)."
+    },
+    {
+      "paso": 5,
+      "nivel_isa95": "Nivel 3 - Ejecucion de Manufactura (MES)",
+      "codigo_sap_equivalente": "CO11N / CO15",
+      "actividad": "Liberacion, Ensamble de PC Gamer y Cierre de OP",
+      "descripcion": "Ejecuta el ensamble en linea, registra consumo real de lotes, contabiliza scrap, verifica el balance de masa y cierra la OP asociando la genealogia de lotes al numero de serie/lote de PC001."
+    }
+  ],
+  "eventos_integridad": [
+    {
+      "id_evento": "EVT-INT-001",
+      "topico": "TechAssembly/Linea_Logistica_MRP/Servidor_ERP_Validador",
+      "timestamp": "2026-11-10T20:40:00-06:00",
+      "regla_integridad": "Validacion de Tipos de Datos y Restricciones NOT NULL",
+      "severidad": "CRITICA",
+      "descripcion": "Rechazo de registro de OC/OP si existen campos nulos en folios, costos o cantidades, o si las cantidades no son enteros positivos.",
+      "accion_agente_ia": "Bloquear insercion en base de datos y devolver error de esquema al modulo emisor."
+    },
+    {
+      "id_evento": "EVT-INT-002",
+      "topico": "TechAssembly/Linea_Logistica_MRP/Servidor_ERP_Catalogos",
+      "timestamp": "2026-11-10T20:41:15-06:00",
+      "regla_integridad": "Consistencia Referencial (Llaves Foraneas)",
+      "severidad": "CRITICA",
+      "descripcion": "Validacion de que el producto (PC001), materiales (CPU001..GPU001), proveedores y almacenes existan en los catalogos maestros antes de crear una OC u OP.",
+      "accion_agente_ia": "Abortar creacion de orden huerfana y notificar ID de referencia inexistente."
+    },
+    {
+      "id_evento": "EVT-INT-003",
+      "topico": "TechAssembly/Linea_Logistica_MRP/Controlador_Estados_Orden",
+      "timestamp": "2026-11-10T20:42:30-06:00",
+      "regla_integridad": "Valores Logicos y Rangos Permitidos (Enum)",
+      "severidad": "ALTA",
+      "descripcion": "Restriccion de estados de OC (Emitida, En Aduana/Transito, Inspeccion de Calidad, Cerrada Conforme, Devuelta) y OP (Liberada, En Preparacion, Paro de Linea, Finalizada con Desvio, Cerrada).",
+      "accion_agente_ia": "Rechazar transicion de estado si el valor no pertenece al Enum oficial o viola la secuencia logica."
+    },
+    {
+      "id_evento": "EVT-INT-004",
+      "topico": "TechAssembly/Linea_Recepcion_Almacen/Bascula_Inspeccion_QA",
+      "timestamp": "2026-11-10T20:45:00-06:00",
+      "regla_integridad": "Consistencia de Fechas Operativas y Caducidad",
+      "severidad": "ALTA",
+      "descripcion": "Verifica que la fecha de entrega de la OC no sea anterior a su emision, y que la fecha de caducidad del lote recibido sea estrictamente posterior a su fecha de fabricacion/recepcion (evitando lotes vencidos en FEFO).",
+      "accion_agente_ia": "Lanzar ExpiredBatchException o error de fecha, bloquear ingreso del lote y retener en cuarentena."
+    },
+    {
+      "id_evento": "EVT-INT-005",
+      "topico": "TechAssembly/Linea_Recepcion_Almacen/Terminal_Recepcion_MIGO",
+      "timestamp": "2026-11-10T20:46:20-06:00",
+      "regla_integridad": "Aislamiento de Cuarentena y Tolerancia de Sobredelivery",
+      "severidad": "MEDIA",
+      "descripcion": "Impide que lotes en almacen de Inspeccion/Calidad sumen al stock disponible del MRP y bloquea recepciones que excedan el +/- 5% de la cantidad solicitada en la OC sin autorizacion.",
+      "accion_agente_ia": "Excluir stock en cuarentena del calculo MRP y solicitar firma gerencial si la variacion supera el 5%."
+    },
+    {
+      "id_evento": "EVT-INT-006",
+      "topico": "TechAssembly/Linea_Ensamble_PC_Gamer/Dispensador_Componentes_SMD",
+      "timestamp": "2026-11-10T20:48:10-06:00",
+      "regla_integridad": "Prevencion Estricta de Stock Negativo",
+      "severidad": "CRITICA",
+      "descripcion": "Verifica disponibilidad fisica real antes de descontar componentes (ej. GPU001, RAM001) para una OP; ninguna salida de almacen puede dejar el saldo menor a cero.",
+      "accion_agente_ia": "Frenar liberacion o consumo de la OP, emitir alerta de faltante y disparar solicitud de OC."
+    },
+    {
+      "id_evento": "EVT-INT-007",
+      "topico": "TechAssembly/Linea_Ensamble_PC_Gamer/Estacion_Control_Masa",
+      "timestamp": "2026-11-10T20:52:00-06:00",
+      "regla_integridad": "Balance de Masa en Produccion y Umbral de Scrap",
+      "severidad": "ALTA",
+      "descripcion": "Valida que (PCs Terminadas + Scrap Real) cuadre con el total de componentes consumidos. Si el desvio de merma supera el +/- 3%, exige justificacion del supervisor.",
+      "accion_agente_ia": "Bloquear el paso de la OP a estado Cerrada hasta registrar la justificacion del desvio o cuadrar insumos."
+    },
+    {
+      "id_evento": "EVT-INT-008",
+      "topico": "TechAssembly/Linea_Ensamble_PC_Gamer/Escaner_Trazabilidad_Final",
+      "timestamp": "2026-11-10T20:55:00-06:00",
+      "regla_integridad": "Trazabilidad Bidireccional Estricta (Genealogia de Lote)",
+      "severidad": "CRITICA",
+      "descripcion": "Vincula matricialmente cada lote de PC Gamer (PC001) con los IDs de lote exactos de CPU, Motherboard, RAM, SSD, PSU y GPU consumidos, permitiendo consultas de Recall inverso.",
+      "accion_agente_ia": "Impedir el alta de producto terminado si algun componente carece de ID de lote de origen asignado."
+    },
+    {
+      "id_evento": "EVT-INT-009",
+      "topico": "TechAssembly/Linea_Logistica_MRP/Motor_Cierre_Contable",
+      "timestamp": "2026-11-10T20:58:00-06:00",
+      "regla_integridad": "Inmutabilidad de Lotes y Ordenes Cerradas",
+      "severidad": "CRITICA",
+      "descripcion": "Bloquea en modo solo lectura los registros de lotes asociados a una OP 'Cerrada' o a una OC 'Cerrada Conforme'.",
+      "accion_agente_ia": "Denegar cualquier UPDATE/DELETE directo sobre la orden o lote y redirigir a un movimiento de ajuste contable auditado."
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+---
+config:
+  flowchart:
+    curve: bumpX
+    nodeSpacing: 60
+    rankSpacing: 70
+---
+flowchart LR
+    INICIO((Inicio)) --> REG["Registrar material o producto:<br/>código, unidad y tipo"]
+    REG --> VAL{"¿Datos completos, código<br/>único y usuario autorizado?"}
+    VAL -->|No| ERROR["Mostrar error y solicitar corrección"]
+    ERROR --> REG
+    VAL -->|Sí| TIPO{"¿Tipo de proceso?"}
+
+    subgraph MATERIALES["Ruta de materiales comprados"]
+        direction LR
+        MC["Compras: emitir orden de compra<br/>con proveedor y fecha inicial"]
+        ME["ERP: registrar fecha estimada<br/>y calendario aplicable"]
+        MS["Compras: seguimiento de entrega<br/>pendiente o en tránsito"]
+        MX{"¿Orden cancelada?"}
+        MR["Almacén: registrar recepción"]
+        MQ["Calidad: inspeccionar material"]
+        MA{"¿Material aprobado?"}
+        MRE["Bloquear material, registrar<br/>incidencia y gestionar reposición"]
+
+        MC --> ME --> MS --> MX
+        MX -->|No| MR --> MQ --> MA
+        MA -->|No| MRE
+        MRE --> MS
+    end
+
+    subgraph INTERNOS["Ruta de productos fabricados internamente"]
+        direction LR
+        PI["Producción: liberar orden<br/>y registrar fecha inicial y estimada"]
+        PS{"¿Materiales suficientes?"}
+        PF["ERP: mostrar faltantes<br/>y ajustar plan"]
+        PP["Producción: fabricar<br/>y registrar avances"]
+        PX{"¿Orden cancelada?"}
+        PQ["Calidad: inspeccionar<br/>producto terminado"]
+        PA{"¿Producto aprobado?"}
+        PR["Producción: registrar defecto<br/>y realizar reproceso"]
+
+        PI --> PS
+        PS -->|No| PF
+        PF --> PS
+        PS -->|Sí| PP --> PX
+        PX -->|No| PQ --> PA
+        PA -->|No| PR
+        PR --> PP
+    end
+
+    subgraph CIERRE["Control de disponibilidad y lead time en el ERP"]
+        direction LR
+        DISP["Registrar fecha real de disponibilidad<br/>y actualizar inventario"]
+        CALC["Calcular lead time real<br/>según el calendario configurado"]
+        COMP["Comparar con tiempo estimado<br/>y calcular desviación"]
+        RET{"¿Existe retraso?"}
+        ALERT["Registrar desviación<br/>e identificar retraso"]
+        OK["Registrar cumplimiento del plazo"]
+        HIST["Guardar historial y trazabilidad:<br/>usuario, fechas, cambios y estado"]
+        FIN((Fin))
+
+        DISP --> CALC --> COMP --> RET
+        RET -->|Sí| ALERT --> HIST
+        RET -->|No| OK --> HIST
+        HIST --> FIN
+    end
+
+    TIPO -->|Material comprado| MC
+    TIPO -->|Producto interno| PI
+    MA -->|Sí| DISP
+    PA -->|Sí| DISP
+
+    MX -->|Sí| CANCEL["Registrar cancelación,<br/>conservar historial y excluir promedios"]
+    PX -->|Sí| CANCEL
+    CANCEL --> FINC((Fin cancelado))
+
+    MS -.->|Si vence la fecha estimada| VIG["ERP: generar alerta de orden abierta;<br/>no asignar lead time real definitivo"]
+    PP -.->|Si vence la fecha estimada| VIG
+
+    classDef evento fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#111827;
+    classDef decision fill:#fff6da,stroke:#c18416,stroke-width:1.5px,color:#111827;
+    classDef tarea fill:#f6fbff,stroke:#3677aa,color:#111827;
+    classDef alerta fill:#fff0ed,stroke:#c3473e,color:#111827;
+    class INICIO,FIN,FINC evento;
+    class VAL,TIPO,MX,MA,PS,PX,PA,RET decision;
+    class ERROR,MRE,PF,PR,ALERT,CANCEL,VIG alerta;

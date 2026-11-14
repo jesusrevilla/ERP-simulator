@@ -1,0 +1,304 @@
+{
+  "titulo": "Lead time de materiales y productos internos",
+  "empresa": "TechAssembly S.A.",
+  "producto": {
+    "codigo": "PC001",
+    "nombre": "Gaming PC",
+    "cantidad_orden": 30,
+    "unidad": "pieza"
+  },
+  "contexto": {
+    "origen": "ERP-simulator-main.zip",
+    "tipo": "caso_academico",
+    "descripcion": "Caso de ejemplo",
+    "formato_timestamp": "YYYY-MM-DDTHH:mm:ss",
+    "zona_horaria": "Hora local",
+    "referencias_bibliograficas_incluidas": false
+  },
+  "isa95": {
+    "norma": "ISA-95 / IEC 62264",
+    "objetivo": "Integrar la planeación del negocio con la gestión y ejecución de manufactura.",
+    "niveles_usados": [
+      {
+        "nivel": 4,
+        "funcion": "ERP: pedidos, planificación MRP, compras y cierre administrativo"
+      },
+      {
+        "nivel": 3,
+        "funcion": "MES/MOM: recepción operativa, calidad, despacho, ensamble, empaque y trazabilidad"
+      }
+    ],
+    "nota": "El simulador proporcionado demuestra ERP/MRP y pruebas unitarias; no implementa un MES ni registra por sí mismo los eventos operativos aquí modelados."
+  },
+  "definiciones": {
+    "lead_time_materiales": "Tiempo transcurrido entre la emisión de la orden de compra de material faltante y su disponibilidad aprobada para producción.",
+    "lead_time_producto_interno": "Tiempo transcurrido entre el inicio del ensamble y la liberación del lote como producto terminado.",
+    "lead_time_total_orden": "Tiempo desde la creación de la orden de venta hasta la liberación del producto terminado. Se mide en horas calendario para esta simulación; no se descuentan turnos o días no laborables."
+  },
+  "lista_materiales_y_mrp": [
+    {
+      "codigo": "CPU001",
+      "material": "CPU Ryzen 7",
+      "cantidad_por_producto": 1,
+      "cantidad_requerida": 30,
+      "stock_inicial": 50,
+      "faltante": 0,
+      "stock_despues_de_reposicion": 50
+    },
+    {
+      "codigo": "MB001",
+      "material": "Motherboard B650",
+      "cantidad_por_producto": 1,
+      "cantidad_requerida": 30,
+      "stock_inicial": 45,
+      "faltante": 0,
+      "stock_despues_de_reposicion": 45
+    },
+    {
+      "codigo": "RAM001",
+      "material": "RAM 16GB DDR5",
+      "cantidad_por_producto": 2,
+      "cantidad_requerida": 60,
+      "stock_inicial": 200,
+      "faltante": 0,
+      "stock_despues_de_reposicion": 200
+    },
+    {
+      "codigo": "SSD001",
+      "material": "SSD 1TB NVMe",
+      "cantidad_por_producto": 1,
+      "cantidad_requerida": 30,
+      "stock_inicial": 75,
+      "faltante": 0,
+      "stock_despues_de_reposicion": 75
+    },
+    {
+      "codigo": "PSU001",
+      "material": "Power Supply 750W",
+      "cantidad_por_producto": 1,
+      "cantidad_requerida": 30,
+      "stock_inicial": 40,
+      "faltante": 0,
+      "stock_despues_de_reposicion": 40
+    },
+    {
+      "codigo": "GPU001",
+      "material": "Graphics Card RTX",
+      "cantidad_por_producto": 1,
+      "cantidad_requerida": 30,
+      "stock_inicial": 20,
+      "faltante": 10,
+      "stock_despues_de_reposicion": 30
+    }
+  ],
+  "abastecimiento": {
+    "material_critico": "Graphics Card RTX",
+    "codigo": "GPU001",
+    "faltante": 10,
+    "unidad": "pieza",
+    "inicio_timestamp": "2026-11-10T09:00:00",
+    "fin_timestamp": "2026-11-12T10:30:00",
+    "lead_time_horas": 49.5,
+    "lead_time_dias_calendario": 2.062
+  },
+  "produccion_interna": {
+    "cantidad": 30,
+    "inicio_timestamp": "2026-11-12T12:00:00",
+    "fin_timestamp": "2026-11-12T19:30:00",
+    "lead_time_horas": 7.5,
+    "incluye": "ensamble, pruebas, tiempo de espera intermedio y empaque"
+  },
+  "lead_time_total_orden": {
+    "inicio_timestamp": "2026-11-10T08:00:00",
+    "fin_timestamp": "2026-11-12T19:30:00",
+    "horas": 59.5
+  },
+  "eventos": [
+    {
+      "id_evento": "EV001",
+      "evento": "orden_venta_creada",
+      "timestamp": "2026-11-10T08:00:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP",
+      "descripcion": "Se registra pedido de 30 Gaming PC.",
+      "etapa": "planificacion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV002",
+      "evento": "mrp_ejecutado",
+      "timestamp": "2026-11-10T08:05:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP/MRP",
+      "descripcion": "Se calculan necesidades con lista de materiales.",
+      "etapa": "planificacion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV003",
+      "evento": "inventario_verificado",
+      "timestamp": "2026-11-10T08:10:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP/MRP",
+      "descripcion": "Se detectan 20 GPU RTX ante 30 requeridas; faltan 10.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV004",
+      "evento": "solicitud_compra_generada",
+      "timestamp": "2026-11-10T08:30:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP/Compras",
+      "descripcion": "Se solicita reabastecimiento de 10 GPU RTX.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV005",
+      "evento": "orden_compra_emitida",
+      "timestamp": "2026-11-10T09:00:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP/Compras",
+      "descripcion": "Se emite orden al proveedor (supuesto del ejercicio).",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV006",
+      "evento": "proveedor_confirma_pedido",
+      "timestamp": "2026-11-10T10:00:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP/Compras",
+      "descripcion": "Se confirma entrega simulada de GPU RTX.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV007",
+      "evento": "material_recibido",
+      "timestamp": "2026-11-12T09:00:00",
+      "nivel_isa95": 3,
+      "sistema": "Almacen/MOM",
+      "descripcion": "Se reciben 10 GPU RTX.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV008",
+      "evento": "inspeccion_entrada_aprobada",
+      "timestamp": "2026-11-12T10:00:00",
+      "nivel_isa95": 3,
+      "sistema": "Calidad/MOM",
+      "descripcion": "Se inspeccionan y liberan las 10 GPU RTX.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV009",
+      "evento": "material_disponible_para_produccion",
+      "timestamp": "2026-11-12T10:30:00",
+      "nivel_isa95": 3,
+      "sistema": "Inventario/MOM",
+      "descripcion": "Las 30 GPU RTX quedan disponibles para la orden, considerando las 20 iniciales.",
+      "etapa": "materiales",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV010",
+      "evento": "orden_produccion_liberada",
+      "timestamp": "2026-11-12T11:00:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP",
+      "descripcion": "Se autoriza producir 30 Gaming PC.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV011",
+      "evento": "orden_despachada_a_ensamble",
+      "timestamp": "2026-11-12T11:15:00",
+      "nivel_isa95": 3,
+      "sistema": "MES/MOM",
+      "descripcion": "Se asignan materiales y recursos al área de ensamble.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV012",
+      "evento": "ensamble_iniciado",
+      "timestamp": "2026-11-12T12:00:00",
+      "nivel_isa95": 3,
+      "sistema": "MES/MOM",
+      "descripcion": "Comienza el ensamble del lote de 30 Gaming PC.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV013",
+      "evento": "ensamble_terminado",
+      "timestamp": "2026-11-12T16:00:00",
+      "nivel_isa95": 3,
+      "sistema": "MES/MOM",
+      "descripcion": "Se termina el ensamble del lote.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV014",
+      "evento": "pruebas_funcionales_iniciadas",
+      "timestamp": "2026-11-12T16:15:00",
+      "nivel_isa95": 3,
+      "sistema": "Calidad/MOM",
+      "descripcion": "Inician las pruebas de encendido y funcionamiento.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV015",
+      "evento": "pruebas_funcionales_aprobadas",
+      "timestamp": "2026-11-12T18:15:00",
+      "nivel_isa95": 3,
+      "sistema": "Calidad/MOM",
+      "descripcion": "El lote supera las pruebas simuladas.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV016",
+      "evento": "empaque_terminado",
+      "timestamp": "2026-11-12T19:00:00",
+      "nivel_isa95": 3,
+      "sistema": "MES/MOM",
+      "descripcion": "Se empacan las 30 Gaming PC.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV017",
+      "evento": "producto_terminado_liberado",
+      "timestamp": "2026-11-12T19:30:00",
+      "nivel_isa95": 3,
+      "sistema": "Inventario/MOM",
+      "descripcion": "Se registran 30 Gaming PC como producto terminado.",
+      "etapa": "produccion",
+      "tipo_registro": "simulado"
+    },
+    {
+      "id_evento": "EV018",
+      "evento": "orden_produccion_cerrada",
+      "timestamp": "2026-11-12T19:45:00",
+      "nivel_isa95": 4,
+      "sistema": "ERP",
+      "descripcion": "ERP recibe el resultado productivo y cierra la orden.",
+      "etapa": "cierre",
+      "tipo_registro": "simulado"
+    }
+  ],
+  "conclusiones": [
+    "MRP detecta un faltante de 10 GPU RTX para fabricar 30 Gaming PC.",
+    "El tiempo de llegada y liberación del material crítico condiciona la fecha de inicio de la producción.",
+    "Los eventos con timestamp permiten medir tiempos de compras, disponibilidad, ensamble y calidad.",
+    "ISA-95 permite diferenciar decisiones del ERP (nivel 4) y seguimiento operativo de manufactura (nivel 3)."
+  ]
+}

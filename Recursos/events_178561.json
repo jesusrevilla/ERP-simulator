@@ -1,0 +1,97 @@
+{
+  "domain": "Resources",
+  "industry": "Ensamble de computadoras y manufactura",
+  "timestampFormat": "ISO 8601 UTC",
+  "events": [
+    {
+      "id": 1,
+      "eventType": "Resource.Created",
+      "description": "Creación de un nuevo recurso (máquina, mano de obra o de otro tipo) con código, nombre, tipo y unidad de medida",
+      "reference": "SAP B1: Creación de recursos",
+      "isa95Verb": "Sync",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "createdAt"]
+    },
+    {
+      "id": 2,
+      "eventType": "Resource.CapacityAssigned",
+      "description": "Definición de la capacidad diaria, número de unidades simultáneas y rendimiento del recurso",
+      "reference": "SAP B1: Capacidad de recursos",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "assignedAt"]
+    },
+    {
+      "id": 3,
+      "eventType": "Resource.CalendarLinked",
+      "description": "Asociación del recurso a un calendario de turnos, jornadas laborales y días no laborables",
+      "reference": "SAP B1: Calendarios y turnos de recursos",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "linkedAt"]
+    },
+    {
+      "id": 4,
+      "eventType": "Resource.ValidationFailed",
+      "description": "Error al registrar un recurso por capacidad negativa, unidad vacía o solapamiento de calendarios",
+      "reference": "Validación de datos maestros de recursos",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "validatedAt"]
+    },
+    {
+      "id": 5,
+      "eventType": "Resource.StatusChanged",
+      "description": "Cambio de estado del recurso (activo, inactivo o en mantenimiento preventivo/correctivo)",
+      "reference": "Control de disponibilidad de recursos",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "statusChangedAt"]
+    },
+    {
+      "id": 6,
+      "eventType": "Resource.AvailabilityChecked",
+      "description": "Consulta y validación de la disponibilidad horaria del recurso frente a la demanda de producción",
+      "reference": "SAP B1: Planificación y MRP de recursos",
+      "isa95Verb": "Get",
+      "direction": "MES->ERP",
+      "timestamps": ["eventTimestamp", "checkedAt"]
+    },
+    {
+      "id": 7,
+      "eventType": "Resource.ConflictDetected",
+      "description": "Conflicto de programación cuando se intenta asignar un recurso fuera de su jornada o con capacidad excedida",
+      "reference": "Control de restricciones de ruta y capacidad",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "detectedAt"]
+    },
+    {
+      "id": 8,
+      "eventType": "Resource.MaintenanceScheduled",
+      "description": "Bloqueo programado del recurso por tareas de mantenimiento, afectando su capacidad disponible",
+      "reference": "Gestión de tiempos muertos y mantenimiento",
+      "isa95Verb": "Sync",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "scheduledAt", "maintenanceFrom", "maintenanceTo"]
+    },
+    {
+      "id": 9,
+      "eventType": "Resource.WhereUsedQueried",
+      "description": "Consulta de las rutas de producción y órdenes de fabricación que utilizan un recurso específico",
+      "reference": "Reportes de utilización de recursos",
+      "isa95Verb": "Get",
+      "direction": "MES->ERP",
+      "timestamps": ["eventTimestamp", "requestedAt"]
+    },
+    {
+      "id": 10,
+      "eventType": "Resource.AuditRecorded",
+      "description": "Registro de auditoría sobre quién modificó los datos, turnos o capacidades de un recurso",
+      "reference": "Trazabilidad administrativa",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "auditedAt"]
+    }
+  ]
+}

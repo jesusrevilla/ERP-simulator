@@ -1,0 +1,94 @@
+{
+  "estandar": "ANSI/ISA-95 (IEC 62264)",
+  "titulo": "Actividades de Business Partners en ISA-95 (Integración ERP - MRP - MES)",
+  "descripcion": "Resumen simplificado de las actividades, reglas y pruebas para la interacción de socios de negocio entre Nivel 4 (ERP) y Nivel 3 (MES).",
+  "niveles_isa95": {
+    "nivel_4_erp": "Gestión Comercial y Planificación (Ventas, Compras, MRP)",
+    "nivel_3_mes": "Ejecución de Planta y Almacén (Producción, Calidad, Inventarios)"
+  },
+  "socios_de_negocio": [
+    {
+      "rol": "Cliente (Customer)",
+      "actividades": [
+        {
+          "id": "BP-CUST-01",
+          "nombre": "Generación de Demanda (Pedidos y Pronósticos)",
+          "descripcion": "Envío de pedidos de venta y pronósticos que alimentan la demanda del MRP.",
+          "regla_clave": "Excluir clientes bloqueados o inactivos.",
+          "prueba": "Verificar que los pedidos pendientes aparezcan como necesidad en la fecha pactada."
+        },
+        {
+          "id": "BP-CUST-02",
+          "nombre": "Especificaciones del Producto y Empaque",
+          "descripcion": "Definición de requisitos técnicos y tolerancias de calidad para la fabricación.",
+          "regla_clave": "Vincular acuerdos comerciales y precios especiales.",
+          "prueba": "Validar que la orden de producción herede las especificaciones del cliente."
+        },
+        {
+          "id": "BP-CUST-03",
+          "nombre": "Seguimiento y Trazabilidad",
+          "descripcion": "Consulta del estado del pedido y genealogía de lotes.",
+          "regla_clave": "Mantener vínculo directo entre pedido del cliente y orden de compra/producción.",
+          "prueba": "Comprobar la trazabilidad desde la venta hasta el certificado de calidad final."
+        }
+      ]
+    },
+    {
+      "rol": "Proveedor (Supplier / Vendor)",
+      "actividades": [
+        {
+          "id": "BP-SUPP-01",
+          "nombre": "Configuración de Parámetros de Compra (MRP)",
+          "descripcion": "Definición de Lead Time (tiempo de entrega), MOQ (mínimo de compra) y Múltiplos.",
+          "regla_clave": "El MRP resta el Lead Time para sugerir la fecha de emisión y ajusta a MOQ/Múltiplos.",
+          "prueba": "Si se necesitan 15 unidades y el múltiplo es 50, el MRP debe sugerir 50."
+        },
+        {
+          "id": "BP-SUPP-02",
+          "nombre": "Recomendación y Generación de Órdenes de Compra",
+          "descripcion": "Agrupación de necesidades por Proveedor Preferente y conversión a Orden de Compra.",
+          "regla_clave": "Asignación predeterminada al Proveedor Preferente activo.",
+          "prueba": "Verificar que las sugerencias muestren el nombre del Proveedor Preferente."
+        },
+        {
+          "id": "BP-SUPP-03",
+          "activity_name": "Calidad y Certificados de Análisis (CoA)",
+          "descripcion": "Entrega de certificados de calidad para liberar insumos en almacén.",
+          "regla_clave": "No consumir material en planta sin la aprobación de calidad (CoA).",
+          "prueba": "Confirmar que el sistema bloquee insumos sin certificado liberado."
+        }
+      ]
+    },
+    {
+      "rol": "Subcontratista / Maquilador (Subcontractor)",
+      "actividades": [
+        {
+          "id": "BP-SUBC-01",
+          "nombre": "Procesamiento Externo de Materiales",
+          "descripcion": "Envío de materiales a un tercero para ejecutar fases externas de fabricación.",
+          "regla_clave": "Validar el inventario en custodia del proveedor antes de liberar la orden.",
+          "prueba": "Confirmar la transferencia física de inventario al subcontratista."
+        },
+        {
+          "id": "BP-SUBC-02",
+          "nombre": "Reporte de Consumo, Mermas y Retorno",
+          "descripcion": "Notificación de insumos consumidos, mermas y reingreso del producto procesado.",
+          "regla_clave": "Ajustar mermas obligatoriamente contra la orden de subcontratación.",
+          "prueba": "Comprobar el cálculo de rendimiento (yield) y retorno al almacén."
+        }
+      ]
+    },
+    {
+      "rol": "Socio Logístico (3PL)",
+      "actividades": [
+        {
+          "id": "BP-LOGI-01",
+          "nombre": "Despacho y Carga Física",
+          "descripcion": "Coordinación de transporte, cartas porte (BOL) y manifiestos de salida.",
+          "regla_clave": "El manifiesto debe requerir la liberación previa de Calidad.",
+          "prueba": "Verificar la actualización del estado de entrega en el ERP al despachar."
+        }
+      ]
+    }
+  ]
+}

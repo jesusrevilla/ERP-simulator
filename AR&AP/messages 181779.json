@@ -1,0 +1,130 @@
+{
+  "standard": "ISA-95",
+  "timezone": "UTC-06:00 (America/Mexico_City)",
+  "levels": {
+    "4": "ERP - Business Planning & Logistics",
+    "3": "MES/WMS - Manufacturing Operations Management",
+    "2": "SCADA - Monitoring & Supervisory Control",
+    "1": "PLC - Sensing & Manipulating",
+    "0": "Production Process - sensores y actuadores"
+  },
+  "messages": [
+    {
+      "messageId": "MSG-001",
+      "timestamp": "2026-11-02T09:00:00-06:00",
+      "isa95Level": 4,
+      "process": "AP",
+      "eventType": "PurchaseOrderCreated",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "purchaseOrderId": "PO-4001", "supplierId": "PROV-3301", "subtotal": 1700000.00, "total": 1972000.00, "currency": "MXN", "paymentTerms": "NET30" }
+    },
+    {
+      "messageId": "MSG-002",
+      "timestamp": "2026-11-04T09:10:00-06:00",
+      "isa95Level": 3,
+      "process": "AP",
+      "eventType": "GoodsReceiptConfirmed",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "goodsReceiptId": "GR-5001", "purchaseOrderId": "PO-4001", "totalQuantity": 1000, "uom": "PZA", "storageLocation": "ALM-MP-01" }
+    },
+    {
+      "messageId": "MSG-003",
+      "timestamp": "2026-11-04T11:30:00-06:00",
+      "isa95Level": 4,
+      "process": "AP",
+      "eventType": "APInvoicePosted",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "apInvoiceId": "APINV-6001", "purchaseOrderId": "PO-4001", "goodsReceiptId": "GR-5001", "match": "THREE_WAY_OK", "total": 1972000.00, "currency": "MXN", "dueDate": "2026-12-04T00:00:00-06:00" }
+    },
+    {
+      "messageId": "MSG-004",
+      "timestamp": "2026-11-04T11:35:00-06:00",
+      "isa95Level": 4,
+      "process": "AP",
+      "eventType": "PaymentScheduled",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "apInvoiceId": "APINV-6001", "amount": 1972000.00, "currency": "MXN", "method": "SPEI", "paymentDate": "2026-12-04T00:00:00-06:00" }
+    },
+    {
+      "messageId": "MSG-005",
+      "timestamp": "2026-11-05T06:00:00-06:00",
+      "isa95Level": 4,
+      "process": "MRP",
+      "eventType": "ProductionOrderReleased",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "productionOrderId": "PRD-2001", "materialId": "FG-LAP15", "quantity": 200, "uom": "PZA" }
+    },
+    {
+      "messageId": "MSG-006",
+      "timestamp": "2026-11-05T06:02:00-06:00",
+      "isa95Level": 3,
+      "process": "MRP",
+      "eventType": "MaterialIssuedToLine",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "productionOrderId": "PRD-2001", "components": 4, "materialCost": 1700000.00, "currency": "MXN" }
+    },
+    {
+      "messageId": "MSG-007",
+      "timestamp": "2026-11-05T06:05:00-06:00",
+      "isa95Level": 2,
+      "process": "MRP",
+      "eventType": "StationStateChanged",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "previousState": "SETUP", "currentState": "RUNNING", "productionOrderId": "PRD-2001" }
+    },
+    {
+      "messageId": "MSG-008",
+      "timestamp": "2026-11-05T06:05:23.850-06:00",
+      "isa95Level": 0,
+      "process": "MRP",
+      "eventType": "ScrewTorqueMeasured",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "sensorId": "TQ-0102-01", "torqueNm": 0.45, "toleranceNm": [0.40, 0.50], "inTolerance": true }
+    },
+    {
+      "messageId": "MSG-009",
+      "timestamp": "2026-11-05T06:05:24.000-06:00",
+      "isa95Level": 1,
+      "process": "MRP",
+      "eventType": "AssemblyCycleCompleted",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "plcId": "PLC-0102", "cycleCount": 1, "cycleTimeSeconds": 24 }
+    },
+    {
+      "messageId": "MSG-010",
+      "timestamp": "2026-11-05T15:20:00-06:00",
+      "isa95Level": 3,
+      "process": "MRP",
+      "eventType": "ProductionCountReported",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "productionOrderId": "PRD-2001", "totalProduced": 200, "goodQty": 198, "scrapQty": 2, "uom": "PZA" }
+    },
+    {
+      "messageId": "MSG-011",
+      "timestamp": "2026-11-05T15:30:00-06:00",
+      "isa95Level": 4,
+      "process": "MRP",
+      "eventType": "ReceiptFromProductionPosted",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "productionOrderId": "PRD-2001", "goodQty": 198, "actualCost": 1784000.00, "unitCost": 9010.10, "currency": "MXN" }
+    },
+    {
+      "messageId": "MSG-012",
+      "timestamp": "2026-11-06T10:00:00-06:00",
+      "isa95Level": 4,
+      "process": "AR",
+      "eventType": "ARInvoicePosted",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "arInvoiceId": "ARINV-8001", "invoiceType": "INTERNAL_TRANSFER", "counterparty": "CC-DIST01", "quantity": 198, "transferPrice": 10500.00, "total": 2079000.00, "currency": "MXN" }
+    },
+    {
+      "messageId": "MSG-013",
+      "timestamp": "2026-11-09T12:00:00-06:00",
+      "isa95Level": 4,
+      "process": "AR",
+      "eventType": "InternalSettlementPosted",
+      "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+      "payload": { "arInvoiceId": "ARINV-8001", "amountSettled": 2079000.00, "currency": "MXN", "status": "CLEARED", "openAmount": 0.00 }
+    }
+  ]
+}

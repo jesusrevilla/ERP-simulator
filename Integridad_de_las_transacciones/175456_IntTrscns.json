@@ -1,0 +1,944 @@
+{
+  "modelo": "Eventos apegados a ISA 95 (Area de integridad de las transacciones)",
+  "proyecto": "Ensamble de computadoras (laptops y equipos de escritorio)",
+  "estandar_referencia": "ISA-95 ",
+  "alcance_ISA95": {
+    "partes_utilizadas": {
+      "Parte 1": "Marco general: modelo jerarquico y terminologia",
+      "Parte 2": "Atributos de objetos (Production Schedule, Material Lot, Production Performance, etc.)",
+      "Parte 3": "Actividades de operaciones de manufactura (despacho, ejecucion, recoleccion de datos, seguimiento)",
+      "Parte 4": "Objetos de integracion de MOM (datos maestros y modelos de operaciones)",
+      "Parte 5": "Transacciones entre negocio y manufactura (ERP-MES): Get, Process, Change, Cancel, Respond, Show, Sync"
+    },
+    "niveles": {
+      "nucleo_de_integridad": [
+        "Nivel 4 (ERP)",
+        "Nivel 3 (MES)"
+      ],
+      "fuentes_de_datos": [
+        "Nivel 2 (bancos de prueba y estaciones)",
+        "Nivel 1 (escaneres y sensores)",
+        "Nivel 0 (manipulacion fisica)"
+      ]
+    }
+  },
+  "jerarquia_de_equipo_ejemplo": {
+    "Enterprise": "Empresa ensambladora",
+    "Site": "Planta de ensamble",
+    "Area": "Area de ensamble y pruebas",
+    "Work_Center": [
+      "Linea de ensamble",
+      "Celda de burn-in",
+      "Estacion de flasheo e imagen",
+      "Empaque"
+    ],
+    "Work_Unit": [
+      "Estacion de montaje",
+      "Banco de pruebas",
+      "Escaner de serie"
+    ]
+  },
+  "convenciones": {
+    "propiedades_integridad": [
+      "Atomicidad",
+      "Consistencia",
+      "Aislamiento",
+      "Durabilidad",
+      "Trazabilidad",
+      "No repudio"
+    ],
+    "transacciones_B2MML": [
+      "Get",
+      "Process",
+      "Change",
+      "Cancel",
+      "Respond",
+      "Show",
+      "Sync"
+    ],
+    "formato_id_evento": "EV-<nivel>-<consecutivo>"
+  },
+  "sincronizacion_tiempo": {
+    "formato_timestamp": "ISO 8601 en UTC (equivalente a xs:dateTime de B2MML)",
+    "ejemplo": "2026-11-10T08:00:00.000Z",
+    "zona_horaria_referencia": "UTC",
+    "fuente_de_reloj": "NTP / PTP con servidor maestro unico de planta",
+    "campos": {
+      "timestamp_origen": "Momento en que ocurre el evento en la fuente (lector, estacion, MES o ERP)",
+      "timestamp_recepcion": "Momento en que el sistema destino recibe el mensaje",
+      "timestamp_confirmacion": "Momento en que la transaccion queda confirmada (commit)",
+      "latencia_ms": "timestamp_recepcion - timestamp_origen",
+      "tolerancia_desfase_ms": "Desfase maximo permitido entre relojes para ese nivel",
+      "secuencia": "Numero consecutivo global para ordenar eventos con timestamps iguales"
+    },
+    "reglas": [
+      "Todo evento debe llevar timestamp_origen generado en la fuente, no en el destino",
+      "Si latencia_ms excede la tolerancia, el evento se marca 'revisar_sincronizacion'",
+      "Eventos con timestamp_origen posterior a timestamp_recepcion se rechazan (reloj adelantado)",
+      "Los eventos se procesan por timestamp_origen y, en empate, por secuencia"
+    ],
+    "tolerancia_por_nivel_ms": {
+      "nivel_0": 1000,
+      "nivel_1": 10,
+      "nivel_2": 50,
+      "nivel_3": 500,
+      "nivel_4": 1000,
+      "transversales": 500
+    },
+    "nota": "Los valores de timestamp de cada evento son de ejemplo; sustituir con los reales de la integracion"
+  },
+  "jerarquia": {
+    "nivel_4_planeacion_de_negocio_ERP": {
+      "rol": "Nucleo de la integridad: origen de ordenes, inventario y contabilidad",
+      "descripcion": "Pedidos de clientes, MRP, compras, almacenes, costos y facturacion",
+      "categorias": {
+        "ordenes_y_programacion": [
+          {
+            "id": "EV-L4-001",
+            "evento": "Creacion de orden de ensamble",
+            "ejemplo_ensamble_pc": "Pedido de 50 laptops modelo X: i5, 16 GB RAM, SSD 512 GB",
+            "objeto_ISA95": "Production Schedule",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Consistencia"
+            ],
+            "control": "Validar BOM, ruta y disponibilidad antes de confirmar; commit unico",
+            "resultado_esperado": "Orden completa o rechazada, nunca parcial",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:07.137Z",
+              "timestamp_recepcion": "2026-11-10T08:00:07.457Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:07.637Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 1,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L4-002",
+            "evento": "Modificacion de orden en ejecucion",
+            "ejemplo_ensamble_pc": "Cliente cambia RAM de 16 GB a 32 GB con equipos ya en linea",
+            "objeto_ISA95": "Production Schedule",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Change",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Aislamiento"
+            ],
+            "control": "Bloqueo de registro, control de versiones y notificacion a MES",
+            "resultado_esperado": "Equipos en proceso y nuevos terminan con la configuracion correcta",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:14.274Z",
+              "timestamp_recepcion": "2026-11-10T08:00:14.594Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:14.774Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 2,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L4-003",
+            "evento": "Cancelacion de orden con componentes ya consumidos",
+            "ejemplo_ensamble_pc": "Se cancela la orden con 12 placas madre ya instaladas",
+            "objeto_ISA95": "Production Schedule / Production Performance",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Cancel",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Trazabilidad"
+            ],
+            "control": "Reversa compensatoria de inventario y costos",
+            "resultado_esperado": "Inventario y contabilidad cuadrados tras la cancelacion",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:21.411Z",
+              "timestamp_recepcion": "2026-11-10T08:00:21.731Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:21.911Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 3,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "compras_e_inventario": [
+          {
+            "id": "EV-L4-004",
+            "evento": "Recepcion de componentes de proveedor",
+            "ejemplo_ensamble_pc": "Entrada de 200 SSD con lote y numeros de serie",
+            "objeto_ISA95": "Material Lot",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Trazabilidad"
+            ],
+            "control": "Entrada de inventario y lote registradas en una sola transaccion",
+            "resultado_esperado": "Stock y lote del proveedor trazables",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:28.548Z",
+              "timestamp_recepcion": "2026-11-10T08:00:28.868Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:29.048Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 4,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L4-005",
+            "evento": "Reserva de componentes para varias ordenes",
+            "ejemplo_ensamble_pc": "Dos ordenes reservan las ultimas 30 tarjetas de video",
+            "objeto_ISA95": "Material Definition / Production Schedule",
+            "parte_ISA95": "Parte 2",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Aislamiento",
+              "Consistencia"
+            ],
+            "control": "Bloqueo de saldo y reserva atomica",
+            "resultado_esperado": "Sin sobreasignacion de inventario",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:35.685Z",
+              "timestamp_recepcion": "2026-11-10T08:00:36.005Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:36.185Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 5,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L4-006",
+            "evento": "Sustitucion por componente alterno",
+            "ejemplo_ensamble_pc": "Se cambia un modulo RAM por una marca equivalente",
+            "objeto_ISA95": "Material Definition (BOM alterna)",
+            "parte_ISA95": "Parte 2",
+            "transaccion_B2MML": "Change",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Trazabilidad"
+            ],
+            "control": "Solo alternos aprobados en BOM; registrar el cambio en la orden",
+            "resultado_esperado": "Configuracion final valida y documentada",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:42.822Z",
+              "timestamp_recepcion": "2026-11-10T08:00:43.142Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:43.322Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 6,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "datos_maestros": [
+          {
+            "id": "EV-L4-007",
+            "evento": "Cambio de version de BOM o configuracion de modelo",
+            "ejemplo_ensamble_pc": "Nueva version del modelo X con otra fuente de poder",
+            "objeto_ISA95": "Material Definition / Process Segment",
+            "parte_ISA95": "Parte 2 / Parte 4",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Consistencia",
+              "No repudio"
+            ],
+            "control": "Flujo de aprobacion, vigencias y bitacora de auditoria",
+            "resultado_esperado": "ERP y MES usan la misma version",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:49.959Z",
+              "timestamp_recepcion": "2026-11-10T08:00:50.279Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:50.459Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 7,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "contabilizacion_y_entrega": [
+          {
+            "id": "EV-L4-008",
+            "evento": "Contabilizacion de equipos terminados",
+            "ejemplo_ensamble_pc": "Entrada de 50 laptops a almacen de producto terminado",
+            "objeto_ISA95": "Production Performance",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Durabilidad"
+            ],
+            "control": "Asiento contable, consumo de componentes y alta de producto en una transaccion",
+            "resultado_esperado": "Costo real igual a lo consumido y reportado",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:00:57.096Z",
+              "timestamp_recepcion": "2026-11-10T08:00:57.416Z",
+              "timestamp_confirmacion": "2026-11-10T08:00:57.596Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 8,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L4-009",
+            "evento": "Envio y facturacion de pedido",
+            "ejemplo_ensamble_pc": "Se factura y envia el pedido con 50 numeros de serie",
+            "objeto_ISA95": "Material Lot (producto terminado)",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "No repudio"
+            ],
+            "control": "Verificar que cada serie facturada exista, este liberada y no se haya enviado antes",
+            "resultado_esperado": "Una serie solo se factura y envia una vez",
+            "sincronizacion": {
+              "fuente_reloj": "ERP",
+              "timestamp_origen": "2026-11-10T08:01:04.233Z",
+              "timestamp_recepcion": "2026-11-10T08:01:04.553Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:04.733Z",
+              "latencia_ms": 320,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 9,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    },
+    "nivel_3_operaciones_de_manufactura_MES": {
+      "rol": "Nucleo de la integridad: ejecucion, trazabilidad y calidad del ensamble",
+      "descripcion": "Despacho, estaciones de ensamble, pruebas, trazabilidad por numero de serie y empaque",
+      "categorias": {
+        "ejecucion_de_produccion": [
+          {
+            "id": "EV-L3-001",
+            "evento": "Despacho de orden a linea de ensamble",
+            "ejemplo_ensamble_pc": "Orden enviada a la linea 2 con su lista de componentes",
+            "objeto_ISA95": "Production Request / Work Center",
+            "parte_ISA95": "Parte 3 / Parte 5",
+            "transaccion_B2MML": "Get / Respond",
+            "propiedad_integridad": [
+              "Consistencia"
+            ],
+            "control": "Confirmar disponibilidad de linea, personal y componentes",
+            "resultado_esperado": "Orden despachada una sola vez",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:11.370Z",
+              "timestamp_recepcion": "2026-11-10T08:01:11.510Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:11.600Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 10,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-002",
+            "evento": "Inicio o fin de operacion en estacion",
+            "ejemplo_ensamble_pc": "Termina el montaje de CPU y disipador en la estacion 3",
+            "objeto_ISA95": "Production Response",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Trazabilidad",
+              "Consistencia"
+            ],
+            "control": "Secuencia valida de estaciones y sello de tiempo",
+            "resultado_esperado": "Equipo no avanza sin completar la operacion previa",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:18.507Z",
+              "timestamp_recepcion": "2026-11-10T08:01:18.647Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:18.737Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 11,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "materiales_y_trazabilidad": [
+          {
+            "id": "EV-L3-003",
+            "evento": "Consumo de componente por numero de serie",
+            "ejemplo_ensamble_pc": "Se vincula la serie de la placa madre MB-0412 al equipo PC-1001",
+            "objeto_ISA95": "Material Lot / Material Sublot",
+            "parte_ISA95": "Parte 2 / Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Trazabilidad"
+            ],
+            "control": "Descontar componente y ligarlo al equipo en una transaccion",
+            "resultado_esperado": "Genealogia completa serie de componente a serie de equipo",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:25.644Z",
+              "timestamp_recepcion": "2026-11-10T08:01:25.784Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:25.874Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 12,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-004",
+            "evento": "Asignacion de numero de serie al equipo terminado",
+            "ejemplo_ensamble_pc": "Se genera el serial PC-1001 y se imprime la etiqueta",
+            "objeto_ISA95": "Material Lot (producto)",
+            "parte_ISA95": "Parte 2 / Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Trazabilidad"
+            ],
+            "control": "Restriccion de unicidad de serie",
+            "resultado_esperado": "Sin series duplicadas",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:32.781Z",
+              "timestamp_recepcion": "2026-11-10T08:01:32.921Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:33.011Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 13,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-005",
+            "evento": "Retrabajo o reemplazo de componente",
+            "ejemplo_ensamble_pc": "Se cambia una RAM defectuosa ya instalada",
+            "objeto_ISA95": "Production Performance / Material Lot",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Trazabilidad",
+              "Atomicidad"
+            ],
+            "control": "Reversa del consumo anterior y nuevo consumo ligados",
+            "resultado_esperado": "Historial del equipo refleja ambos movimientos",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:39.918Z",
+              "timestamp_recepcion": "2026-11-10T08:01:40.058Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:40.148Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 14,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "calidad_y_pruebas": [
+          {
+            "id": "EV-L3-006",
+            "evento": "Resultado de prueba burn-in, POST o diagnostico",
+            "ejemplo_ensamble_pc": "El equipo PC-1001 aprueba 4 horas de burn-in",
+            "objeto_ISA95": "Test Result",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "No repudio",
+              "Trazabilidad"
+            ],
+            "control": "Resultado ligado a serie, estacion y operador; sin edicion posterior",
+            "resultado_esperado": "Solo equipos aprobados avanzan a empaque",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:47.055Z",
+              "timestamp_recepcion": "2026-11-10T08:01:47.195Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:47.285Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 15,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-007",
+            "evento": "Flasheo de BIOS/firmware e instalacion de imagen de SO",
+            "ejemplo_ensamble_pc": "BIOS v2.1 e imagen Windows instaladas en PC-1001",
+            "objeto_ISA95": "Process Segment Parameter / Test Result",
+            "parte_ISA95": "Parte 2 / Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "No repudio"
+            ],
+            "control": "Validar version aprobada y registrar hash de imagen",
+            "resultado_esperado": "Version instalada igual a la autorizada",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:01:54.192Z",
+              "timestamp_recepcion": "2026-11-10T08:01:54.332Z",
+              "timestamp_confirmacion": "2026-11-10T08:01:54.422Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 16,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-008",
+            "evento": "Componente defectuoso o scrap",
+            "ejemplo_ensamble_pc": "Fuente de poder falla en prueba y se desecha",
+            "objeto_ISA95": "Production Performance / Material Lot",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Trazabilidad"
+            ],
+            "control": "Registrar causa y descontar del inventario",
+            "resultado_esperado": "Balance de materiales sin diferencias",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:02:01.329Z",
+              "timestamp_recepcion": "2026-11-10T08:02:01.469Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:01.559Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 17,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-009",
+            "evento": "Bloqueo de lote de proveedor no conforme",
+            "ejemplo_ensamble_pc": "Lote de SSD con fallas se bloquea en todo el sistema",
+            "objeto_ISA95": "Material Lot",
+            "parte_ISA95": "Parte 2 / Parte 5",
+            "transaccion_B2MML": "Change",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Aislamiento"
+            ],
+            "control": "Bloqueo simultaneo en ERP y MES; identificar equipos ya armados con ese lote",
+            "resultado_esperado": "Ningun equipo se libera con componentes bloqueados",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:02:08.466Z",
+              "timestamp_recepcion": "2026-11-10T08:02:08.606Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:08.696Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 18,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "equipo_y_empaque": [
+          {
+            "id": "EV-L3-010",
+            "evento": "Paro de estacion o falla de equipo de prueba",
+            "ejemplo_ensamble_pc": "Falla el banco de pruebas 2",
+            "objeto_ISA95": "Equipment Performance",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Trazabilidad"
+            ],
+            "control": "Registrar causa, duracion y ordenes afectadas",
+            "resultado_esperado": "Tiempo perdido asignado a la orden correcta",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:02:15.603Z",
+              "timestamp_recepcion": "2026-11-10T08:02:15.743Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:15.833Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 19,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L3-011",
+            "evento": "Empaque y etiquetado de equipo terminado",
+            "ejemplo_ensamble_pc": "Se liga serie PC-1001 a caja y pedido",
+            "objeto_ISA95": "Production Performance",
+            "parte_ISA95": "Parte 3 / Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Trazabilidad"
+            ],
+            "control": "Escaneo obligatorio serie-caja-pedido",
+            "resultado_esperado": "Caja contiene el equipo y la configuracion del pedido",
+            "sincronizacion": {
+              "fuente_reloj": "MES",
+              "timestamp_origen": "2026-11-10T08:02:22.740Z",
+              "timestamp_recepcion": "2026-11-10T08:02:22.880Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:22.970Z",
+              "latencia_ms": 140,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 20,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    },
+    "nivel_2_supervision_y_control": {
+      "rol": "Fuente de datos hacia MES (bancos de prueba, estaciones automaticas)",
+      "descripcion": "Software de pruebas, flasheo automatico y controladores de estaciones",
+      "categorias": {
+        "fuente_de_datos": [
+          {
+            "id": "EV-L2-001",
+            "evento": "Resultado automatico del banco de pruebas",
+            "ejemplo_ensamble_pc": "El probador envia aprobado/rechazado con parametros medidos",
+            "objeto_ISA95": "Test Result",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "No repudio"
+            ],
+            "control": "Mensaje con serie, version de prueba y sello de tiempo",
+            "resultado_esperado": "MES recibe un resultado unico por prueba",
+            "sincronizacion": {
+              "fuente_reloj": "Banco de pruebas/Estacion",
+              "timestamp_origen": "2026-11-10T08:02:29.877Z",
+              "timestamp_recepcion": "2026-11-10T08:02:29.902Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:29.917Z",
+              "latencia_ms": 25,
+              "tolerancia_desfase_ms": 50,
+              "secuencia": 21,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L2-002",
+            "evento": "Descarga de parametros o imagen a estacion",
+            "ejemplo_ensamble_pc": "Se carga el perfil de flasheo del modelo X",
+            "objeto_ISA95": "Process Segment Parameter",
+            "parte_ISA95": "Parte 2",
+            "transaccion_B2MML": "Change",
+            "propiedad_integridad": [
+              "Consistencia",
+              "No repudio"
+            ],
+            "control": "Validar version aprobada y registrar usuario",
+            "resultado_esperado": "Parametros ejecutados iguales a los autorizados",
+            "sincronizacion": {
+              "fuente_reloj": "Banco de pruebas/Estacion",
+              "timestamp_origen": "2026-11-10T08:02:37.014Z",
+              "timestamp_recepcion": "2026-11-10T08:02:37.039Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:37.054Z",
+              "latencia_ms": 25,
+              "tolerancia_desfase_ms": 50,
+              "secuencia": 22,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L2-003",
+            "evento": "Perdida de comunicacion estacion-MES",
+            "ejemplo_ensamble_pc": "La estacion de burn-in pierde red durante la prueba",
+            "objeto_ISA95": "Production Data Collection",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Durabilidad",
+              "Consistencia"
+            ],
+            "control": "Buffer local y reenvio ordenado",
+            "resultado_esperado": "Sin perdida ni duplicado de resultados",
+            "sincronizacion": {
+              "fuente_reloj": "Banco de pruebas/Estacion",
+              "timestamp_origen": "2026-11-10T08:02:44.151Z",
+              "timestamp_recepcion": "2026-11-10T08:02:44.176Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:44.191Z",
+              "latencia_ms": 25,
+              "tolerancia_desfase_ms": 50,
+              "secuencia": 23,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    },
+    "nivel_1_sensores_y_lectores": {
+      "rol": "Fuente de datos (lectores y sensores)",
+      "descripcion": "Escaneres de codigo de barras y sensores de temperatura",
+      "categorias": {
+        "captura_de_datos": [
+          {
+            "id": "EV-L1-001",
+            "evento": "Lectura de codigo de barras duplicada o ilegible",
+            "ejemplo_ensamble_pc": "El escaner lee dos veces la serie de la placa madre",
+            "objeto_ISA95": "Material Lot (identificacion)",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Trazabilidad"
+            ],
+            "control": "Filtro de duplicados y validacion de formato",
+            "resultado_esperado": "Solo lecturas validas llegan al MES",
+            "sincronizacion": {
+              "fuente_reloj": "Escaner/Sensor",
+              "timestamp_origen": "2026-11-10T08:02:51.288Z",
+              "timestamp_recepcion": "2026-11-10T08:02:51.292Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:51.295Z",
+              "latencia_ms": 4,
+              "tolerancia_desfase_ms": 10,
+              "secuencia": 24,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L1-002",
+            "evento": "Temperatura fuera de rango en burn-in",
+            "ejemplo_ensamble_pc": "El sensor marca 95 C durante la prueba",
+            "objeto_ISA95": "Equipment / Sensor Reading",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia"
+            ],
+            "control": "Validacion de rango y alarma asociada a la serie",
+            "resultado_esperado": "Prueba invalidada o repetida segun regla",
+            "sincronizacion": {
+              "fuente_reloj": "Escaner/Sensor",
+              "timestamp_origen": "2026-11-10T08:02:58.425Z",
+              "timestamp_recepcion": "2026-11-10T08:02:58.429Z",
+              "timestamp_confirmacion": "2026-11-10T08:02:58.432Z",
+              "latencia_ms": 4,
+              "tolerancia_desfase_ms": 10,
+              "secuencia": 25,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    },
+    "nivel_0_proceso_fisico": {
+      "rol": "Origen fisico del dato (donde se rompe la integridad si no se registra)",
+      "descripcion": "Manipulacion real de componentes y equipos",
+      "categorias": {
+        "movimiento_fisico": [
+          {
+            "id": "EV-L0-001",
+            "evento": "Componente instalado sin escaneo",
+            "ejemplo_ensamble_pc": "Un tecnico instala una RAM sin registrar la serie",
+            "objeto_ISA95": "Material Lot",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Trazabilidad"
+            ],
+            "control": "Escaneo obligatorio por estacion y conteo ciclico",
+            "resultado_esperado": "Componentes fisicos iguales a los registrados",
+            "sincronizacion": {
+              "fuente_reloj": "Captura manual",
+              "timestamp_origen": "2026-11-10T08:03:05.562Z",
+              "timestamp_recepcion": "2026-11-10T08:03:06.162Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:06.362Z",
+              "latencia_ms": 600,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 26,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-L0-002",
+            "evento": "Intercambio fisico de componente entre equipos",
+            "ejemplo_ensamble_pc": "Se pasa un SSD de PC-1001 a PC-1002 sin registro",
+            "objeto_ISA95": "Material Lot",
+            "parte_ISA95": "Parte 3",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Trazabilidad",
+              "No repudio"
+            ],
+            "control": "Prohibir intercambios sin transaccion de retrabajo",
+            "resultado_esperado": "Cada serie ligada al equipo real",
+            "sincronizacion": {
+              "fuente_reloj": "Captura manual",
+              "timestamp_origen": "2026-11-10T08:03:12.699Z",
+              "timestamp_recepcion": "2026-11-10T08:03:13.299Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:13.499Z",
+              "latencia_ms": 600,
+              "tolerancia_desfase_ms": 1000,
+              "secuencia": 27,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    },
+    "transversales_integracion_ERP_MES": {
+      "rol": "Eventos que cruzan niveles y afectan la integridad de extremo a extremo",
+      "descripcion": "Mensajeria B2MML, seguridad y conciliacion",
+      "categorias": {
+        "mensajeria_B2MML": [
+          {
+            "id": "EV-X-001",
+            "evento": "Mensaje duplicado",
+            "ejemplo_ensamble_pc": "El MES reenvia el reporte de produccion de la orden 5001",
+            "objeto_ISA95": "Production Performance",
+            "parte_ISA95": "Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia"
+            ],
+            "control": "Idempotencia con ID unico de mensaje",
+            "resultado_esperado": "El duplicado se ignora sin efecto",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:19.836Z",
+              "timestamp_recepcion": "2026-11-10T08:03:20.046Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:20.166Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 28,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-X-002",
+            "evento": "Mensaje fuera de orden",
+            "ejemplo_ensamble_pc": "Llega el consumo de componentes antes que el inicio de orden",
+            "objeto_ISA95": "Production Response",
+            "parte_ISA95": "Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Aislamiento"
+            ],
+            "control": "Numero de secuencia y cola ordenada",
+            "resultado_esperado": "Se procesa en la secuencia correcta",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:26.973Z",
+              "timestamp_recepcion": "2026-11-10T08:03:27.183Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:27.303Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 29,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-X-003",
+            "evento": "Timeout o falla de la interfaz ERP-MES",
+            "ejemplo_ensamble_pc": "El ERP no responde al reporte de equipos terminados",
+            "objeto_ISA95": "Production Performance",
+            "parte_ISA95": "Parte 5",
+            "transaccion_B2MML": "Process",
+            "propiedad_integridad": [
+              "Atomicidad",
+              "Durabilidad"
+            ],
+            "control": "Reintentos, rollback o transaccion compensatoria",
+            "resultado_esperado": "Sin estados a medias entre ERP y MES",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:34.110Z",
+              "timestamp_recepcion": "2026-11-10T08:03:34.320Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:34.440Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 30,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "seguridad_y_auditoria": [
+          {
+            "id": "EV-X-004",
+            "evento": "Acceso o modificacion no autorizada",
+            "ejemplo_ensamble_pc": "Un usuario edita un resultado de prueba aprobado",
+            "objeto_ISA95": "Personnel / Test Result",
+            "parte_ISA95": "Parte 2",
+            "transaccion_B2MML": "Change",
+            "propiedad_integridad": [
+              "No repudio",
+              "Trazabilidad"
+            ],
+            "control": "Roles, segregacion de funciones y bitacora inmutable",
+            "resultado_esperado": "Todo cambio atribuible a un usuario",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:41.247Z",
+              "timestamp_recepcion": "2026-11-10T08:03:41.457Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:41.577Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 31,
+              "estado_sincronizacion": "sincronizado"
+            }
+          },
+          {
+            "id": "EV-X-005",
+            "evento": "Desincronizacion de relojes entre sistemas",
+            "ejemplo_ensamble_pc": "El servidor del MES se adelanta 3 segundos respecto al ERP",
+            "objeto_ISA95": "Todos",
+            "parte_ISA95": "Parte 1 / Parte 5",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Trazabilidad",
+              "Consistencia"
+            ],
+            "control": "Sincronizacion NTP y validacion de sellos de tiempo",
+            "resultado_esperado": "Cronologia de eventos confiable",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:48.384Z",
+              "timestamp_recepcion": "2026-11-10T08:03:48.594Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:48.714Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 32,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ],
+        "conciliacion": [
+          {
+            "id": "EV-X-006",
+            "evento": "Diferencia de inventario ERP vs MES al cierre de turno",
+            "ejemplo_ensamble_pc": "El ERP muestra 48 equipos terminados y el MES 50",
+            "objeto_ISA95": "Production Performance / Material Lot",
+            "parte_ISA95": "Parte 3 / Parte 5",
+            "transaccion_B2MML": "Sync",
+            "propiedad_integridad": [
+              "Consistencia",
+              "Durabilidad"
+            ],
+            "control": "Conciliacion automatica y ajustes autorizados",
+            "resultado_esperado": "Diferencias explicadas y documentadas",
+            "sincronizacion": {
+              "fuente_reloj": "Interfaz ERP-MES",
+              "timestamp_origen": "2026-11-10T08:03:55.521Z",
+              "timestamp_recepcion": "2026-11-10T08:03:55.731Z",
+              "timestamp_confirmacion": "2026-11-10T08:03:55.851Z",
+              "latencia_ms": 210,
+              "tolerancia_desfase_ms": 500,
+              "secuencia": 33,
+              "estado_sincronizacion": "sincronizado"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

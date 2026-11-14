@@ -1,0 +1,95 @@
+{
+  "modulo_erp": "reglas_oc_op",
+  "descripcion_modulo": "Base de conocimientos para IA - Reglas de negocio de Órdenes de Compra (OC) y Órdenes de Producción (OP) - TechAssembly",
+  "estandar_referencia": "ISA-95 (Nivel 4 ERP / Nivel 3 MES)",
+  "eventos_reglas": [
+    {
+      "timestamp": "2026-11-10T20:00:01Z",
+      "tipo_documento": "Orden_de_Compra",
+      "empresa": "TechAssembly",
+      "linea": null,
+      "maquina": null,
+      "disparador": "Requisición de Compra / MRP",
+      "regla_id": "OC_REG_01",
+      "nombre_regla": "Origen Válido y Requisición Prioritaria",
+      "regla": "Toda Orden de Compra (OC) debe nacer formalmente a partir de una Requisición de Compra autorizada o de un punto de reorden automático disparado por el sistema MRP."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:02Z",
+      "tipo_documento": "Orden_de_Compra",
+      "empresa": "TechAssembly",
+      "linea": null,
+      "maquina": null,
+      "disparador": "Generación de OC",
+      "regla_id": "OC_REG_02",
+      "nombre_regla": "Validación de Estatus de Proveedor",
+      "regla": "El sistema ERP debe validar que el proveedor esté registrado, activo y con situación fiscal al corriente antes de permitir la emisión y firma de la Orden de Compra."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:03Z",
+      "tipo_documento": "Orden_de_Compra",
+      "empresa": "TechAssembly",
+      "linea": null,
+      "maquina": null,
+      "disparador": "Monto de la Orden",
+      "regla_id": "OC_REG_03",
+      "nombre_regla": "Control Presupuestal y Flujo de Aprobaciones",
+      "regla": "El ERP exige la autorización jerárquica por firma digital según el monto de la compra y verifica disponibilidad presupuestal en el centro de costos asignado."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:04Z",
+      "tipo_documento": "Orden_de_Compra",
+      "empresa": "TechAssembly",
+      "linea": null,
+      "maquina": null,
+      "disparador": "Recepción y Facturación",
+      "regla_id": "OC_REG_04",
+      "nombre_regla": "Coincidencia de 3 Vías (3-Way Matching)",
+      "regla": "Para autorizar el pago a proveedor, el ERP valida la coincidencia exacta entre tres documentos: Orden de Compra emitida, Recepción de Almacén y Factura del Proveedor."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:05Z",
+      "tipo_documento": "Orden_de_Produccion",
+      "empresa": "TechAssembly",
+      "linea": "Línea de Ensamble A",
+      "maquina": "Corte CNC 01",
+      "disparador": "Pedido de Cliente / Stock Mínimo",
+      "regla_id": "OP_REG_01",
+      "nombre_regla": "Explosión BOM y Verificación de Insumos (MRP)",
+      "regla": "Toda Orden de Producción exige la validación de la Lista de Materiales (BOM). Si el inventario de insumos es insuficiente, el ERP detona automáticamente la Requisición de Compra correspondiente."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:06Z",
+      "tipo_documento": "Orden_de_Produccion",
+      "empresa": "TechAssembly",
+      "linea": "Línea de Ensamble A",
+      "maquina": "Corte CNC 01",
+      "disparador": "Liberación a Piso",
+      "regla_id": "OP_REG_02",
+      "nombre_regla": "Programación de Capacidad y Asignación de Recursos",
+      "regla": "Al pasar a estatus Liberada, el ERP/MES asigna la OP a una Línea de Ensamble y Máquina específica, verificando la disponibilidad de capacidad del centro de trabajo."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:07Z",
+      "tipo_documento": "Orden_de_Produccion",
+      "empresa": "TechAssembly",
+      "linea": "Línea de Ensamble A",
+      "maquina": "Corte CNC 01",
+      "disparador": "Avance de Fabricación",
+      "regla_id": "OP_REG_03",
+      "nombre_regla": "Consumo de Insumos y Asignación de Costos Directos",
+      "regla": "Durante la ejecución, el sistema descuenta la materia prima del inventario (vía backflush o salida manual) y acumula las horas efectivas de mano de obra y máquina."
+    },
+    {
+      "timestamp": "2026-11-10T20:00:08Z",
+      "tipo_documento": "Orden_de_Produccion",
+      "empresa": "TechAssembly",
+      "linea": "Línea de Ensamble A",
+      "maquina": "Corte CNC 01",
+      "disparador": "Cierre de Orden",
+      "regla_id": "OP_REG_04",
+      "nombre_regla": "Entrada de Producto Terminado y Cierre Contable",
+      "regla": "Al finalizar la producción, el producto terminado ingresa al inventario de venta y la OP se congela/cierra para el cálculo definitivo de costos de manufactura."
+    }
+  ]
+}

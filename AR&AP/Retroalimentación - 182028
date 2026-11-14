@@ -1,0 +1,19 @@
+1. Catálogos (condiciones de pago e impuestos)
+
+Cumple: nos dan los días de crédito y el IVA.
+Ajuste: que el IVA se pueda cambiar y que se puedan desactivar en vez de borrar.
+
+2. Pedidos de venta
+
+Cumple a medias: es la base para facturar a clientes.
+Falta: que indique los días de crédito del pedido, que el total cuadre con subtotal + IVA, y la tabla de clientes.
+
+3. Contabilidad (Miriam)
+
+Cumple a medias: tiene las cuentas, pero no hay dónde registrar los movimientos de cobros y pagos.
+Falta: los asientos contables y la bitácora de cambios (que pedimos para cancelaciones y ajustes).
+
+4. Órdenes de compra
+
+Cumple a medias: es la base para facturas de proveedores.
+Falta: conectarla con la tabla de proveedores y que indique los días de crédito.

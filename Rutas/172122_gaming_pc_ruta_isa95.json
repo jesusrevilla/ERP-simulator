@@ -1,0 +1,68 @@
+{
+  "OperationsResponse": {
+    "ID": "RSP-001",
+    "OperationsRequestID": "REQ-001",
+    "OperationsDefinitionID": "RUTA-GAMING-PC",
+    "ResponseState": "Completed",
+    "ActualStartTime": "2026-11-10T08:00:00Z",
+    "ActualEndTime": "2026-11-10T13:00:00Z",
+
+    "SegmentResponse": [
+      {
+        "Sequence": 1,
+        "ProcessSegmentID": "Etapa_1_Base",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T08:00:00Z",
+        "ActualEndTime": "2026-11-10T09:30:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "Motherboard_B650", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "CPU_Ryzen7", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "RAM_16GB_DDR5", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "SSD_1TB_NVMe", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      },
+      {
+        "Sequence": 2,
+        "ProcessSegmentID": "Etapa_2_Energia",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T10:00:00Z",
+        "ActualEndTime": "2026-11-10T11:00:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "PowerSupply_750W", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      },
+      {
+        "Sequence": 3,
+        "ProcessSegmentID": "Etapa_3_Graficos",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T11:30:00Z",
+        "ActualEndTime": "2026-11-10T12:30:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "GraphicsCard_RTX", "MaterialUse": "Consumed", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      }
+    ],
+
+    "MaterialProducedActual": [
+      {
+        "MaterialDefinitionID": "Gaming_PC",
+        "MaterialUse": "Produced",
+        "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" }
+      }
+    ],
+
+    "EventLog": [
+      { "Sequence": 1,  "Timestamp": "2026-11-10T07:30:00Z", "EventType": "RouteCreated",           "RouteStatus": "Borrador",    "Description": "Hoja de ruta creada para Gaming_PC" },
+      { "Sequence": 2,  "Timestamp": "2026-11-10T07:40:00Z", "EventType": "RouteSubmittedForReview", "RouteStatus": "En revisión", "Description": "Hoja enviada a revisión" },
+      { "Sequence": 3,  "Timestamp": "2026-11-10T07:50:00Z", "EventType": "RouteReleased",          "RouteStatus": "Liberada",    "Description": "Hoja liberada por el aprobador" },
+      { "Sequence": 4,  "Timestamp": "2026-11-10T08:00:00Z", "EventType": "ProductionStarted",      "Description": "Orden de producción iniciada" },
+      { "Sequence": 5,  "Timestamp": "2026-11-10T08:00:00Z", "EventType": "SegmentStarted",         "ProcessSegmentID": "Etapa_1_Base" },
+      { "Sequence": 6,  "Timestamp": "2026-11-10T09:30:00Z", "EventType": "SegmentCompleted",       "ProcessSegmentID": "Etapa_1_Base" },
+      { "Sequence": 7,  "Timestamp": "2026-11-10T10:00:00Z", "EventType": "SegmentStarted",         "ProcessSegmentID": "Etapa_2_Energia" },
+      { "Sequence": 8,  "Timestamp": "2026-11-10T11:00:00Z", "EventType": "SegmentCompleted",       "ProcessSegmentID": "Etapa_2_Energia" },
+      { "Sequence": 9,  "Timestamp": "2026-11-10T11:30:00Z", "EventType": "SegmentStarted",         "ProcessSegmentID": "Etapa_3_Graficos" },
+      { "Sequence": 10, "Timestamp": "2026-11-10T12:30:00Z", "EventType": "SegmentCompleted",       "ProcessSegmentID": "Etapa_3_Graficos" },
+      { "Sequence": 11, "Timestamp": "2026-11-10T13:00:00Z", "EventType": "ProductionCompleted",    "Description": "Gaming_PC terminada" }
+    ]
+  }
+}

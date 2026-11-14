@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json.libremfg.ai/schemas/v2.0.1.equipment.schema.json",
+  "ISA95_Model": {
+    "Enterprise": "TechAssembly S.A.",
+    "Site": "Planta de Ensamble Principal",
+    "Area": "Línea de Ensamble Gaming PC",
+    "Operations": {
+      "Activities": [
+        {
+          "ActivityID": "ACT-PREP-MB-01",
+          "ActivityName": "Preparación de Tarjeta Madre",
+          "HierarchyLocation": "TechAssembly S.A. / Planta de Ensamble / Línea Gaming PC / Celda Preparación / Estación ESD-01",
+          "Events": [
+            {
+              "EventID": "EVT-ASM-001",
+              "EventType": "ComponentMounting",
+              "Description": "Instalación del CPU Ryzen 7 en el socket de la Motherboard B650."
+            },
+            {
+              "EventID": "EVT-ASM-002",
+              "EventType": "ComponentMounting",
+              "Description": "Inserción de los módulos de RAM 16GB DDR5 y el SSD 1TB NVMe en sus respectivas ranuras."
+            }
+          ]
+        },
+        {
+          "ActivityID": "ACT-ENSAMBLE-CHASIS-01",
+          "ActivityName": "Ensamble en Gabinete",
+          "HierarchyLocation": "TechAssembly S.A. / Planta de Ensamble / Línea Gaming PC / Celda Chasis / Estación Montaje-02",
+          "Events": [
+            {
+              "EventID": "EVT-ASM-003",
+              "EventType": "PowerSupplyInstallation",
+              "Description": "Fijación de la Power Supply 750W en el chasis y ruteo inicial de cables de poder."
+            },
+            {
+              "EventID": "EVT-ASM-004",
+              "EventType": "ComponentMounting",
+              "Description": "Fijación de la Motherboard pre-ensamblada al gabinete y conexión de la Graphics Card RTX en el puerto PCIe principal."
+            }
+          ]
+        },
+        {
+          "ActivityID": "ACT-PRUEBAS-QA-01",
+          "ActivityName": "Pruebas de Calidad (POST y Estrés)",
+          "HierarchyLocation": "TechAssembly S.A. / Planta de Ensamble / Línea Gaming PC / Celda Calidad / Rack Pruebas-01",
+          "Events": [
+            {
+              "EventID": "EVT-QA-001",
+              "EventType": "PowerOnSelfTest",
+              "Description": "Primer encendido del equipo. Validación de que la BIOS reconoce el CPU, RAM, SSD y tarjeta gráfica correctamente."
+            },
+            {
+              "EventID": "EVT-QA-002",
+              "EventType": "QualityLog",
+              "Description": "Registro de equipo aprobado. Actualización del inventario de producto terminado en PostgreSQL y registro en Neo4j."
+            }
+          ]
+        }
+      ]
+    },
+    "ProcessEquipment": {
+      "@releaseID": "1",
+      "ApplicationArea": {
+        "CreationDateTime": "2026-11-10T20:35:00Z",
+        "Sender": {
+          "LogicalID": "ERP-MRP-Demo-Action"
+        }
+      },
+      "DataArea": {
+        "EquipmentClass": {
+          "ID": "ASSEMBLY-STATION",
+          "Description": "Estación de trabajo antiestática para ensamble de PC"
+        },
+        "Equipment": {
+          "ID": "ESD-01",
+          "Description": "Mesa de Preparación Componentes Base",
+          "EquipmentLevel": "WorkCell",
+          "EquipmentProperty": [
+            {
+              "ID": "StaticGrounding",
+              "Value": {
+                "StringValue": "Connected"
+              }
+            },
+            {
+              "ID": "OperatingStatus",
+              "Value": {
+                "StringValue": "Available"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

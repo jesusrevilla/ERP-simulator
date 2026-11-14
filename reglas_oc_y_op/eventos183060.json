@@ -1,0 +1,52 @@
+{
+  "events": [
+    {
+      "timestamp": "2026-11-10T08:00:00Z",
+      "hierarchy": "Tech Assembly / Planeacion / Estacion-MRP",
+      "event_type": "FORECAST",
+      "document": "Forecast",
+      "details": { "item_id": "PT-100", "qty": 100 },
+      "description": "Ingreso de demanda / forecast."
+    },
+    {
+      "timestamp": "2026-11-10T09:00:00Z",
+      "hierarchy": "Tech Assembly / Compras / Oficina-Compras",
+      "event_type": "PO_CREATED",
+      "document": "Orden de Compra",
+      "details": { "po_id": "OC-001", "material_id": "MP-50", "qty": 200, "status": "Pendiente" },
+      "description": "Creación de Orden de Compra."
+    },
+    {
+      "timestamp": "2026-11-10T11:00:00Z",
+      "hierarchy": "Tech Assembly / Almacen / Muelle-01",
+      "event_type": "PO_RECEIVED",
+      "document": "Recibo Inventario",
+      "details": { "po_id": "OC-001", "material_id": "MP-50", "qty_received": 200, "po_status": "Recibida" },
+      "description": "Recepción de materia prima en almacén."
+    },
+    {
+      "timestamp": "2026-11-10T12:00:00Z",
+      "hierarchy": "Tech Assembly / Planeacion / Estacion-MRP",
+      "event_type": "WO_CREATED",
+      "document": "Orden de Produccion",
+      "details": { "wo_id": "OP-100", "product_id": "PT-100", "qty": 50, "status": "Planeada" },
+      "description": "Creación de Orden de Producción."
+    },
+    {
+      "timestamp": "2026-11-10T13:00:00Z",
+      "hierarchy": "Tech Assembly / Linea-1 / Maquina-A1",
+      "event_type": "MACHINE_PRODUCTION",
+      "document": "Ejecucion Maquina",
+      "details": { "wo_id": "OP-100", "machine_id": "Maquina-A1", "units_produced": 50 },
+      "description": "Producción de piezas en máquina."
+    },
+    {
+      "timestamp": "2026-11-10T14:00:00Z",
+      "hierarchy": "Tech Assembly / Almacen / Estacion-PT",
+      "event_type": "WO_COMPLETED",
+      "document": "Orden de Produccion",
+      "details": { "wo_id": "OP-100", "product_id": "PT-100", "qty_added": 50, "status": "Completada" },
+      "description": "Cierre de OP e ingreso de producto terminado."
+    }
+  ]
+}

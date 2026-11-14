@@ -1,0 +1,13 @@
+CREATE TABLE Item_Master (
+    ItemID SERIAL PRIMARY KEY,
+    ItemCode VARCHAR(50) NOT NULL UNIQUE,
+    Name VARCHAR(150) NOT NULL,
+    Description TEXT,
+    ItemType VARCHAR(50) NOT NULL,
+    UnitOfMeasure VARCHAR(20) NOT NULL,
+    StandardCost NUMERIC(10, 2) DEFAULT 0.00,
+    ListPrice NUMERIC(10, 2) DEFAULT 0.00,
+    SafetyStock INT DEFAULT 0,
+    IsActive BOOLEAN DEFAULT TRUE,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

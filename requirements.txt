@@ -1,5 +1,5 @@
 psycopg2-binary
 pymongo
-neo4j
 pytest
-python-dotenv
+neo4j>=5.0.0
+python-dotenv>=1.0.0

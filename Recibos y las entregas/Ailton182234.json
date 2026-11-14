@@ -1,0 +1,109 @@
+{
+  "modelo_isa95_recibos_y_entregas": {
+    "nivel_4_ERP": {
+      "descripcion": "La oficina o la app general (Gestión y Negocio)",
+      "modulos": {
+        "recibos": [
+          {
+            "id": "REC-01",
+            "timestamp": "2026-11-10T08:00:00Z",
+            "actividad": "Hacer pedido al proveedor",
+            "detalles": "Mandarle la lista al carnicero de cuántos kilos de carne vas a comprar para la semana."
+          }
+        ],
+        "entregas": [
+          {
+            "id": "ENT-01",
+            "timestamp": "2026-11-10T08:15:00Z",
+            "actividad": "Registrar venta al cliente",
+            "detalles": "Anotar en la libreta que tu vecino te encargó dos pasteles y ya te los pagó."
+          }
+        ]
+      }
+    },
+    "nivel_3_MES_WMS": {
+      "descripcion": "El cerebro del almacén o la cocina (Organización de tareas)",
+      "modulos": {
+        "recibos": [
+          {
+            "id": "REC-02",
+            "timestamp": "2026-11-10T09:30:00Z",
+            "actividad": "Revisar que esté completo",
+            "detalles": "Abrir las bolsas del mandado y contar si te dieron los 5 kilos de tomate que pediste y que ninguno esté podrido."
+          }
+        ],
+        "entregas": [
+          {
+            "id": "ENT-02",
+            "timestamp": "2026-11-10T10:00:00Z",
+            "actividad": "Armar el paquete (Surtido)",
+            "detalles": "Meter los pasteles en cajas bonitas, ponerles servilletas y cerrarlas con cinta."
+          }
+        ]
+      }
+    },
+    "nivel_2_SCADA": {
+      "descripcion": "La pantalla de control o supervisión (Monitoreo)",
+      "modulos": {
+        "recibos": [
+          {
+            "id": "REC-03",
+            "timestamp": "2026-11-10T09:35:00Z",
+            "actividad": "Ver el peso en la báscula de la tienda",
+            "detalles": "Ver la pantalla digital de la báscula cuando pones la caja de mercancía encima para ver cuánto pesa."
+          }
+        ],
+        "entregas": [
+          {
+            "id": "ENT-03",
+            "timestamp": "2026-11-10T10:10:00Z",
+            "actividad": "Controlar la banda deslizante",
+            "detalles": "Ver en una pantallita por cuál banda va pasando la caja del vecino para que no se pierda."
+          }
+        ]
+      }
+    },
+    "nivel_1_PLC": {
+      "descripcion": "Los botones y motores automáticos (Automatización básica)",
+      "modulos": {
+        "recibos": [
+          {
+            "id": "REC-04",
+            "timestamp": "2026-11-10T09:37:00Z",
+            "actividad": "Prender o apagar la banda",
+            "detalles": "El botoncito eléctrico que hace que la pequeña cinta transportadora del mostrador se mueva."
+          }
+        ],
+        "entregas": [
+          {
+            "id": "ENT-04",
+            "timestamp": "2026-11-10T10:12:00Z",
+            "actividad": "Empujar la caja con un pistón",
+            "detalles": "Un bracito automático que da un golpe seco para desviar la caja hacia la salida correcta."
+          }
+        ]
+      }
+    },
+    "nivel_0_Dispositivos": {
+      "descripcion": "Los aparatos físicos que tocas (Sensores y Herramientas)",
+      "modulos": {
+        "recibos": [
+          {
+            "id": "REC-05",
+            "timestamp": "2026-11-10T09:40:00Z",
+            "actividad": "Escanear el código de barras",
+            "detalles": "Pasar el producto por el lector láser de la caja del supermercado 'bip' para que lo reconozca."
+          }
+        ],
+        "entregas": [
+          {
+            "id": "ENT-05",
+            "timestamp": "2026-11-10T10:15:00Z",
+            "actividad": "Imprimir la etiqueta de envío",
+            "detalles": "La maquinita pequeña que imprime el papelito con la dirección de tu casa para pegárselo al paquete."
+          }
+        ]
+      }
+    }
+  }
+}

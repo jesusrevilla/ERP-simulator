@@ -1,0 +1,101 @@
+{
+  "source": "ERP-Simulator – Módulo A/R y A/P",
+  "timezone": "America/Mexico_City (UTC-06:00)",
+  "events": [
+    {
+      "eventId": "EVT-01",
+      "timestamp": "2025-11-10T20:00:01-06:00",
+      "eventType": "PedidoVentaCreado",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Pedidos" },
+      "actor": "Ventas",
+      "document": { "folio": "PV-1001", "base": null, "estatus": "Abierto" },
+      "data": { "cliente": "C001", "articulo": "A100", "cantidad": 10, "precio": 100.00, "subtotal": 1000.00, "iva": 160.00, "total": 1160.00 }
+    },
+    {
+      "eventId": "EVT-02",
+      "timestamp": "2025-11-10T20:00:02-06:00",
+      "eventType": "LimiteCreditoValidado",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Facturas" },
+      "actor": "Sistema",
+      "document": { "folio": "PV-1001", "base": null, "estatus": "Abierto" },
+      "data": { "cliente": "C001", "limiteCredito": 5000.00, "saldoAbierto": 2000.00, "montoFactura": 1160.00, "resultado": "Aprobado" }
+    },
+    {
+      "eventId": "EVT-03",
+      "timestamp": "2025-11-10T20:00:03-06:00",
+      "eventType": "FacturaClienteCreada",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Facturas" },
+      "actor": "Ventas",
+      "document": { "folio": "FC-2001", "base": "PV-1001", "estatus": "Abierta" },
+      "data": { "cliente": "C001", "total": 1160.00, "saldo": 1160.00, "vencimiento": "2025-12-10" },
+      "asiento": "Cargo Clientes 1160 / Abono Ventas 1000 + IVA trasladado 160"
+    },
+    {
+      "eventId": "EVT-04",
+      "timestamp": "2025-11-10T20:00:04-06:00",
+      "eventType": "CobroAplicado",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Cobranza", "workUnit": "Cobros" },
+      "actor": "Cobranza",
+      "document": { "folio": "CB-3001", "base": "FC-2001", "estatus": "Cerrado" },
+      "data": { "cliente": "C001", "monto": 500.00, "saldoAnterior": 1160.00, "saldoNuevo": 660.00, "estatusFactura": "Abierta" },
+      "asiento": "Cargo Bancos 500 / Abono Clientes 500"
+    },
+    {
+      "eventId": "EVT-05",
+      "timestamp": "2025-11-10T20:00:05-06:00",
+      "eventType": "CobroAplicado",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Cobranza", "workUnit": "Cobros" },
+      "actor": "Cobranza",
+      "document": { "folio": "CB-3002", "base": "FC-2001", "estatus": "Cerrado" },
+      "data": { "cliente": "C001", "monto": 660.00, "saldoAnterior": 660.00, "saldoNuevo": 0.00, "estatusFactura": "Cerrada" },
+      "asiento": "Cargo Bancos 660 / Abono Clientes 660"
+    },
+    {
+      "eventId": "EVT-06",
+      "timestamp": "2025-11-10T20:00:06-06:00",
+      "eventType": "OrdenCompraCreada",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Compras", "workUnit": "OrdenesCompra" },
+      "actor": "Compras",
+      "document": { "folio": "OC-4001", "base": null, "estatus": "Abierta" },
+      "data": { "proveedor": "P001", "articulo": "A200", "cantidad": 10, "precio": 50.00, "subtotal": 500.00, "iva": 80.00, "total": 580.00 }
+    },
+    {
+      "eventId": "EVT-07",
+      "timestamp": "2025-11-10T20:00:07-06:00",
+      "eventType": "RecepcionRegistrada",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Almacen", "workUnit": "Recepciones" },
+      "actor": "Compras",
+      "document": { "folio": "RM-5001", "base": "OC-4001", "estatus": "Abierta" },
+      "data": { "proveedor": "P001", "articulo": "A200", "cantidadRecibida": 10, "existenciaAnterior": 0, "existenciaNueva": 10 }
+    },
+    {
+      "eventId": "EVT-08",
+      "timestamp": "2025-11-10T20:00:08-06:00",
+      "eventType": "ConciliacionTresViasValidada",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "FacturasProveedor" },
+      "actor": "Sistema",
+      "document": { "folio": "FP-6001", "base": "RM-5001", "estatus": "Pendiente" },
+      "data": { "cantidadOC": 10, "cantidadRecibida": 10, "cantidadFactura": 10, "precioOC": 50.00, "precioFactura": 50.00, "resultado": "Coincide" }
+    },
+    {
+      "eventId": "EVT-09",
+      "timestamp": "2025-11-10T20:00:09-06:00",
+      "eventType": "FacturaProveedorCreada",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "FacturasProveedor" },
+      "actor": "Pagos",
+      "document": { "folio": "FP-6001", "base": "RM-5001", "estatus": "Abierta" },
+      "data": { "proveedor": "P001", "total": 580.00, "saldo": 580.00, "vencimiento": "2025-12-10" },
+      "asiento": "Cargo Inventario 500 + IVA acreditable 80 / Abono Proveedores 580"
+    },
+    {
+      "eventId": "EVT-10",
+      "timestamp": "2025-11-10T20:00:10-06:00",
+      "eventType": "PagoProveedorAplicado",
+      "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "PagosProveedor" },
+      "actor": "Pagos",
+      "document": { "folio": "PP-7001", "base": "FP-6001", "estatus": "Cerrado" },
+      "data": { "proveedor": "P001", "monto": 580.00, "saldoAnterior": 580.00, "saldoNuevo": 0.00, "estatusFactura": "Cerrada" },
+      "asiento": "Cargo Proveedores 580 / Abono Bancos 580"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+    "SecuenciaDeEventos": [
+        {
+            "Paso": 1,
+            "Accion": "Registro de Solicitud",
+            "Tipo": "Entrada",
+            "FechaHora": "2026-11-10 08:15:00",
+            "Usuario": "Jefe de Almacén",
+            "Estado": "Completado"
+        },
+        {
+            "Paso": 2,
+            "Accion": "Verificación de Mercancía",
+            "Tipo": "Control",
+            "FechaHora": "2026-11-10 08:45:00",
+            "Detalle": "Revisión de lotes y cantidades",
+            "Estado": "Completado"
+        },
+        {
+            "Paso": 3,
+            "Accion": "Validación de Stock ERP",
+            "Tipo": "Regla de Negocio",
+            "FechaHora": "2026-11-10 10:30:00",
+            "Detalle": "Validación de inventario mayor a cero",
+            "Estado": "Rechazado (Stock Insuficiente)"
+        },
+        {
+            "Paso": 4,
+            "Accion": "Transferencia de Inventario",
+            "Tipo": "Movimiento",
+            "FechaHora": "2026-11-10 11:15:00",
+            "Origen": "Almacén Principal",
+            "Destino": "Almacén Producción",
+            "Estado": "Completado"
+        },
+        {
+            "Paso": 5,
+            "Accion": "Confirmación Base de Datos",
+            "Tipo": "Sistema",
+            "FechaHora": "2026-11-10 11:15:05",
+            "Detalle": "Registro ACID exitoso",
+            "Estado": "Completado"
+        }
+    ]
+}

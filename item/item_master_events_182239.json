@@ -1,0 +1,144 @@
+{
+    "OperationsEvent": {
+        "@releaseID": "1",
+        "ApplicationArea": {
+            "CreationDateTime": "2026-11-10T20:30:00Z",
+            "Sender": {
+                "LogicalID": "Item-Master"
+            }
+        },
+        "DataArea": {
+            "OperationsEventClass": {
+                "ID": "ITEM-MASTER-ACTIVITIES",
+                "Description": "Actividades y eventos transaccionales del Maestro de Artículos"
+            },
+            "OperationsEvent": [
+                {
+                    "ID": "EVT-401-CREATE",
+                    "Description": "Creación Inicial del Artículo (SKU)",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Ingeniería de Producto",
+                        "WorkCenter": "Oficina Central de Datos",
+                        "WorkCell": "Terminal-ERP-01"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Alta de un nuevo producto, materia prima o servicio en el ERP con sus características financieras y comerciales."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "ItemCreatedEvent: El usuario guarda un nuevo registro válido en la base de datos tras superar las validaciones."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "EVT-301-BOM",
+                    "Description": "Vinculación de Lista de Materiales y Rutas",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Manufactura",
+                        "ProductionLine": "Línea de Ensamblaje",
+                        "WorkCell": "Estación de Preparación de Materiales"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Conectar el Item Master con los componentes necesarios y sus especificaciones de manufactura."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "BOMAttachedToItemEvent: Se aprueba y vincula la lista de materiales y la ruta al SKU, habilitando su producción en la Línea SMT."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "EVT-402-PLM",
+                    "Description": "Gestión del Ciclo de Vida del Producto (PLM)",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Control de Calidad y Procesos",
+                        "WorkCenter": "Laboratorio de Calidad",
+                        "Equipment": "Estación de Aprobación QA-01"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Cambio de estado del artículo (Activo, Obsoleto, En Desarrollo, Suspendido)."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "ItemObsoletedEvent: El artículo es marcado como obsoleto por Calidad, bloqueando automáticamente futuras órdenes de compra o producción."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "EVT-302-UOM",
+                    "Description": "Gestión de Unidades de Medida en Planta",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Almacén de Materia Prima",
+                        "ProductionLine": "Recepción y Kitting",
+                        "WorkCell": "Báscula-01"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Administración de conversiones operativas para consumo y declaración de producción."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "UoMConversionAddedEvent: Se registra una nueva conversión."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "EVT-403-SOURCING",
+                    "Description": "Definición de Políticas de Abastecimiento",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Supply Chain",
+                        "WorkCenter": "Oficina de Compras",
+                        "WorkCell": "Terminal-Compras-02"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Configuración de parámetros comerciales de compra o estrategias logísticas."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "ApprovedSupplierLinkedEvent: Se asocia un proveedor autorizado y un Lead Time específico, actualizando el punto de reorden en el MRP."
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

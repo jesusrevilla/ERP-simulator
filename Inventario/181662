@@ -1,0 +1,75 @@
+{
+  "arquitecturaIntegracion": "ANSI/ISA-95",
+  "dominioOperacional": "Gestión de Almacenes y Logística (WMS/ERP)",
+  "registroEventos": [
+    {
+      "idEvento": "EVT-L4-9901",
+      "nivelJerarquico": "Nivel 4: Planificación de Negocios y Logística (ERP)",
+      "tipoEvento": "Orquestacion_Aprovisionamiento",
+      "timestamp": "2026-11-10T20:30:15.000Z",
+      "timestampEpoch": 1794342615000,
+      "descripcionAcademica": "Registro de una solicitud de pedido a nivel corporativo para la conciliación de inventario y previsión financiera.",
+      "cargaUtil": {
+        "origenDatos": "Módulo de Compras (SAP ERP)",
+        "idTransaccion": "PO-45892",
+        "impactoEstrategico": "Actualización de proyecciones de flujo de caja y cuentas por pagar."
+      }
+    },
+    {
+      "idEvento": "EVT-L3-8823",
+      "nivelJerarquico": "Nivel 3: Gestión de Operaciones de Manufactura/Almacén (MOM/WMS)",
+      "tipoEvento": "Asignacion_Ruta_Picking",
+      "timestamp": "2026-11-10T20:31:05.230Z",
+      "timestampEpoch": 1794342665230,
+      "descripcionAcademica": "Traducción de los requerimientos logísticos en flujos de trabajo operativos, asignando rutas optimizadas de recolección.",
+      "cargaUtil": {
+        "origenDatos": "Sistema de Gestión de Almacenes (WMS)",
+        "idOrdenTrabajo": "WO-7712",
+        "operarioAsignado": "OP-104",
+        "zonaAlmacenaje": "Pasillo C, Rack 4, Nivel 2"
+      }
+    },
+    {
+      "idEvento": "EVT-L2-7745",
+      "nivelJerarquico": "Nivel 2: Control de Supervisión (SCADA/HMI)",
+      "tipoEvento": "Supervision_Trafico_AGV",
+      "timestamp": "2026-11-10T20:32:10.045Z",
+      "timestampEpoch": 1794342730045,
+      "descripcionAcademica": "Monitorización centralizada del estado del sistema automatizado, detectando congestión en las trayectorias de los Vehículos de Guiado Automático (AGV).",
+      "cargaUtil": {
+        "origenDatos": "Servidor SCADA Central",
+        "idDispositivo": "AGV-Flota-A",
+        "estadoOperativo": "Enrutamiento Dinámico Activo",
+        "alertaSupervision": "Desviación de trayectoria por obstrucción física en nodo 12."
+      }
+    },
+    {
+      "idEvento": "EVT-L1-6650",
+      "nivelJerarquico": "Nivel 1: Control Básico (PLC/DCS)",
+      "tipoEvento": "Lectura_Identificacion_Fisica",
+      "timestamp": "2026-11-10T20:32:15.112Z",
+      "timestampEpoch": 1794342735112,
+      "descripcionAcademica": "Procesamiento lógico de señales digitales interconectadas para validar la trazabilidad del inventario en movimiento.",
+      "cargaUtil": {
+        "origenDatos": "Controlador Lógico Programable (PLC-Conveyor-01)",
+        "protocoloComunicacion": "Profinet",
+        "variableLogica": "Lectura_RFID_Exitosa",
+        "valorHexadecimal": "0x3A2B11"
+      }
+    },
+    {
+      "idEvento": "EVT-L0-5512",
+      "nivelJerarquico": "Nivel 0: Proceso Físico (Sensores y Actuadores)",
+      "tipoEvento": "Transicion_Estado_Sensor",
+      "timestamp": "2026-11-10T20:32:15.150Z",
+      "timestampEpoch": 1794342735150,
+      "descripcionAcademica": "Cambio de estado binario en la instrumentación de campo debido a la interacción electromagnética con el entorno físico.",
+      "cargaUtil": {
+        "origenDatos": "Sensor Fotoeléctrico (SEN-OP-09)",
+        "magnitudFisica": "Presencia de Objeto (Interrupción de Haz de Luz)",
+        "senalElectrica": "24V DC",
+        "estado": true
+      }
+    }
+  ]
+}

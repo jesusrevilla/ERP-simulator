@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "domain": "ERP_Enterprise_Integration",
+  "standard_alignment": "ISA-95 Level 3 (MES) to ISA-95 Level 4 (ERP)",
+  "subsystem": "Accounts_Payable_and_Payment_Processing",
+  "transaction_integrity_pattern": "Saga_Pattern_Two_Phase_Commit_Outbox",
+  "description": "Secuencia exhaustiva de eventos de integración para la ejecución e integridad de pagos en un ERP con marcas de tiempo en formato ISO 8601 UTC estricto.",
+  "event_sequence": [
+    {
+      "step": 1,
+      "event_id": "EVT-ERP-PAY-001",
+      "event_name": "InvoiceApprovedForPaymentEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "Financial Accounts Payable",
+      "source_module": "ERP_AP_Module",
+      "timestamp_utc": "2026-11-10T20:24:00.000Z",
+      "idempotency_key": "IDEMP-INV-994812-20261110-01",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "PREPARATION",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "invoice_id": "INV-994812",
+        "vendor_id": "VEN-55410",
+        "vendor_tax_id": "RFC-ABC123456789",
+        "total_amount": 150000.00,
+        "currency": "MXN",
+        "due_date": "2026-11-10",
+        "purchase_order_id": "PO-2026-00451",
+        "receiving_report_id": "GRN-2026-0982",
+        "approval_chain": [
+          {
+            "approver_role": "Purchasing_Manager",
+            "approver_id": "USR-882",
+            "timestamp": "2026-11-10T18:00:00.000Z"
+          },
+          {
+            "approver_role": "Finance_Director",
+            "approver_id": "USR-104",
+            "timestamp": "2026-11-10T19:30:00.000Z"
+          }
+        ]
+      }
+    },
+    {
+      "step": 2,
+      "event_id": "EVT-ERP-PAY-002",
+      "event_name": "PaymentBatchCreatedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "Treasury Operations",
+      "source_module": "ERP_Treasury_Module",
+      "timestamp_utc": "2026-11-10T20:24:05.120Z",
+      "idempotency_key": "IDEMP-BATCH-20261110-88",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "BATCHING",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "payment_batch_id": "PBATCH-20261110-88",
+        "bank_account_source": "MX-BANK-0123-MAIN",
+        "total_batch_amount": 450000.00,
+        "currency": "MXN",
+        "item_count": 3,
+        "included_invoices": [
+          "INV-994812",
+          "INV-994813",
+          "INV-994814"
+        ]
+      }
+    },
+    {
+      "step": 3,
+      "event_id": "EVT-ERP-PAY-003",
+      "event_name": "AccountBalanceReserveRequestedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "General Ledger Integrity",
+      "source_module": "ERP_General_Ledger",
+      "timestamp_utc": "2026-11-10T20:24:06.010Z",
+      "idempotency_key": "IDEMP-RES-PBATCH-20261110-88-INV-994812",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "LOCKING",
+        "isolation_level": "SERIALIZABLE"
+      },
+      "payload": {
+        "reservation_id": "RES-2026-00921",
+        "account_id": "ACC-1010-001-CASH",
+        "amount_to_reserve": 150000.00,
+        "currency": "MXN",
+        "lock_type": "PESSIMISTIC_OUTBOUND_PAYMENT",
+        "expiration_seconds": 300
+      }
+    },
+    {
+      "step": 4,
+      "event_id": "EVT-ERP-PAY-004",
+      "event_name": "AccountBalanceReservedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "General Ledger Integrity",
+      "source_module": "ERP_General_Ledger",
+      "timestamp_utc": "2026-11-10T20:24:06.350Z",
+      "idempotency_key": "IDEMP-RES-CONF-2026-00921",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "LOCKED",
+        "isolation_level": "SERIALIZABLE"
+      },
+      "payload": {
+        "reservation_id": "RES-2026-00921",
+        "status": "RESERVED_SUCCESSFULLY",
+        "account_id": "ACC-1010-001-CASH",
+        "available_balance_after_lock": 8500000.00,
+        "reserved_balance_total": 150000.00
+      }
+    },
+    {
+      "step": 5,
+      "event_id": "EVT-ERP-PAY-005",
+      "event_name": "PaymentInstructionGeneratedEvent",
+      "isa95_level": "Level 3 - Operations Management",
+      "isa95_category": "Execution Bridge",
+      "source_module": "ERP_Payment_Gateway_Adapter",
+      "timestamp_utc": "2026-11-10T20:24:07.000Z",
+      "idempotency_key": "IDEMP-INSTR-2026-883019",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "INSTRUCTION_PREPARATION",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "instruction_id": "INS-2026-0001882",
+        "target_bank_code": "SPEI_MX",
+        "destination_account_clabe": "012180001234567890",
+        "beneficiary_name": "PROVEEDORES INDUSTRIALES S.A. DE C.V.",
+        "amount": 150000.00,
+        "reference_concept": "PAGO FACTURA INV-994812",
+        "outbox_message_id": "OUTBOX-PAY-88192"
+      }
+    },
+    {
+      "step": 6,
+      "event_id": "EVT-ERP-PAY-006",
+      "event_name": "BankingGatewayPayloadSignedEvent",
+      "isa95_level": "Level 3 - Operations Management",
+      "isa95_category": "Security & Non-Repudiation",
+      "source_module": "ERP_Security_HSM_Service",
+      "timestamp_utc": "2026-11-10T20:24:07.800Z",
+      "idempotency_key": "IDEMP-SIGN-INS-2026-0001882",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "CRYPTOGRAPHIC_SIGNING",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "instruction_id": "INS-2026-0001882",
+        "digital_signature": "MEQCIG9X2a...[SHA256_RSA_SIGNATURE]...",
+        "hsm_key_version": "v3-2026",
+        "hash_algorithm": "SHA-256"
+      }
+    },
+    {
+      "step": 7,
+      "event_id": "EVT-ERP-PAY-007",
+      "event_name": "BankTransactionDispatchedEvent",
+      "isa95_level": "Level 3 - Operations Management",
+      "isa95_category": "External Banking Interface",
+      "source_module": "ERP_Banking_Integration_Agent",
+      "timestamp_utc": "2026-11-10T20:24:08.200Z",
+      "idempotency_key": "IDEMP-DISP-INS-2026-0001882",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "EXTERNAL_DISPATCH",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "instruction_id": "INS-2026-0001882",
+        "bank_endpoint": "https://api.banco.com.mx/v2/spei/transfers",
+        "bank_request_reference": "REQ-SPEI-99182301",
+        "http_status_received": 202,
+        "bank_tracking_id": "SPEI-TRACK-20261110-0981"
+      }
+    },
+    {
+      "step": 8,
+      "event_id": "EVT-ERP-PAY-008",
+      "event_name": "BankTransactionSettledEvent",
+      "isa95_level": "Level 3 - Operations Management",
+      "isa95_category": "External Banking Interface",
+      "source_module": "ERP_Banking_Callback_Listener",
+      "timestamp_utc": "2026-11-10T20:24:12.450Z",
+      "idempotency_key": "IDEMP-SETTLE-SPEI-TRACK-20261110-0981",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "SETTLEMENT_CONFIRMED",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "bank_tracking_id": "SPEI-TRACK-20261110-0981",
+        "spei_cep_url": "https://www.banxico.org.mx/cep/CEP?clave=20261110...",
+        "settlement_timestamp": "2026-11-10T20:24:12.100Z",
+        "bank_authorization_code": "AUTH-773910",
+        "transferred_amount": 150000.00
+      }
+    },
+    {
+      "step": 9,
+      "event_id": "EVT-ERP-PAY-009",
+      "event_name": "GeneralLedgerPostedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "General Ledger Execution",
+      "source_module": "ERP_General_Ledger",
+      "timestamp_utc": "2026-11-10T20:24:13.000Z",
+      "idempotency_key": "IDEMP-GL-POST-SAGA-PAY-2026-883019",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "DOUBLE_ENTRY_POSTING",
+        "isolation_level": "SERIALIZABLE"
+      },
+      "payload": {
+        "journal_entry_id": "JE-2026-11-9982",
+        "accounting_period": "2026-11",
+        "reservation_id_released": "RES-2026-00921",
+        "entries": [
+          {
+            "account_code": "2100-001-AP_SUPPLIERS",
+            "type": "DEBIT",
+            "amount": 150000.00,
+            "currency": "MXN"
+          },
+          {
+            "account_code": "1010-001-CASH_BANKS",
+            "type": "CREDIT",
+            "amount": 150000.00,
+            "currency": "MXN"
+          }
+        ]
+      }
+    },
+    {
+      "step": 10,
+      "event_id": "EVT-ERP-PAY-010",
+      "event_name": "VendorBalanceUpdatedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "Accounts Payable Ledger",
+      "source_module": "ERP_AP_Module",
+      "timestamp_utc": "2026-11-10T20:24:13.500Z",
+      "idempotency_key": "IDEMP-AP-UPDATE-VEN-55410",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "LEDGER_UPDATE",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "vendor_id": "VEN-55410",
+        "invoice_id": "INV-994812",
+        "invoice_status_after": "PAID",
+        "previous_outstanding_balance": 150000.00,
+        "current_outstanding_balance": 0.00,
+        "payment_reference": "JE-2026-11-9982"
+      }
+    },
+    {
+      "step": 11,
+      "event_id": "EVT-ERP-PAY-011",
+      "event_name": "MaterialVendorStatusUnblockedEvent",
+      "isa95_level": "Level 3 - Operations Management",
+      "isa95_category": "Supply Chain & MES Sync",
+      "source_module": "ERP_Procurement_And_MES_Bridge",
+      "timestamp_utc": "2026-11-10T20:24:14.000Z",
+      "idempotency_key": "IDEMP-MES-UNBLOCK-VEN-55410",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "ISA95_MES_PROPAGATION",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "vendor_id": "VEN-55410",
+        "credit_hold_status": "RELEASED",
+        "mes_purchasing_status": "APPROVED_FOR_NEW_WORK_ORDERS",
+        "affected_work_centers": [
+          "WORK_CENTER_LINE_01",
+          "WORK_CENTER_LINE_04"
+        ]
+      }
+    },
+    {
+      "step": 12,
+      "event_id": "EVT-ERP-PAY-012",
+      "event_name": "PaymentSagaCompletedEvent",
+      "isa95_level": "Level 4 - Business Operations",
+      "isa95_category": "Saga Orchestration",
+      "source_module": "ERP_Saga_Orchestrator",
+      "timestamp_utc": "2026-11-10T20:24:14.200Z",
+      "idempotency_key": "IDEMP-SAGA-COMPLETE-SAGA-PAY-2026-883019",
+      "transaction_context": {
+        "saga_id": "SAGA-PAY-2026-883019",
+        "phase": "COMPLETED",
+        "isolation_level": "READ_COMMITTED"
+      },
+      "payload": {
+        "saga_status": "SUCCESS",
+        "total_execution_time_ms": 14200,
+        "audit_hash": "c0a80101-9981-4209-a1b2-c0ffee001122",
+        "compensation_plan_active": false
+      }
+    }
+  ],
+  "transaction_guarantees": {
+    "outbox_pattern_applied": true,
+    "idempotency_enforced": true,
+    "compensating_actions_defined": [
+      {
+        "failed_step": 7,
+        "action": "Release Account Balance Reservation (EVT-ERP-PAY-003-COMPENSATE)"
+      },
+      {
+        "failed_step": 8,
+        "action": "Initiate Manual Reconciliation / Banking Dispute Flow"
+      }
+    ]
+  }
+}

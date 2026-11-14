@@ -1,0 +1,96 @@
+{
+  "empresa": "TECHASSEMBLY",
+  "estandar": "ISA-95",
+  "eventos": [
+    {
+      "id": 1,
+      "area": "Compras",
+      "proceso": "AP",
+      "evento": "Se compran componentes",
+      "control": "El jefe autoriza la compra",
+      "riesgo": "Compras sin autorización",
+      "timestamp": "2026-11-10 09:00:00"
+    },
+    {
+      "id": 2,
+      "area": "Almacén",
+      "proceso": "AP",
+      "evento": "Llegan los componentes",
+      "control": "Revisar contra la orden de compra",
+      "riesgo": "Pagar algo que no llegó",
+      "timestamp": "2026-11-10 11:30:00"
+    },
+    {
+      "id": 3,
+      "area": "Cuentas por pagar",
+      "proceso": "AP",
+      "evento": "Llega la factura del proveedor",
+      "control": "Checar que no esté repetida",
+      "riesgo": "Factura duplicada",
+      "timestamp": "2026-11-10 12:15:00"
+    },
+    {
+      "id": 4,
+      "area": "Tesorería",
+      "proceso": "AP",
+      "evento": "Se paga al proveedor",
+      "control": "Dos personas autorizan",
+      "riesgo": "Pago doble o a otra cuenta",
+      "timestamp": "2026-11-10 14:00:00"
+    },
+    {
+      "id": 5,
+      "area": "Contabilidad",
+      "proceso": "AP",
+      "evento": "Conciliación bancaria",
+      "control": "Se revisa cada mes",
+      "riesgo": "Pagos sin registrar",
+      "timestamp": "2026-11-10 16:45:00"
+    },
+    {
+      "id": 6,
+      "area": "Ventas",
+      "proceso": "AR",
+      "evento": "Cliente pide computadoras",
+      "control": "Ver si tiene crédito",
+      "riesgo": "Vender a quien no paga",
+      "timestamp": "2026-11-10 09:20:00"
+    },
+    {
+      "id": 7,
+      "area": "Logística",
+      "proceso": "AR",
+      "evento": "Se entregan las computadoras",
+      "control": "Comparar entrega con factura",
+      "riesgo": "Cobrar antes de entregar",
+      "timestamp": "2026-11-10 10:40:00"
+    },
+    {
+      "id": 8,
+      "area": "Facturación",
+      "proceso": "AR",
+      "evento": "Se factura al cliente",
+      "control": "Folios consecutivos",
+      "riesgo": "Facturas faltantes o repetidas",
+      "timestamp": "2026-11-10 11:00:00"
+    },
+    {
+      "id": 9,
+      "area": "Cobranza",
+      "proceso": "AR",
+      "evento": "Cliente paga",
+      "control": "Aplicar el pago a su factura",
+      "riesgo": "Pago aplicado a otra factura",
+      "timestamp": "2026-11-10 15:10:00"
+    },
+    {
+      "id": 10,
+      "area": "Cobranza",
+      "proceso": "AR",
+      "evento": "Nota de crédito por equipo defectuoso",
+      "control": "Autorizar y ligar a la factura original",
+      "riesgo": "Notas de crédito falsas",
+      "timestamp": "2026-11-10 17:00:00"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+flowchart LR
+    
+    direction LR
+
+    subgraph USUARIO["1. USUARIO ERP / PLANIFICADOR"]
+        direction TB
+        A((Inicio))
+        B["Registrar pedido de venta / necesidad"]
+        C["Establecer fecha de entrega (necesidad bruta)"]
+        Z["Revisar alertas y órdenes generadas"]
+        FIN((Fin))
+    end
+
+    subgraph MAESTRO["2. MAESTRO DE ARTÍCULOS Y REGLAS"]
+        direction TB
+        D["Consultar tipo de artículo (Compra o Fabricación)"]
+        E{"¿Es artículo de compra?"}
+        F["Consultar margen de tiempo de seguridad (alta variabilidad)"]
+    end
+
+    subgraph COMPRAS["3. CÁLCULO LEAD TIME: MATERIALES ADQUIRIDOS"]
+        direction TB
+        M1["Sumar tiempo de tránsito del proveedor"]
+        M2["Sumar tiempo de recepción"]
+        M3["Sumar tiempo de inspección de calidad"]
+        M4["Sumar tiempo de almacenamiento seguro"]
+        M5["Calcular Lead Time total de compra"]
+    end
+
+    subgraph PRODUCCION["4. CÁLCULO LEAD TIME: PRODUCTOS INTERNOS"]
+        direction TB
+        P1["Consultar ruta de producción (etapas)"]
+        P2["Sumar tiempos de preparación (setup)"]
+        P3["Sumar tiempos de procesamiento"]
+        P4["Sumar tiempos de espera"]
+        P5["Calcular Lead Time dinámico total de fabricación"]
+    end
+
+    subgraph MRP_CALCULO["5. MRP Y CALENDARIO OPERATIVO"]
+        direction TB
+        R1["Integrar calendario operativo (excluir fines de semana/festivos)"]
+        R2["Restar Lead Time a Fecha de Necesidad Bruta"]
+        R3["Obtener Fecha Recomendada de Liberación"]
+        R4{"¿Fecha recomendada <br/> está en el pasado?"}
+        R5["Programar orden para el Día Actual"]
+        R6["Etiquetar orden (Urgencia / Retraso Proyectado)"]
+        R7["Emitir alerta automática de excepción"]
+        R8["Mantener fecha futura recomendada"]
+        R9["Registrar en bitácora de auditoría"]
+    end
+
+    %% Relaciones Usuario -> Maestro
+    A --> B --> C --> D
+    
+    %% Relaciones Maestro -> Compras / Producción
+    D --> E
+    E -- Sí --> M1
+    E -- No (Producto Interno) --> P1
+    
+    %% Flujo Compras
+    M1 --> M2 --> M3 --> M4 --> M5 --> F
+    
+    %% Flujo Producción
+    P1 --> P2 --> P3 --> P4 --> P5 --> F
+    
+    %% Flujo MRP y Decisión de Fechas
+    F --> R1
+    R1 --> R2 --> R3 --> R4
+    
+    R4 -- Sí (Retroactiva) --> R5 --> R6 --> R7 --> R9
+    R4 -- No (Futura) --> R8 --> R9
+    
+    %% Relaciones MRP -> Usuario final
+    R9 --> Z
+    Z --> FIN
+
+    %% Estilos de alto contraste (Fondos claros pastel, bordes y texto negro)
+    classDef evento fill:#C8E6C9,stroke:#1B5E20,stroke-width:2px,color:#000000;
+    classDef decision fill:#FFF9C4,stroke:#F57F17,stroke-width:2px,color:#000000;
+    classDef error fill:#FFCDD2,stroke:#B71C1C,stroke-width:2px,color:#000000;
+    classDef actividad fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#000000;
+
+    class A,FIN evento
+    class E,R4 decision
+    class R5,R6,R7 error
+    class B,C,D,F,M1,M2,M3,M4,M5,P1,P2,P3,P4,P5,R1,R2,R3,R8,R9,Z actividad

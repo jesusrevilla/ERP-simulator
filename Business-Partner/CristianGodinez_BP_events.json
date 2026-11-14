@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.0",
+  "name": "Catálogo de eventos de Business Partners, TechAssembly",
+  "scope": "Business Partners (datos maestros, contactos, crédito, bloqueos y operaciones habilitadas)",
+  "standard_reference": "ISA-95, relación conceptual ERP (nivel 4) y MOM (nivel 3)",
+  "description": "Secuencia didáctica original de eventos de ciclo de vida de socios de negocio; no es un export de SAP Business One ni un estándar certificado.",
+  "simulated_data": true,
+  "enterprise": "TechAssembly S.A.",
+  "campus": "UPSLP",
+  "author": "Cristian Ricardo Godinez Limones",
+  "terminology": {
+    "bp_type": {
+      "C": "Cliente",
+      "V": "Proveedor",
+      "L": "Cliente potencial"
+    },
+    "amount_cents": "Importes en centavos de MXN; ningún importe representa una transacción real."
+  },
+  "events": [
+    {
+      "event_id": "CG-BP-001",
+      "timestamp_utc": "2026-11-11T12:00:00Z",
+      "event_type": "BP_REGISTERED",
+      "card_code": "BP-V-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "name": "Delta Componentes (simulado)",
+        "bp_type": "V",
+        "group": "Proveedores de hardware",
+        "tax_id": "SIMULADO-V-001",
+        "currency": "MXN",
+        "active": true
+      }
+    },
+    {
+      "event_id": "CG-BP-002",
+      "timestamp_utc": "2026-11-11T12:04:00Z",
+      "event_type": "ADDRESS_ADDED",
+      "card_code": "BP-V-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "address_id": "DIR-V-01",
+        "kind": "FISCAL",
+        "city": "San Luis Potosí",
+        "country": "MX",
+        "description": "Dirección ficticia de facturación"
+      }
+    },
+    {
+      "event_id": "CG-BP-003",
+      "timestamp_utc": "2026-11-11T12:08:00Z",
+      "event_type": "CONTACT_ADDED",
+      "card_code": "BP-V-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "contact_id": "CONT-V-01",
+        "name": "Contacto de compras (simulado)",
+        "email": "proveedor@example.test"
+      }
+    },
+    {
+      "event_id": "CG-BP-004",
+      "timestamp_utc": "2026-11-11T12:12:00Z",
+      "event_type": "PAYMENT_TERMS_UPDATED",
+      "card_code": "BP-V-001",
+      "actor_role": "FINANCE",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "payment_terms": "NET_30",
+        "currency": "MXN"
+      }
+    },
+    {
+      "event_id": "CG-BP-005",
+      "timestamp_utc": "2026-11-11T12:16:00Z",
+      "event_type": "PARTNER_TAG_ADDED",
+      "card_code": "BP-V-001",
+      "actor_role": "PURCHASING",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "tag": "SUPPLIER_CRITICAL_COMPONENTS"
+      }
+    },
+    {
+      "event_id": "CG-BP-006",
+      "timestamp_utc": "2026-11-11T12:20:00Z",
+      "event_type": "PARTNER_BLOCKED",
+      "card_code": "BP-V-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "scope": "PURCHASES",
+        "reason": "Revisión documental simulada"
+      }
+    },
+    {
+      "event_id": "CG-BP-007",
+      "timestamp_utc": "2026-11-11T12:24:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-V-001",
+      "actor_role": "PURCHASING",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "PURCHASE_ORDER",
+        "amount_cents": 250000,
+        "currency": "MXN",
+        "expected_result": "REJECTED",
+        "expected_reason": "BLOCKED"
+      }
+    },
+    {
+      "event_id": "CG-BP-008",
+      "timestamp_utc": "2026-11-11T12:28:00Z",
+      "event_type": "PARTNER_UNBLOCKED",
+      "card_code": "BP-V-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "scope": "PURCHASES",
+        "reason": "Verificación concluida (simulada)"
+      }
+    },
+    {
+      "event_id": "CG-BP-009",
+      "timestamp_utc": "2026-11-11T12:32:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-V-001",
+      "actor_role": "PURCHASING",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "PURCHASE_ORDER",
+        "amount_cents": 250000,
+        "currency": "MXN",
+        "expected_result": "APPROVED",
+        "expected_reason": "NONE"
+      }
+    },
+    {
+      "event_id": "CG-BP-010",
+      "timestamp_utc": "2026-11-11T12:36:00Z",
+      "event_type": "BP_REGISTERED",
+      "card_code": "BP-L-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "name": "Cliente potencial Norte Digital (simulado)",
+        "bp_type": "L",
+        "group": "Prospectos empresariales",
+        "tax_id": "SIMULADO-L-001",
+        "currency": "MXN",
+        "active": true
+      }
+    },
+    {
+      "event_id": "CG-BP-011",
+      "timestamp_utc": "2026-11-11T12:40:00Z",
+      "event_type": "CONTACT_ADDED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "contact_id": "CONT-L-01",
+        "name": "Contacto comercial (simulado)",
+        "email": "prospecto@example.test"
+      }
+    },
+    {
+      "event_id": "CG-BP-012",
+      "timestamp_utc": "2026-11-11T12:44:00Z",
+      "event_type": "ADDRESS_ADDED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "address_id": "DIR-L-01",
+        "kind": "SHIPPING",
+        "city": "San Luis Potosí",
+        "country": "MX",
+        "description": "Domicilio ficticio de entrega"
+      }
+    },
+    {
+      "event_id": "CG-BP-013",
+      "timestamp_utc": "2026-11-11T12:48:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "SALES_ORDER",
+        "amount_cents": 200000,
+        "currency": "MXN",
+        "expected_result": "REJECTED",
+        "expected_reason": "PARTNER_TYPE"
+      }
+    },
+    {
+      "event_id": "CG-BP-014",
+      "timestamp_utc": "2026-11-11T12:52:00Z",
+      "event_type": "LEAD_CONVERTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "new_type": "C",
+        "preserve_contacts": true,
+        "preserve_addresses": true
+      }
+    },
+    {
+      "event_id": "CG-BP-015",
+      "timestamp_utc": "2026-11-11T12:56:00Z",
+      "event_type": "CREDIT_LIMIT_UPDATED",
+      "card_code": "BP-L-001",
+      "actor_role": "FINANCE",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "credit_limit_cents": 1500000,
+        "open_balance_cents": 0,
+        "currency": "MXN"
+      }
+    },
+    {
+      "event_id": "CG-BP-016",
+      "timestamp_utc": "2026-11-11T13:00:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "SALES_ORDER",
+        "amount_cents": 1000000,
+        "currency": "MXN",
+        "expected_result": "APPROVED",
+        "expected_reason": "NONE"
+      }
+    },
+    {
+      "event_id": "CG-BP-017",
+      "timestamp_utc": "2026-11-11T13:04:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "SALES_ORDER",
+        "amount_cents": 1800000,
+        "currency": "MXN",
+        "expected_result": "REJECTED",
+        "expected_reason": "CREDIT_LIMIT"
+      }
+    },
+    {
+      "event_id": "CG-BP-018",
+      "timestamp_utc": "2026-11-11T13:08:00Z",
+      "event_type": "PARTNER_BLOCKED",
+      "card_code": "BP-L-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "scope": "SALES",
+        "reason": "Suspensión de pedidos simulada"
+      }
+    },
+    {
+      "event_id": "CG-BP-019",
+      "timestamp_utc": "2026-11-11T13:12:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "SALES_ORDER",
+        "amount_cents": 10000,
+        "currency": "MXN",
+        "expected_result": "REJECTED",
+        "expected_reason": "BLOCKED"
+      }
+    },
+    {
+      "event_id": "CG-BP-020",
+      "timestamp_utc": "2026-11-11T13:16:00Z",
+      "event_type": "PARTNER_UNBLOCKED",
+      "card_code": "BP-L-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "scope": "SALES",
+        "reason": "Reactivación comercial simulada"
+      }
+    },
+    {
+      "event_id": "CG-BP-021",
+      "timestamp_utc": "2026-11-11T13:20:00Z",
+      "event_type": "PARTNER_DEACTIVATED",
+      "card_code": "BP-L-001",
+      "actor_role": "ADMIN",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "reason": "Fin del escenario de prueba"
+      }
+    },
+    {
+      "event_id": "CG-BP-022",
+      "timestamp_utc": "2026-11-11T13:24:00Z",
+      "event_type": "DOCUMENT_ATTEMPTED",
+      "card_code": "BP-L-001",
+      "actor_role": "SALES",
+      "source_system": "ERP_LEVEL_4",
+      "target_system": "MOM_LEVEL_3",
+      "isa95_source_level": 4,
+      "isa95_target_level": 3,
+      "payload": {
+        "document_type": "SALES_ORDER",
+        "amount_cents": 10000,
+        "currency": "MXN",
+        "expected_result": "REJECTED",
+        "expected_reason": "INACTIVE"
+      }
+    }
+  ]
+}

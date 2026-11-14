@@ -102,6 +102,14 @@ jobs:
       - name: Run MRP Validation
         run: |
           python src/check_shortages.py
+          
+      - name: Load Graph In Neo4j
+        run: |
+          python -m src.neo4j_load
+
+      - name: Run Neo4j Shortage Analysis
+        run: |
+          python -m src.neo4j_shortages
 
       - name: Set Python Path
         run: |

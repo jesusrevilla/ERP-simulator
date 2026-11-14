@@ -1,0 +1,73 @@
+import os
+import json
+from crewai import Agent, Task, Crew, Process
+
+def cargar_json_mrp():
+    """Simula la carga del JSON proporcionado con los datos de Lead Time y eventos."""
+    datos_mrp = """{
+      "empresa": "TechAssembly S.A.",
+      "producto": "Gaming PC",
+      "lista_materiales_y_mrp": [{"codigo": "GPU001", "faltante": 10}],
+      "abastecimiento": {"inicio_timestamp": "2026-11-10T09:00:00", "fin_timestamp": "2026-11-12T10:30:00", "lead_time_horas": 49.5},
+      "produccion_interna": {"inicio_timestamp": "2026-11-12T12:00:00", "fin_timestamp": "2026-11-12T19:30:00", "lead_time_horas": 7.5},
+      "lead_time_total_orden": {"inicio_timestamp": "2026-11-10T08:00:00", "fin_timestamp": "2026-11-12T19:30:00", "horas": 59.5}
+    }"""
+    return datos_mrp
+
+def LeadTime_LLM_Orchestrator():
+    json_context = cargar_json_mrp()
+
+    # 1. Definición de Agentes
+    agente_erp = Agent(
+        role='Analista ERP (ISA-95 Nivel 4)',
+        goal='Calcular faltantes de materiales y medir el Lead Time de Abastecimiento a partir de los timestamps.',
+        backstory='Experto en Planeación MRP y Compras. Determina los tiempos muertos esperando materiales críticos (ej. GPU RTX).',
+        allow_delegation=False
+    )
+
+    agente_mes = Agent(
+        role='Coordinador MES (ISA-95 Nivel 3)',
+        goal='Analizar los eventos de piso (ensamble, pruebas, empaque) para medir el Lead Time de Producción.',
+        backstory='Supervisor de manufactura encargado de optimizar tiempos operativos y trazabilidad de lotes.',
+        allow_delegation=False
+    )
+
+    agente_auditor = Agent(
+        role='Auditor de Lead Time Total',
+        goal='Consolidar los tiempos del ERP y el MES para generar el reporte de Lead Time Total de la Orden (59.5 horas).',
+        backstory='Analista de mejora continua encargado de entregar KPIs precisos de la orden PC001.',
+        allow_delegation=False
+    )
+
+    # 2. Definición de Tareas
+    tarea_compras = Task(
+        description=f'Extrae del siguiente JSON los datos de abastecimiento y calcula el Lead Time de Materiales (49.5 horas).\nJSON: {json_context}',
+        expected_output='Reporte de Lead Time de Abastecimiento y análisis del faltante de 10 GPUs.',
+        agent=agente_erp
+    )
+
+    tarea_produccion = Task(
+        description=f'Usando el mismo JSON, extrae los timestamps de manufactura para validar que el Lead Time de Producción es de 7.5 horas.\nJSON: {json_context}',
+        expected_output='Reporte de Lead Time de Producción Interna.',
+        agent=agente_mes
+    )
+
+    tarea_consolidacion = Task(
+        description='Toma los reportes de ERP y MES y genera un resumen final validando el Lead Time Total de 59.5 horas de la orden PC001.',
+        expected_output='Resumen Ejecutivo de Lead Times ISA-95.',
+        agent=agente_auditor
+    )
+
+    # 3. Orquestación del Pipeline Secuencial
+    crew = Crew(
+        agents=[agente_erp, agente_mes, agente_auditor],
+        tasks=[tarea_compras, tarea_produccion, tarea_consolidacion],
+        process=Process.sequential 
+    )
+
+    return crew.kickoff()
+
+if __name__ == "__main__":
+    resultado_final = LeadTime_LLM_Orchestrator()
+    print("--- RESULTADO DEL ANÁLISIS DE LEAD TIME ---")
+    print(resultado_final)

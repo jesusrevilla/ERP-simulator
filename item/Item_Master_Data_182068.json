@@ -1,0 +1,142 @@
+{
+  "OperationsPerformance": {
+    "@releaseID": "1.0",
+    "ApplicationArea": {
+      "CreationDateTime": "2026-11-10T20:41:00Z",
+      "Sender": {
+        "LogicalID": "GitHub-Actions-CI-01",
+        "ReferenceID": "ERP-MRP-DEMO-2026"
+      }
+    },
+    "DataArea": {
+      "OperationsPerformance": {
+        "ID": "OP-PERF-GAMING-PC-001",
+        "Description": "Ejecución de flujo ERP/MRP y validación de ensamblaje para Gaming PC",
+        "HierarchyScope": {
+          "EquipmentID": "TechAssembly S.A./Linea-Ensamblaje-GamingPC/Servidor-CI-01",
+          "EquipmentLevel": "WorkCell"
+        },
+        "OperationsResponse": [
+          {
+            "ID": "ACT-01-ESPERA-SERVICIOS",
+            "Description": "Espera y verificación de disponibilidad de bases de datos (PostgreSQL, MongoDB, Neo4j)",
+            "HierarchyScope": {
+              "EquipmentID": "TechAssembly S.A./Linea-Infraestructura-TI/Contenedor-DB-01",
+              "EquipmentLevel": "WorkUnit"
+            },
+            "OperationsEvent": [
+              {
+                "ID": "EVT-01-01",
+                "Description": "Inicio de sondeo (healthcheck) a los puertos de PostgreSQL, MongoDB y Neo4j en el entorno de GitHub Actions.",
+                "EventType": "Start",
+                "TimeStamp": "2026-11-10T20:41:05Z"
+              },
+              {
+                "ID": "EVT-01-02",
+                "Description": "Confirmación de conexión exitosa y estado 'Ready' de los tres motores de base de datos.",
+                "EventType": "Complete",
+                "TimeStamp": "2026-11-10T20:41:15Z"
+              }
+            ]
+          },
+          {
+            "ID": "ACT-02-CREACION-ESQUEMA-ERP",
+            "Description": "Creación de tablas, relaciones y colecciones del esquema ERP en las bases de datos",
+            "HierarchyScope": {
+              "EquipmentID": "TechAssembly S.A./Linea-Infraestructura-TI/Motor-PostgreSQL-01",
+              "EquipmentLevel": "WorkUnit"
+            },
+            "OperationsEvent": [
+              {
+                "ID": "EVT-02-01",
+                "Description": "Ejecución de scripts DDL para crear tablas de órdenes de producción, inventarios y BOM en PostgreSQL.",
+                "EventType": "Start",
+                "TimeStamp": "2026-11-10T20:41:16Z"
+              },
+              {
+                "ID": "EVT-02-02",
+                "Description": "Validación de estructura de grafos en Neo4j y colecciones de logs en MongoDB completada sin errores.",
+                "EventType": "Complete",
+                "TimeStamp": "2026-11-10T20:41:22Z"
+              }
+            ]
+          },
+          {
+            "ID": "ACT-03-CARGA-DATOS-SEMILLA",
+            "Description": "Carga de datos semilla: catálogo de producto Gaming PC y sus 6 componentes",
+            "HierarchyScope": {
+              "EquipmentID": "TechAssembly S.A./Linea-Ensamblaje-GamingPC/Estacion-Almacen-01",
+              "EquipmentLevel": "WorkUnit"
+            },
+            "MaterialActual": [
+              { "MaterialDefinitionID": "CPU-RYZEN-7", "Description": "CPU Ryzen 7" },
+              { "MaterialDefinitionID": "MB-B650", "Description": "Motherboard B650" },
+              { "MaterialDefinitionID": "RAM-16GB-DDR5", "Description": "RAM 16GB DDR5" },
+              { "MaterialDefinitionID": "SSD-1TB-NVME", "Description": "SSD 1TB NVMe" },
+              { "MaterialDefinitionID": "PSU-750W", "Description": "Power Supply 750W" },
+              { "MaterialDefinitionID": "GPU-RTX", "Description": "Graphics Card RTX" }
+            ],
+            "OperationsEvent": [
+              {
+                "ID": "EVT-03-01",
+                "Description": "Inserción de registros iniciales de inventario y lista de materiales (BOM) para el producto Gaming PC.",
+                "EventType": "Start",
+                "TimeStamp": "2026-11-10T20:41:23Z"
+              },
+              {
+                "ID": "EVT-03-02",
+                "Description": "Sincronización completada de los 6 componentes en PostgreSQL (stock) y Neo4j (dependencias de ensamblaje).",
+                "EventType": "Complete",
+                "TimeStamp": "2026-11-10T20:41:30Z"
+              }
+            ]
+          },
+          {
+            "ID": "ACT-04-VALIDACION-MRP",
+            "Description": "Ejecución del cálculo y validación de requerimientos de materiales (MRP)",
+            "HierarchyScope": {
+              "EquipmentID": "TechAssembly S.A./Linea-Ensamblaje-GamingPC/Planificador-MRP-01",
+              "EquipmentLevel": "WorkUnit"
+            },
+            "OperationsEvent": [
+              {
+                "ID": "EVT-04-01",
+                "Description": "Cálculo de explosión de materiales (BOM) para verificar disponibilidad de CPU, Motherboard, RAM, SSD, PSU y GPU.",
+                "EventType": "Start",
+                "TimeStamp": "2026-11-10T20:41:31Z"
+              },
+              {
+                "ID": "EVT-04-02",
+                "Description": "Detección de faltantes o confirmación de stock suficiente y generación de registro de auditoría en MongoDB.",
+                "EventType": "Complete",
+                "TimeStamp": "2026-11-10T20:41:40Z"
+              }
+            ]
+          },
+          {
+            "ID": "ACT-05-PRUEBAS-UNITARIAS",
+            "Description": "Ejecución automatizada de pruebas unitarias con pytest",
+            "HierarchyScope": {
+              "EquipmentID": "TechAssembly S.A./Linea-Calidad-QA/Runner-Pytest-01",
+              "EquipmentLevel": "WorkUnit"
+            },
+            "OperationsEvent": [
+              {
+                "ID": "EVT-05-01",
+                "Description": "Inicio del comando 'pytest' para validar lógica de negocio del MRP, conexiones a BD y reglas de ensamblaje.",
+                "EventType": "Start",
+                "TimeStamp": "2026-11-10T20:41:41Z"
+              },
+              {
+                "ID": "EVT-05-02",
+                "Description": "Finalización de suite de pruebas con reporte de casos aprobados/fallidos en el pipeline de GitHub Actions.",
+                "EventType": "Complete",
+                "TimeStamp": "2026-11-10T20:41:55Z"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

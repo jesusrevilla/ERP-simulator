@@ -1,0 +1,46 @@
+name: Neo4j Tutorial CI
+
+on:
+  push:
+    branches:
+    - feature/181653
+  workflow_dispatch:
+
+jobs:
+  neo4j-connection-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install neo4j python-dotenv
+
+      - name: Verify Neo4j connection
+        env:
+          NEO4J_URI: ${{ secrets.NEO4J_URI }}
+          NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+          NEO4J_DATABASE: neo4j
+          
+        run: |
+          python - << 'EOF'
+          import os
+          from neo4j import GraphDatabase
+
+          uri = os.environ["NEO4J_URI"]
+          username = os.environ["NEO4J_USERNAME"]
+          password = os.environ["NEO4J_PASSWORD"]
+
+          driver = GraphDatabase.driver(uri, auth=(username, password))
+          try:
+              driver.verify_connectivity()
+              print("Conexión a Neo4j exitosa")
+          finally:
+              driver.close()
+          EOF

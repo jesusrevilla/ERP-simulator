@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=https://json-schema.org/draft/2020-12/schema
+title: "Tutorial de Neo4j: Uso y consulta de bases de datos de grafos en Python"
+date: "2024-09-30"
+read_time: "14 minutos"
+summary: "Aprende a usar las bases de datos de grafos Neo4j con Python: configura AuraDB, escribe consultas Cypher e ingiere datos. Domina los conceptos de bases de datos de grafos y optimiza las consultas con esta guía completa."
+
+table_of_contents:
+  - 1. ¿Qué son las bases de datos de grafos?
+  - 2. ¿Qué es Neo4j?
+  - 3. Configuración de Neo4j y un entorno Python
+  - 4. Fundamentos del lenguaje de consulta Cypher
+  - 5. Uso del controlador de Python de Neo4j para analizar una base de datos de grafos
+  - 6. Ingesta de datos mediante el controlador Python de Neo4j
+  - 7. Conclusión y próximos pasos
+  - 8. Preguntas frecuentes sobre Neo4j
+
+sections:
+  - id: 1
+    title: "¿Qué son las bases de datos de grafos?"
+    summary: "Explicación de las bases de datos NoSQL basadas en grafos en comparación con SQL."
+    components:
+      nodes:
+        - Partido
+        - Equipo
+        - Torneo
+        - Jugador
+        - País
+        - Ciudad
+      relationships:
+        - MARCADO_A_TRABAJO
+        - MARCADO_EN
+        - HAD_SHOOTOUT
+        - VIVE EN
+      properties:
+        match: ["fecha", "resultado local", "resultado visitante"]
+        team: ["nombre"]
+        player: ["nombre"]
+        tournament: ["nombre"]
+        city: ["nombre"]
+        country: ["nombre"]
+        scoring_events: ["minuto", "autogol", "penalti"]
+        shootouts: ["ganador", "primer tirador"]
+
+  - id: 2
+    title: "¿Qué es Neo4j?"
+    summary: "Características de Neo4j como SGBD de grafos nativo: cumplimiento ACID, escalabilidad y lenguaje Cypher."
+
+  - id: 3
+    title: "Configuración de Neo4j y un entorno Python"
+    environment_setup:
+      cloud_provider: "Neo4j AuraDB (Plan gratuito)"
+      env_variables:
+        - NEO4J_USERNAME
+        - NEO4J_PASSWORD
+        - NEO4J_CONNECTION_URI
+      conda_setup:
+        environment_name: "neo4j_tutorial"
+        python_version: "3.9"
+        packages:
+          - "ipykernel"
+          - "neo4j"
+          - "python-dotenv"
+          - "tqdm"
+          - "pandas"
+      data_source:
+        description: "Conjunto de datos de partidos internacionales de fútbol (1872-2024) de Kaggle."
+        ingestion_script: "ingest_football_data.py"
+      connection_check: "GraphDatabase.driver(uri, auth=(username, password)) con verify_connectivity()"
+
+  - id: 4
+    title: "Fundamentos del lenguaje de consulta Cypher"
+    syntax_elements:
+      nodes: "(alias:Label {propiedad: 'valor'})"
+      relationships: "-[alias:RELATIONSHIP_TYPE {propiedad: 'valor'}]->"
+      clauses:
+        - MATCH
+        - WHERE
+        - RETURN
+        - CREATE
+        - MERGE
+        - DELETE
+        - SET
+    example_query: |
+      MATCH (p:Player)-[s:SCORED_IN]->(m:Match)-[PART_OF]->(t:Tournament)
+      WHERE t.name = "FIFA World Cup" AND s.minute > 80 AND s.own_goal = True
+      RETURN p.name AS Player, m.date AS MatchDate, s.minute AS GoalMinute
+      ORDER BY s.minute DESC
+      LIMIT 5
+
+  - id: 5
+    title: "Uso del controlador de Python de Neo4j para analizar una base de datos de grafos"
+    features:
+      - method: "driver.execute_query()"
+        returns: ["records", "summary", "keys"]
+      - concept: "Parámetros de consulta (usando el prefijo $ para evitar Cypher injection y permitir caché)"
+      - write_operations: "Uso de CREATE (crea duplicados) vs MERGE (crea si no existe)"
+      - transactions: "Uso de session.execute_read() y session.execute_write() para transacciones administradas"
+
+  - id: 6
+    title: "Ingesta de datos mediante el controlador Python de Neo4j"
+    ingestion_pipeline:
+      batch_size: 5000
+      indexes_created_for: ["Team.name", "Match.id", "Player.name", "Tournament.name", "City.name", "Country.name"]
+      cypher_keywords_used:
+        - UNWIND: "Procesa arreglos o lotes de datos dentro de consultas"
+        - FOREACH + CASE: "Lógica condicional para crear relaciones (WON, LOST, DREW)"
+      workflow:
+        - "create_indexes(session)"
+        - "ingest_matches(session, results_df)"
+        - "ingest_goals(session, goalscorers_df)"
+        - "ingest_shootouts(session, shootouts_df)"
+
+  - id: 7
+    title: "Conclusión y próximos pasos"
+    takeaways:
+      - "Comprensión del modelo de grafos frente al modelo relacional SQL"
+      - "Uso e integración de Neo4j AuraDB con Python"
+      - "Construcción e ingesta masiva con consultas Cypher optimizadas"
+
+  - id: 8
+    title: "Preguntas frecuentes sobre Neo4j"
+    summary: "Sección de dudas frecuentes tratadas al final del tutorial."

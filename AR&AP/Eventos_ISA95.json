@@ -1,0 +1,344 @@
+{
+  "tema": "Eventos ISA-95 – A/R y A/P",
+  "fuentes": [
+    {
+      "matricula": "181585",
+      "archivoOriginal": "Eventos AR&AP ISA95.json",
+      "contenido": {
+        "source": "ERP-Simulator – Módulo A/R y A/P",
+        "timezone": "America/Mexico_City (UTC-06:00)",
+        "events": [
+          {
+            "eventId": "EVT-01",
+            "timestamp": "2025-11-10T20:00:01-06:00",
+            "eventType": "PedidoVentaCreado",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Pedidos" },
+            "actor": "Ventas",
+            "document": { "folio": "PV-1001", "base": null, "estatus": "Abierto" },
+            "data": { "cliente": "C001", "articulo": "A100", "cantidad": 10, "precio": 100.00, "subtotal": 1000.00, "iva": 160.00, "total": 1160.00 }
+          },
+          {
+            "eventId": "EVT-02",
+            "timestamp": "2025-11-10T20:00:02-06:00",
+            "eventType": "LimiteCreditoValidado",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Facturas" },
+            "actor": "Sistema",
+            "document": { "folio": "PV-1001", "base": null, "estatus": "Abierto" },
+            "data": { "cliente": "C001", "limiteCredito": 5000.00, "saldoAbierto": 2000.00, "montoFactura": 1160.00, "resultado": "Aprobado" }
+          },
+          {
+            "eventId": "EVT-03",
+            "timestamp": "2025-11-10T20:00:03-06:00",
+            "eventType": "FacturaClienteCreada",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Ventas", "workUnit": "Facturas" },
+            "actor": "Ventas",
+            "document": { "folio": "FC-2001", "base": "PV-1001", "estatus": "Abierta" },
+            "data": { "cliente": "C001", "total": 1160.00, "saldo": 1160.00, "vencimiento": "2025-12-10" },
+            "asiento": "Cargo Clientes 1160 / Abono Ventas 1000 + IVA trasladado 160"
+          },
+          {
+            "eventId": "EVT-04",
+            "timestamp": "2025-11-10T20:00:04-06:00",
+            "eventType": "CobroAplicado",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Cobranza", "workUnit": "Cobros" },
+            "actor": "Cobranza",
+            "document": { "folio": "CB-3001", "base": "FC-2001", "estatus": "Cerrado" },
+            "data": { "cliente": "C001", "monto": 500.00, "saldoAnterior": 1160.00, "saldoNuevo": 660.00, "estatusFactura": "Abierta" },
+            "asiento": "Cargo Bancos 500 / Abono Clientes 500"
+          },
+          {
+            "eventId": "EVT-05",
+            "timestamp": "2025-11-10T20:00:05-06:00",
+            "eventType": "CobroAplicado",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AR", "workCenter": "Cobranza", "workUnit": "Cobros" },
+            "actor": "Cobranza",
+            "document": { "folio": "CB-3002", "base": "FC-2001", "estatus": "Cerrado" },
+            "data": { "cliente": "C001", "monto": 660.00, "saldoAnterior": 660.00, "saldoNuevo": 0.00, "estatusFactura": "Cerrada" },
+            "asiento": "Cargo Bancos 660 / Abono Clientes 660"
+          },
+          {
+            "eventId": "EVT-06",
+            "timestamp": "2025-11-10T20:00:06-06:00",
+            "eventType": "OrdenCompraCreada",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Compras", "workUnit": "OrdenesCompra" },
+            "actor": "Compras",
+            "document": { "folio": "OC-4001", "base": null, "estatus": "Abierta" },
+            "data": { "proveedor": "P001", "articulo": "A200", "cantidad": 10, "precio": 50.00, "subtotal": 500.00, "iva": 80.00, "total": 580.00 }
+          },
+          {
+            "eventId": "EVT-07",
+            "timestamp": "2025-11-10T20:00:07-06:00",
+            "eventType": "RecepcionRegistrada",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Almacen", "workUnit": "Recepciones" },
+            "actor": "Compras",
+            "document": { "folio": "RM-5001", "base": "OC-4001", "estatus": "Abierta" },
+            "data": { "proveedor": "P001", "articulo": "A200", "cantidadRecibida": 10, "existenciaAnterior": 0, "existenciaNueva": 10 }
+          },
+          {
+            "eventId": "EVT-08",
+            "timestamp": "2025-11-10T20:00:08-06:00",
+            "eventType": "ConciliacionTresViasValidada",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "FacturasProveedor" },
+            "actor": "Sistema",
+            "document": { "folio": "FP-6001", "base": "RM-5001", "estatus": "Pendiente" },
+            "data": { "cantidadOC": 10, "cantidadRecibida": 10, "cantidadFactura": 10, "precioOC": 50.00, "precioFactura": 50.00, "resultado": "Coincide" }
+          },
+          {
+            "eventId": "EVT-09",
+            "timestamp": "2025-11-10T20:00:09-06:00",
+            "eventType": "FacturaProveedorCreada",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "FacturasProveedor" },
+            "actor": "Pagos",
+            "document": { "folio": "FP-6001", "base": "RM-5001", "estatus": "Abierta" },
+            "data": { "proveedor": "P001", "total": 580.00, "saldo": 580.00, "vencimiento": "2025-12-10" },
+            "asiento": "Cargo Inventario 500 + IVA acreditable 80 / Abono Proveedores 580"
+          },
+          {
+            "eventId": "EVT-10",
+            "timestamp": "2025-11-10T20:00:10-06:00",
+            "eventType": "PagoProveedorAplicado",
+            "isa95": { "level": 4, "enterprise": "ERPSimulator", "site": "MX01", "area": "AP", "workCenter": "Pagos", "workUnit": "PagosProveedor" },
+            "actor": "Pagos",
+            "document": { "folio": "PP-7001", "base": "FP-6001", "estatus": "Cerrado" },
+            "data": { "proveedor": "P001", "monto": 580.00, "saldoAnterior": 580.00, "saldoNuevo": 0.00, "estatusFactura": "Cerrada" },
+            "asiento": "Cargo Proveedores 580 / Abono Bancos 580"
+          }
+        ]
+      }
+    },
+    {
+      "matricula": "181779",
+      "archivoOriginal": "messages 181779.json",
+      "contenido": {
+        "standard": "ISA-95",
+        "timezone": "UTC-06:00 (America/Mexico_City)",
+        "levels": {
+          "4": "ERP - Business Planning & Logistics",
+          "3": "MES/WMS - Manufacturing Operations Management",
+          "2": "SCADA - Monitoring & Supervisory Control",
+          "1": "PLC - Sensing & Manipulating",
+          "0": "Production Process - sensores y actuadores"
+        },
+        "messages": [
+          {
+            "messageId": "MSG-001",
+            "timestamp": "2026-11-02T09:00:00-06:00",
+            "isa95Level": 4,
+            "process": "AP",
+            "eventType": "PurchaseOrderCreated",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "purchaseOrderId": "PO-4001", "supplierId": "PROV-3301", "subtotal": 1700000.00, "total": 1972000.00, "currency": "MXN", "paymentTerms": "NET30" }
+          },
+          {
+            "messageId": "MSG-002",
+            "timestamp": "2026-11-04T09:10:00-06:00",
+            "isa95Level": 3,
+            "process": "AP",
+            "eventType": "GoodsReceiptConfirmed",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "goodsReceiptId": "GR-5001", "purchaseOrderId": "PO-4001", "totalQuantity": 1000, "uom": "PZA", "storageLocation": "ALM-MP-01" }
+          },
+          {
+            "messageId": "MSG-003",
+            "timestamp": "2026-11-04T11:30:00-06:00",
+            "isa95Level": 4,
+            "process": "AP",
+            "eventType": "APInvoicePosted",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "apInvoiceId": "APINV-6001", "purchaseOrderId": "PO-4001", "goodsReceiptId": "GR-5001", "match": "THREE_WAY_OK", "total": 1972000.00, "currency": "MXN", "dueDate": "2026-12-04T00:00:00-06:00" }
+          },
+          {
+            "messageId": "MSG-004",
+            "timestamp": "2026-11-04T11:35:00-06:00",
+            "isa95Level": 4,
+            "process": "AP",
+            "eventType": "PaymentScheduled",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "apInvoiceId": "APINV-6001", "amount": 1972000.00, "currency": "MXN", "method": "SPEI", "paymentDate": "2026-12-04T00:00:00-06:00" }
+          },
+          {
+            "messageId": "MSG-005",
+            "timestamp": "2026-11-05T06:00:00-06:00",
+            "isa95Level": 4,
+            "process": "MRP",
+            "eventType": "ProductionOrderReleased",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "productionOrderId": "PRD-2001", "materialId": "FG-LAP15", "quantity": 200, "uom": "PZA" }
+          },
+          {
+            "messageId": "MSG-006",
+            "timestamp": "2026-11-05T06:02:00-06:00",
+            "isa95Level": 3,
+            "process": "MRP",
+            "eventType": "MaterialIssuedToLine",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "productionOrderId": "PRD-2001", "components": 4, "materialCost": 1700000.00, "currency": "MXN" }
+          },
+          {
+            "messageId": "MSG-007",
+            "timestamp": "2026-11-05T06:05:00-06:00",
+            "isa95Level": 2,
+            "process": "MRP",
+            "eventType": "StationStateChanged",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "previousState": "SETUP", "currentState": "RUNNING", "productionOrderId": "PRD-2001" }
+          },
+          {
+            "messageId": "MSG-008",
+            "timestamp": "2026-11-05T06:05:23.850-06:00",
+            "isa95Level": 0,
+            "process": "MRP",
+            "eventType": "ScrewTorqueMeasured",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "sensorId": "TQ-0102-01", "torqueNm": 0.45, "toleranceNm": [0.40, 0.50], "inTolerance": true }
+          },
+          {
+            "messageId": "MSG-009",
+            "timestamp": "2026-11-05T06:05:24.000-06:00",
+            "isa95Level": 1,
+            "process": "MRP",
+            "eventType": "AssemblyCycleCompleted",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "plcId": "PLC-0102", "cycleCount": 1, "cycleTimeSeconds": 24 }
+          },
+          {
+            "messageId": "MSG-010",
+            "timestamp": "2026-11-05T15:20:00-06:00",
+            "isa95Level": 3,
+            "process": "MRP",
+            "eventType": "ProductionCountReported",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "productionOrderId": "PRD-2001", "totalProduced": 200, "goodQty": 198, "scrapQty": 2, "uom": "PZA" }
+          },
+          {
+            "messageId": "MSG-011",
+            "timestamp": "2026-11-05T15:30:00-06:00",
+            "isa95Level": 4,
+            "process": "MRP",
+            "eventType": "ReceiptFromProductionPosted",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "productionOrderId": "PRD-2001", "goodQty": 198, "actualCost": 1784000.00, "unitCost": 9010.10, "currency": "MXN" }
+          },
+          {
+            "messageId": "MSG-012",
+            "timestamp": "2026-11-06T10:00:00-06:00",
+            "isa95Level": 4,
+            "process": "AR",
+            "eventType": "ARInvoicePosted",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "arInvoiceId": "ARINV-8001", "invoiceType": "INTERNAL_TRANSFER", "counterparty": "CC-DIST01", "quantity": 198, "transferPrice": 10500.00, "total": 2079000.00, "currency": "MXN" }
+          },
+          {
+            "messageId": "MSG-013",
+            "timestamp": "2026-11-09T12:00:00-06:00",
+            "isa95Level": 4,
+            "process": "AR",
+            "eventType": "InternalSettlementPosted",
+            "hierarchy": { "enterprise": "ENT-IPOT", "site": "SLP01", "area": "ENS", "line": "LINE-01", "cell": "CELL-01A", "machine": "EST-ENS-0102" },
+            "payload": { "arInvoiceId": "ARINV-8001", "amountSettled": 2079000.00, "currency": "MXN", "status": "CLEARED", "openAmount": 0.00 }
+          }
+        ]
+      }
+    },
+    {
+      "matricula": "182028",
+      "archivoOriginal": "ISA 95.json",
+      "contenido": {
+        "empresa": "TECHASSEMBLY",
+        "estandar": "ISA-95",
+        "eventos": [
+          {
+            "id": 1,
+            "area": "Compras",
+            "proceso": "AP",
+            "evento": "Se compran componentes",
+            "control": "El jefe autoriza la compra",
+            "riesgo": "Compras sin autorización",
+            "timestamp": "2026-11-10 09:00:00"
+          },
+          {
+            "id": 2,
+            "area": "Almacén",
+            "proceso": "AP",
+            "evento": "Llegan los componentes",
+            "control": "Revisar contra la orden de compra",
+            "riesgo": "Pagar algo que no llegó",
+            "timestamp": "2026-11-10 11:30:00"
+          },
+          {
+            "id": 3,
+            "area": "Cuentas por pagar",
+            "proceso": "AP",
+            "evento": "Llega la factura del proveedor",
+            "control": "Checar que no esté repetida",
+            "riesgo": "Factura duplicada",
+            "timestamp": "2026-11-10 12:15:00"
+          },
+          {
+            "id": 4,
+            "area": "Tesorería",
+            "proceso": "AP",
+            "evento": "Se paga al proveedor",
+            "control": "Dos personas autorizan",
+            "riesgo": "Pago doble o a otra cuenta",
+            "timestamp": "2026-11-10 14:00:00"
+          },
+          {
+            "id": 5,
+            "area": "Contabilidad",
+            "proceso": "AP",
+            "evento": "Conciliación bancaria",
+            "control": "Se revisa cada mes",
+            "riesgo": "Pagos sin registrar",
+            "timestamp": "2026-11-10 16:45:00"
+          },
+          {
+            "id": 6,
+            "area": "Ventas",
+            "proceso": "AR",
+            "evento": "Cliente pide computadoras",
+            "control": "Ver si tiene crédito",
+            "riesgo": "Vender a quien no paga",
+            "timestamp": "2026-11-10 09:20:00"
+          },
+          {
+            "id": 7,
+            "area": "Logística",
+            "proceso": "AR",
+            "evento": "Se entregan las computadoras",
+            "control": "Comparar entrega con factura",
+            "riesgo": "Cobrar antes de entregar",
+            "timestamp": "2026-11-10 10:40:00"
+          },
+          {
+            "id": 8,
+            "area": "Facturación",
+            "proceso": "AR",
+            "evento": "Se factura al cliente",
+            "control": "Folios consecutivos",
+            "riesgo": "Facturas faltantes o repetidas",
+            "timestamp": "2026-11-10 11:00:00"
+          },
+          {
+            "id": 9,
+            "area": "Cobranza",
+            "proceso": "AR",
+            "evento": "Cliente paga",
+            "control": "Aplicar el pago a su factura",
+            "riesgo": "Pago aplicado a otra factura",
+            "timestamp": "2026-11-10 15:10:00"
+          },
+          {
+            "id": 10,
+            "area": "Cobranza",
+            "proceso": "AR",
+            "evento": "Nota de crédito por equipo defectuoso",
+            "control": "Autorizar y ligar a la factura original",
+            "riesgo": "Notas de crédito falsas",
+            "timestamp": "2026-11-10 17:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "empresa": "TechAssembly S.A.",
+  "jerarquia_equipos": [
+    {
+      "linea": "LINEA-LOGISTICA-01",
+      "maquina": "MQ-INBOUND-SCANNER-01",
+      "evento": {
+        "evento_id": "EVT-01",
+        "timestamp": "2026-11-10T20:00:01Z",
+        "tipo": "Inbound",
+        "descripcion": "Recepción de mercancía y validación de Orden de Compra."
+      }
+    },
+    {
+      "linea": "LINEA-INVENTARIO-01",
+      "maquina": "MQ-ALMACEN-SYS-01",
+      "evento": {
+        "evento_id": "EVT-02",
+        "timestamp": "2026-11-10T20:05:00Z",
+        "tipo": "Inventario",
+        "descripcion": "Actualización automática de stock en el almacén."
+      }
+    },
+    {
+      "linea": "LINEA-LOGISTICA-02",
+      "maquina": "MQ-OUTBOUND-PACK-01",
+      "evento": {
+        "evento_id": "EVT-03",
+        "timestamp": "2026-11-10T20:10:00Z",
+        "tipo": "Outbound",
+        "descripcion": "Verificación de stock y emisión de guía de despacho."
+      }
+    }
+  ]
+}

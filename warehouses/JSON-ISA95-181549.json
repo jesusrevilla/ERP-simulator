@@ -1,0 +1,105 @@
+{
+  "Enterprise": "TechAssembly S.A.",
+  "Site": "Plant_SLP",
+  "Area": "Manufacturing_Area_01",
+  "ProductLine": "Gaming PC Assembly",
+  "Components": [
+    "CPU Ryzen 7",
+    "Motherboard B650",
+    "RAM 16GB DDR5",
+    "SSD 1TB NVMe",
+    "Power Supply 750W",
+    "Graphics Card RTX"
+  ],
+  "WorkCenters": [
+    {
+      "WorkCenterID": "WC_WAREHOUSE_01",
+      "Description": "Almacen Principal de Componentes",
+      "StorageBins": ["Bin-A1", "Bin-A2", "Bin-A3"]
+    },
+    {
+      "WorkCenterID": "WC_ASSEMBLY_01",
+      "Description": "Estacion de Ensamble y Tarjeta Madre",
+      "StorageBins": ["Assembly-Bench-1"]
+    },
+    {
+      "WorkCenterID": "WC_TESTING_01",
+      "Description": "Estacion de Pruebas y Control de Calidad",
+      "StorageBins": ["QA-Bench-1"]
+    }
+  ],
+  "ISA95Events": [
+    {
+      "EventID": "EVT-001",
+      "Timestamp": "2026-11-10T08:00:00Z",
+      "Activity": "Goods Receipt - Component Inventory",
+      "WorkCenter": "WC_WAREHOUSE_01",
+      "Details": {
+        "CPU_Ryzen_7": 50,
+        "Motherboard_B650": 50,
+        "RAM_16GB_DDR5": 100,
+        "SSD_1TB_NVMe": 100,
+        "Power_Supply_750W": 50,
+        "Graphics_Card_RTX": 30
+      }
+    },
+    {
+      "EventID": "EVT-002",
+      "Timestamp": "2026-11-10T08:30:00Z",
+      "Activity": "MRP Validation and Stock Allocation",
+      "WorkCenter": "WC_WAREHOUSE_01",
+      "Details": {
+        "TargetProduct": "Gaming PC",
+        "PlannedQuantity": 20,
+        "NetRequirements": "Calculated successfully",
+        "Status": "Stock_Sufficient_Validated"
+      }
+    },
+    {
+      "EventID": "EVT-003",
+      "Timestamp": "2026-11-10T09:00:00Z",
+      "Activity": "Inventory Transfer for Assembly",
+      "WorkCenter": "WC_ASSEMBLY_01",
+      "Details": {
+        "Source": "WC_WAREHOUSE_01",
+        "Destination": "WC_ASSEMBLY_01",
+        "Action": "Move components for batch assembly",
+        "Result": "Inventory_Committed"
+      }
+    },
+    {
+      "EventID": "EVT-004",
+      "Timestamp": "2026-11-10T09:45:00Z",
+      "Activity": "Component Assembly & Integration",
+      "WorkCenter": "WC_ASSEMBLY_01",
+      "Details": {
+        "Action": "Physical build of Gaming PC units",
+        "UnitsAssembled": 20,
+        "Status": "Built_Pending_Test"
+      }
+    },
+    {
+      "EventID": "EVT-005",
+      "Timestamp": "2026-11-10T10:15:00Z",
+      "Activity": "Transfer to Quality Control",
+      "WorkCenter": "WC_TESTING_01",
+      "Details": {
+        "Source": "WC_ASSEMBLY_01",
+        "Destination": "WC_TESTING_01",
+        "Action": "Move assembled units to QA bench"
+      }
+    },
+    {
+      "EventID": "EVT-006",
+      "Timestamp": "2026-11-10T11:00:00Z",
+      "Activity": "Unit Testing & pytest Validation",
+      "WorkCenter": "WC_TESTING_01",
+      "Details": {
+        "TestFramework": "pytest",
+        "DatabaseIntegration": ["PostgreSQL", "MongoDB", "Neo4j"],
+        "ExecutionResult": "Passed",
+        "FinalStatus": "Ready_For_Dispatch"
+      }
+    }
+  ]
+}

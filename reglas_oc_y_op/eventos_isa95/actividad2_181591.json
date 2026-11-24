@@ -1,0 +1,265 @@
+{
+  "estandar_referencia": "ISA-95 (IEC 62264)",
+  "timestamp_lote": "2026-11-10T20:00:01Z",
+  "flujo_proceso": "Integración MRP, Abastecimiento (OC), Control de Inventario y Ejecución de Producción (OP)",
+  "eventos_transaccionales": [
+    {
+      "secuencia": 1,
+      "id_evento": "EVT-MRP-001",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 4 - Planificación Empresarial (ERP)",
+      "categoria_isa95": "Production Schedule / Material Requirements Planning",
+      "modulo": "1. Motor de Planificación (MRP)",
+      "regla_codigo": "SYS-LOCK-01",
+      "nodo_origen": "G_Candado",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "MRP_LOCK_ACQUIRED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "Proceso MRP iniciado. Candado de ejecución adquirido; explosión de BOM y cálculo de requerimiento neto en curso."
+        },
+        "error": {
+          "tipo": "BLOCKER",
+          "codigo_estado": "MRP_ALREADY_RUNNING",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "Ejecución bloqueada: Ya existe un proceso MRP en ejecución activa. Espere a que finalice la corrida actual."
+        }
+      }
+    },
+    {
+      "secuencia": 2,
+      "id_evento": "EVT-MRP-002",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 4 - Planificación Empresarial (ERP)",
+      "categoria_isa95": "Material Requirements / Procurement Alert",
+      "modulo": "1. Motor de Planificación (MRP)",
+      "regla_codigo": "RN-OC-05",
+      "nodo_origen": "T_AlertaComprador",
+      "mensajes": {
+        "alerta": {
+          "tipo": "WARNING",
+          "codigo_estado": "FROZEN_HORIZON_DEMAND_DROP",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-05 (Horizonte Fijo): Se detectó disminución de demanda sobre una Orden de Compra ya enviada al proveedor. No se modifica automáticamente; se ha generado alerta al comprador para gestión manual."
+        }
+      }
+    },
+    {
+      "secuencia": 3,
+      "id_evento": "EVT-OC-001",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 4 - Gestión de Compras y Abastecimiento (ERP)",
+      "categoria_isa95": "Material Information / Supplier Qualification",
+      "modulo": "2. Submódulo de Órdenes de Compra (OC)",
+      "regla_codigo": "RN-OC-02",
+      "nodo_origen": "G_Proveedor",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "SUPPLIER_VALIDATED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-02: Proveedor activo y con homologación vigente. Se autoriza continuar con el cálculo de lote de la OC."
+        },
+        "error": {
+          "tipo": "ERROR",
+          "codigo_estado": "SUPPLIER_BLOCKED_OR_INACTIVE",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-02: Rechazo de propuesta de OC. El proveedor asignado se encuentra inactivo, bloqueado o con homologación vencida."
+        }
+      }
+    },
+    {
+      "secuencia": 4,
+      "id_evento": "EVT-OC-002",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 4 - Gestión de Compras y Abastecimiento (ERP)",
+      "categoria_isa95": "Material Lot Sizing Rules",
+      "modulo": "2. Submódulo de Órdenes de Compra (OC)",
+      "regla_codigo": "RN-OC-01",
+      "nodo_origen": "T_AjusteLote",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "LOT_SIZE_ADJUSTED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-01: Cantidad de la Orden de Compra ajustada automáticamente para cumplir con el mínimo de compra (MOQ) y redondeada al múltiplo de empaque (MPQ) del proveedor."
+        }
+      }
+    },
+    {
+      "secuencia": 5,
+      "id_evento": "EVT-OC-003",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 4 - Gestión de Compras y Abastecimiento (ERP)",
+      "categoria_isa95": "Procurement Workflow Approval",
+      "modulo": "2. Submódulo de Órdenes de Compra (OC)",
+      "regla_codigo": "RF-07",
+      "nodo_origen": "G_AprobacionOC",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "PO_APPROVED_AND_SENT",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RF-07: Orden de Compra aprobada satisfactoriamente. Estado actualizado a 'Enviada' y notificación despachada al proveedor."
+        },
+        "espera": {
+          "tipo": "WARNING",
+          "codigo_estado": "PO_PENDING_APPROVAL",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RF-07: El monto total de la OC supera el límite de aprobación directa. La orden se mantiene en estado 'Borrador / En Espera de Firma'."
+        }
+      }
+    },
+    {
+      "secuencia": 6,
+      "id_evento": "EVT-ALM-001",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Interfaz Nivel 4 a Nivel 3 - Gestión de Inventario y Recepción (WMS/MES)",
+      "categoria_isa95": "Material Receipt & Tolerance Verification",
+      "modulo": "3. Almacén y Control de Inventario",
+      "regla_codigo": "RF-08 / RN-OC-03",
+      "nodo_origen": "G_Tolerancia",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "RECEIPT_WITHIN_TOLERANCE",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RF-08 / RN-OC-03: Cantidad física recibida validada dentro del margen de la cantidad pedida más el porcentaje de tolerancia permitido."
+        },
+        "error": {
+          "tipo": "ERROR",
+          "codigo_estado": "RECEIPT_TOLERANCE_EXCEEDED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-03: Recepción rechazada. La cantidad física ingresada excede el límite máximo de tolerancia permitido sobre la Orden de Compra."
+        }
+      }
+    },
+    {
+      "secuencia": 7,
+      "id_evento": "EVT-ALM-002",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 3 - Gestión de Operaciones de Inventario (MES/WMS)",
+      "categoria_isa95": "Inventory Material Lot / Kardex Ledger",
+      "modulo": "3. Almacén y Control de Inventario",
+      "regla_codigo": "RN-OC-04",
+      "nodo_origen": "T_ActualizarKardex",
+      "mensajes": {
+        "exito_parcial": {
+          "tipo": "INFO",
+          "codigo_estado": "KARDEX_POSTED_PARTIAL_PO",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-04: Entrada registrada en almacén con sello de inmutabilidad en Kardex. Orden de Compra actualizada a estado 'Recibida Parcial'; stock libre actualizado para Producción."
+        },
+        "exito_total": {
+          "tipo": "INFO",
+          "codigo_estado": "KARDEX_POSTED_CLOSED_PO",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OC-04: Entrada final registrada e inmutable en Kardex. Entrega completa verificada; Orden de Compra actualizada a estado 'Recibida Total / Cerrada'."
+        }
+      }
+    },
+    {
+      "secuencia": 8,
+      "id_evento": "EVT-OP-001",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Interfaz Nivel 4 a Nivel 3 - Definición del Producto",
+      "categoria_isa95": "Product Definition Information (BOM & Routing)",
+      "modulo": "4. Submódulo de Órdenes de Producción (OP)",
+      "regla_codigo": "RN-OP-01",
+      "nodo_origen": "G_ValidaBOM",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "BOM_AND_ROUTING_VALID",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-01: Lista de materiales (BOM) y Ruta de Fabricación activas verificadas. Se crea OP en estado 'Planificada' y se congela el Snapshot de la BOM."
+        },
+        "error": {
+          "tipo": "ERROR",
+          "codigo_estado": "MISSING_ACTIVE_BOM_OR_ROUTING",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-01: No es posible crear la Orden de Producción. El producto terminado no cuenta con una BOM vigente o una Ruta de Producción activa."
+        }
+      }
+    },
+    {
+      "secuencia": 9,
+      "id_evento": "EVT-OP-002",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 3 - Despacho y Gestión de Recursos (MES/MOM)",
+      "categoria_isa95": "Production Capability & Material Allocation",
+      "modulo": "4. Submódulo de Órdenes de Producción (OP)",
+      "regla_codigo": "RN-OP-02 / RF-11",
+      "nodo_origen": "G_StockCritico",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "OP_RELEASED_STOCK_LOCKED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-02 / RF-11: Stock libre verificado mediante bloqueo de fila (Row-Level Locking). Materiales reservados exitosamente y Orden de Producción cambiada a estado 'Liberada'."
+        },
+        "error": {
+          "tipo": "WARNING",
+          "codigo_estado": "INSUFFICIENT_FREE_STOCK",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-02: Liberación de OP bloqueada por falta de stock libre suficiente. Se mantiene en espera de abastecimiento y se dispara requerimiento hacia Compras (OC)."
+        }
+      }
+    },
+    {
+      "secuencia": 10,
+      "id_evento": "EVT-OP-003",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Nivel 3 - Ejecución de Operaciones de Manufactura (MES)",
+      "categoria_isa95": "Work Execution & Material Backflush",
+      "modulo": "4. Submódulo de Órdenes de Producción (OP)",
+      "regla_codigo": "RN-OP-04 / RN-OP-05",
+      "nodo_origen": "T_Consumo",
+      "mensajes": {
+        "exito": {
+          "tipo": "INFO",
+          "codigo_estado": "OPERATION_EXECUTED_BACKFLUSH_OK",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-04 / RN-OP-05: Operación de ruta ejecutada en secuencia estricta. Consumo de materiales (Backflush) aplicado sin generar saldos negativos en inventario."
+        },
+        "error_secuencia": {
+          "tipo": "ERROR",
+          "codigo_estado": "INVALID_OPERATION_SEQUENCE",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-04: Violación de secuencia de ruta. No se puede iniciar ni reportar esta operación hasta que la operación predecesora haya sido completada."
+        },
+        "error_saldo": {
+          "tipo": "ERROR",
+          "codigo_estado": "NEGATIVE_INVENTORY_PREVENTED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-05: Transacción de consumo abortada. El descuento automático (Backflush) provocaría un saldo negativo en el lote del componente."
+        }
+      }
+    },
+    {
+      "secuencia": 11,
+      "id_evento": "EVT-OP-004",
+      "timestamp": "2026-11-10T20:00:01Z",
+      "nivel_isa95": "Interfaz Nivel 3 a Nivel 4 - Rendimiento de Producción (MES -> ERP)",
+      "categoria_isa95": "Production Performance & Order Closure",
+      "modulo": "4. Submódulo de Órdenes de Producción (OP)",
+      "regla_codigo": "RN-OP-06",
+      "nodo_origen": "G_CierreValido",
+      "mensajes": {
+        "exito": {
+          "tipo": "SUCCESS",
+          "codigo_estado": "ACID_OP_CLOSED",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-06: Entregas y consumos validados al 100%. Transacción ACID ejecutada con éxito: Entrada de Producto Terminado a almacén, registro de merma real, escritura en bitácora de auditoría y cierre definitivo de la OP."
+        },
+        "error": {
+          "tipo": "WARNING",
+          "codigo_estado": "PENDING_CONSUMPTIONS_OR_DELIVERIES",
+          "timestamp": "2026-11-10T20:00:01Z",
+          "mensaje": "RN-OP-06: Cierre de OP denegado. Existen operaciones de ruta abiertas, consumos de materiales pendientes de registrar o entregas parciales sin conciliar."
+        }
+      }
+    }
+  ]
+}

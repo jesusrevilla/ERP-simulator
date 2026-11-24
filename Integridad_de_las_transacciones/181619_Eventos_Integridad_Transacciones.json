@@ -1,0 +1,169 @@
+{
+    "company": "TechAssembly S.A.",
+    "product": "Gaming PC",
+    "standard": "ISA-95 (IEC 62264)",
+    "mrp_transaction_integrity_module": {
+        "description": "Módulo de Integridad de Transacciones MRP basado en la norma ISA-95 para la integración entre sistemas de gestión empresarial (ERP/MRP - Nivel 3/4) y ejecución de manufactura (MES - Nivel 3).",
+        "events": [
+            {
+                "event_id": "TXN-2026-001",
+                "timestamp": "2026-11-10T08:30:00Z",
+                "isa95_level": "Level 4 (Business Planning and Logistics)",
+                "event_type": "MaterialProcurementOrderCreated",
+                "source_module": "Procurement / ERP",
+                "status": "RELEASED",
+                "details": {
+                    "supplier_id": "SUP-TECH-01",
+                    "purchase_order_id": "PO-2026-8891",
+                    "material_actuals": [
+                        {"material_definition_id": "CPU-RYZEN-7", "quantity": 50, "unit_of_measure": "PCS", "unit_cost": 280.00},
+                        {"material_definition_id": "MB-B650", "quantity": 50, "unit_of_measure": "PCS", "unit_cost": 150.00},
+                        {"material_definition_id": "RAM-16GB-DDR5", "quantity": 100, "unit_of_measure": "PCS", "unit_cost": 65.00},
+                        {"material_definition_id": "SSD-1TB-NVME", "quantity": 50, "unit_of_measure": "PCS", "unit_cost": 80.00},
+                        {"material_definition_id": "PSU-750W", "quantity": 50, "unit_of_measure": "PCS", "unit_cost": 90.00},
+                        {"material_definition_id": "GPU-RTX", "quantity": 50, "unit_of_measure": "PCS", "unit_cost": 550.00}
+                    ]
+                },
+                "integrity_checks": {
+                    "schema_validation": "ISA95_B2MML_v0600",
+                    "master_data_matched": true,
+                    "checksum": "e9a18f4c20b"
+                }
+            },
+            {
+                "event_id": "TXN-2026-002",
+                "timestamp": "2026-11-10T10:15:00Z",
+                "isa95_level": "Level 3 (Manufacturing Operations Management)",
+                "event_type": "MaterialReceiptPosted",
+                "source_module": "Inventory Management / WMS",
+                "status": "COMPLETED",
+                "details": {
+                    "purchase_order_ref": "PO-2026-8891",
+                    "location_id": "WH-MAIN-LOC-A1",
+                    "material_lots": [
+                        {"material_definition_id": "CPU-RYZEN-7", "lot_number": "LOT-CPU-202611-01", "quantity": 50},
+                        {"material_definition_id": "MB-B650", "lot_number": "LOT-MB-202611-01", "quantity": 50},
+                        {"material_definition_id": "RAM-16GB-DDR5", "lot_number": "LOT-RAM-202611-01", "quantity": 100},
+                        {"material_definition_id": "SSD-1TB-NVME", "lot_number": "LOT-SSD-202611-01", "quantity": 50},
+                        {"material_definition_id": "PSU-750W", "lot_number": "LOT-PSU-202611-01", "quantity": 50},
+                        {"material_definition_id": "GPU-RTX", "lot_number": "LOT-GPU-202611-01", "quantity": 50}
+                    ]
+                },
+                "integrity_checks": {
+                    "lot_traceability_assigned": true,
+                    "quantity_reconciliation_passed": true
+                }
+            },
+            {
+                "event_id": "TXN-2026-003",
+                "timestamp": "2026-11-10T11:00:00Z",
+                "isa95_level": "Level 4 (Business Planning and Logistics)",
+                "event_type": "CustomerOrderReceived",
+                "source_module": "Sales / Order Management",
+                "status": "APPROVED",
+                "details": {
+                    "customer_id": "CUST-8842",
+                    "sales_order_id": "SO-2026-5012",
+                    "material_definition_id": "GAMING-PC-ASY",
+                    "ordered_quantity": 10,
+                    "unit_price": 1800.00,
+                    "promised_delivery": "2026-11-15T18:00:00Z"
+                },
+                "integrity_checks": {
+                    "customer_credit_ok": true,
+                    "bill_of_materials_validated": true
+                }
+            },
+            {
+                "event_id": "TXN-2026-004",
+                "timestamp": "2026-11-10T11:30:00Z",
+                "isa95_level": "Level 3 (Manufacturing Operations Management)",
+                "event_type": "ProductionScheduleDispatched",
+                "source_module": "Production Planning / MOM",
+                "status": "SCHEDULED",
+                "details": {
+                    "work_schedule_id": "WS-2026-9901",
+                    "sales_order_ref": "SO-2026-5012",
+                    "assembly_item": "Gaming PC",
+                    "target_quantity": 10,
+                    "bill_of_materials": [
+                        {"material_definition_id": "CPU-RYZEN-7", "required_qty": 10, "unit": "PCS"},
+                        {"material_definition_id": "MB-B650", "required_qty": 10, "unit": "PCS"},
+                        {"material_definition_id": "RAM-16GB-DDR5", "required_qty": 20, "unit": "PCS"},
+                        {"material_definition_id": "SSD-1TB-NVME", "required_qty": 10, "unit": "PCS"},
+                        {"material_definition_id": "PSU-750W", "required_qty": 10, "unit": "PCS"},
+                        {"material_definition_id": "GPU-RTX", "required_qty": 10, "unit": "PCS"}
+                    ]
+                },
+                "integrity_checks": {
+                    "bom_explosion_accurate": true,
+                    "inventory_allocation_locked": true
+                }
+            },
+            {
+                "event_id": "TXN-2026-005",
+                "timestamp": "2026-11-10T13:00:00Z",
+                "isa95_level": "Level 3 (Manufacturing Operations Management)",
+                "event_type": "MaterialConsumedForProduction",
+                "source_module": "Material Tracking / MES",
+                "status": "COMPLETED",
+                "details": {
+                    "work_schedule_ref": "WS-2026-9901",
+                    "equipment_id": "LINE-ASSEMB-01",
+                    "consumed_materials": [
+                        {"material_definition_id": "CPU-RYZEN-7", "lot_number": "LOT-CPU-202611-01", "consumed_qty": 10},
+                        {"material_definition_id": "MB-B650", "lot_number": "LOT-MB-202611-01", "consumed_qty": 10},
+                        {"material_definition_id": "RAM-16GB-DDR5", "lot_number": "LOT-RAM-202611-01", "consumed_qty": 20},
+                        {"material_definition_id": "SSD-1TB-NVME", "lot_number": "LOT-SSD-202611-01", "consumed_qty": 10},
+                        {"material_definition_id": "PSU-750W", "lot_number": "LOT-PSU-202611-01", "consumed_qty": 10},
+                        {"material_definition_id": "GPU-RTX", "lot_number": "LOT-GPU-202611-01", "consumed_qty": 10}
+                    ]
+                },
+                "integrity_checks": {
+                    "fifo_lot_verification": true,
+                    "stock_deduction_sync": true
+                }
+            },
+            {
+                "event_id": "TXN-2026-006",
+                "timestamp": "2026-11-10T16:00:00Z",
+                "isa95_level": "Level 3 (Manufacturing Operations Management)",
+                "event_type": "ProductionPerformanceReported",
+                "source_module": "MES / Quality Control",
+                "status": "COMPLETED",
+                "details": {
+                    "work_schedule_ref": "WS-2026-9901",
+                    "produced_material_id": "GAMING-PC-ASY",
+                    "produced_lot_number": "LOT-FG-202611-10",
+                    "quantity_produced": 10,
+                    "scrap_quantity": 0,
+                    "quality_status": "PASSED"
+                },
+                "integrity_checks": {
+                    "qc_test_passed": true,
+                    "finished_goods_inventory_updated": true
+                }
+            },
+            {
+                "event_id": "TXN-2026-007",
+                "timestamp": "2026-11-10T17:30:00Z",
+                "isa95_level": "Level 4 (Business Planning and Logistics)",
+                "event_type": "OutboundShipmentCompleted",
+                "source_module": "Logistics / ERP",
+                "status": "DISPATCHED",
+                "details": {
+                    "sales_order_ref": "SO-2026-5012",
+                    "shipped_material_id": "GAMING-PC-ASY",
+                    "shipped_lot_number": "LOT-FG-202611-10",
+                    "quantity_shipped": 10,
+                    "carrier_tracking_id": "TRK-99201482"
+                },
+                "integrity_checks": {
+                    "final_stock_deduction": true,
+                    "billing_event_triggered": true,
+                    "transaction_closed": true
+                }
+            }
+        ]
+    }
+}

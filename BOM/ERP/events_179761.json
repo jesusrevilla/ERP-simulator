@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Catálogo Detallado de Eventos BOM, MRP y Costeo ISA-95",
+  "enterprise": "TECH ASSEMBLY",
+  "site": "Planta San Luis Potosi",
+  "product": "Gaming PC / Estaciones de Trabajo High-End",
+  "events": [
+    {
+      "eventId": "evt-2026-bom-001",
+      "timestamp": "2026-11-10T08:30:00Z",
+      "eventType": "BOM_CREATION_ALLOCATED",
+      "description": "Creación y asignación inicial detallada de la lista de materiales (BOM) para el ensamble de PC Gaming",
+      "isa95Hierarchy": {
+        "enterprise": "TECH ASSEMBLY",
+        "site": "Planta San Luis Potosi",
+        "area": "Producción",
+        "workCenter": {
+          "type": "LINE",
+          "id": "LINE-GAMING-01",
+          "name": "Línea 1 - Ensamble de PCs High-End"
+        },
+        "workUnit": {
+          "type": "PERSONNEL",
+          "id": "EMP-8042",
+          "name": "Técnico Ensamblador - Juan Pérez"
+        }
+      },
+      "productionContext": {
+        "workOrderId": "WO-PC-GAMING-2026-101",
+        "segmentResponseId": "SEG-RESP-ENS-01",
+        "producedMaterial": {
+          "materialDefinitionId": "SKU-PC-GAMING-B650-RTX",
+          "assemblySerialNumber": "SN-PCG-20261110-001"
+        }
+      },
+      "bomDetails": {
+        "bomId": "BOM-GAMING-PC-V1",
+        "bomRevision": "1.0.0",
+        "items": [
+          {
+            "materialDefinitionId": "CPU-RYZEN-7",
+            "description": "CPU Ryzen 7",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "MB-B650",
+            "description": "Motherboard B650",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "RAM-16GB-DDR5",
+            "description": "RAM 16GB DDR5",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "SSD-1TB-NVME",
+            "description": "SSD 1TB NVMe",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "PSU-750W",
+            "description": "Power Supply 750W",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "GPU-RTX",
+            "description": "Graphics Card RTX",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          }
+        ]
+      }
+    },
+    {
+      "eventId": "evt-2026-bom-002",
+      "timestamp": "2026-11-10T09:15:00Z",
+      "eventType": "BOM_CONSUMPTION",
+      "description": "Consumo físico trazable de componentes clave en la estación de ensamble automático",
+      "isa95Hierarchy": {
+        "enterprise": "TECH ASSEMBLY",
+        "site": "Planta San Luis Potosi",
+        "area": "Producción",
+        "workCenter": {
+          "type": "LINE",
+          "id": "LINE-GAMING-01",
+          "name": "Línea 1 - Ensamble de PCs High-End"
+        },
+        "workUnit": {
+          "type": "EQUIPMENT",
+          "id": "EQ-ASY-03",
+          "name": "Estación Automática de Torque y Ensamble"
+        }
+      },
+      "productionContext": {
+        "workOrderId": "WO-PC-GAMING-2026-101",
+        "segmentResponseId": "SEG-RESP-ENS-02",
+        "producedMaterial": {
+          "materialDefinitionId": "SKU-PC-GAMING-B650-RTX",
+          "assemblySerialNumber": "SN-PCG-20261110-001"
+        }
+      },
+      "bomDetails": {
+        "bomId": "BOM-GAMING-PC-V1",
+        "bomRevision": "1.0.0",
+        "items": [
+          {
+            "materialDefinitionId": "CPU-RYZEN-7",
+            "description": "CPU Ryzen 7",
+            "designator": "U1",
+            "lotNumber": "LOT-AMD-9912",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityConsumed": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          },
+          {
+            "materialDefinitionId": "GPU-RTX",
+            "description": "Graphics Card RTX",
+            "designator": "SLOT-PCIE-1",
+            "lotNumber": "LOT-NV-4070-88",
+            "quantityPlanned": 1,
+            "quantityActual": 1,
+            "quantityConsumed": 1,
+            "quantityScrapped": 0,
+            "unitOfMeasure": "PCS"
+          }
+        ]
+      }
+    },
+    {
+      "eventId": "evt-2026-bom-003",
+      "timestamp": "2026-11-10T11:00:00Z",
+      "eventType": "BOM_DISASSEMBLY_SCRAP",
+      "description": "Desmontaje y descarte de fuente de poder defectuosa detectada durante pruebas de calidad POST",
+      "isa95Hierarchy": {
+        "enterprise": "TECH ASSEMBLY",
+        "site": "Planta San Luis Potosi",
+        "area": "Desmontaje",
+        "workCenter": {
+          "type": "DEPARTMENT",
+          "id": "DEPT-REWORK",
+          "name": "Departamento de Retrabajo y Desmontaje"
+        },
+        "workUnit": {
+          "type": "PERSONNEL",
+          "id": "EMP-5011",
+          "name": "Inspector de Calidad - María Torres"
+        }
+      },
+      "productionContext": {
+        "workOrderId": "WO-PC-GAMING-2026-101",
+        "segmentResponseId": "SEG-RESP-QUAL-01",
+        "producedMaterial": {
+          "materialDefinitionId": "SKU-PC-GAMING-B650-RTX",
+          "assemblySerialNumber": "SN-PCG-20261110-001"
+        }
+      },
+      "bomDetails": {
+        "bomId": "BOM-GAMING-PC-V1",
+        "bomRevision": "1.0.0",
+        "items": [
+          {
+            "materialDefinitionId": "PSU-750W",
+            "description": "Power Supply 750W",
+            "designator": "PSU-BAY",
+            "lotNumber": "LOT-PSU-750-X",
+            "quantityPlanned": 1,
+            "quantityActual": 0,
+            "quantityScrapped": 1,
+            "reason": "Falla de voltaje en prueba POST",
+            "unitOfMeasure": "PCS"
+          }
+        ]
+      }
+    },
+    {
+      "eventId": "evt-2026-cost-9941",
+      "timestamp": "2026-11-10T20:30:00Z",
+      "eventType": "BOM_COST_RECALCULATED",
+      "description": "Recálculo automático de costo total de producción (Cost Roll-up) motivado por actualización de precio en insumos",
+      "isa95Hierarchy": {
+        "enterprise": "TECH ASSEMBLY",
+        "site": "Planta San Luis Potosi",
+        "area": "Producción",
+        "workCenter": {
+          "type": "DEPARTMENT",
+          "id": "DEPT-COSTING",
+          "name": "Departamento de Costos y Finanzas de Manufactura"
+        },
+        "workUnit": {
+          "type": "EQUIPMENT",
+          "id": "SYS-MRP-ENGINE",
+          "name": "Motor de Cálculo ERP/MRP"
+        }
+      },
+      "productionContext": {
+        "workOrderId": "N/A",
+        "producedMaterial": {
+          "materialDefinitionId": "PC-ALPHA-MODEL-1"
+        }
+      },
+      "bomDetails": {
+        "bomId": "BOM-ALPHA-1",
+        "bomRevision": "1.2.0"
+      },
+      "costRollupSummary": {
+        "previousTotalCost": 850.0,
+        "newTotalCost": 895.5,
+        "costVariance": 45.5,
+        "currency": "USD",
+        "triggeredBy": "ITEM_PRICE_UPDATE",
+        "changedComponent": {
+          "materialDefinitionId": "RAM-32GB-DDR5",
+          "description": "Módulo Memoria RAM 32GB DDR5",
+          "previousUnitCost": 120.0,
+          "newUnitCost": 165.5
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+import psycopg2
+from psycopg2 import DatabaseError
+
+class GestorTransaccionalERP:
+    """
+    Controlador que orquesta la integridad de las transacciones ACID en el ERP, 
+    aplicando COMMIT o ROLLBACK según las reglas de negocio.
+    """
+    def __init__(self, db_connection):
+        self.conn = db_connection
+
+    def ejecutar_transaccion_venta(self, id_producto, id_cliente, cantidad, folio, total, subtotal, iva, usuario):
+        cursor = self.conn.cursor()
+        try:
+            # 1. Iniciar la transacción de forma explícita
+            cursor.execute("BEGIN;")
+
+            # 2. Bloquear y validar existencia (Bloqueo pesimista)
+            cursor.execute(
+                "SELECT existencia FROM inventario WHERE id_producto = %s FOR UPDATE;", 
+                (id_producto,)
+            )
+            resultado = cursor.fetchone()
+            
+            if not resultado or resultado[0] < cantidad:
+                # Falla la validación: Rechaza la operación[cite: 4]
+                raise ValueError("Inventario insuficiente o producto no encontrado.")
+
+            # 3. Descontar inventario (Regla RN-03)[cite: 5, 10]
+            cursor.execute(
+                "UPDATE inventario SET existencia = existencia - %s WHERE id_producto = %s;",
+                (cantidad, id_producto)
+            )
+
+            # 4. Registrar cuenta por cobrar[cite: 10]
+            cursor.execute(
+                "INSERT INTO cuenta_por_cobrar (id_cliente, folio, importe, estatus) VALUES (%s, %s, %s, 'PENDIENTE');",
+                (id_cliente, folio, total)
+            )
+
+            # 5. Generar póliza contable balanceada (Partida doble)[cite: 10]
+            cursor.execute(
+                """INSERT INTO poliza_detalle (id_poliza, cuenta, cargo, abono) VALUES 
+                   (%s, 'Clientes', %s, 0),
+                   (%s, 'Ventas', 0, %s),
+                   (%s, 'IVA trasladado', 0, %s);""",
+                (folio, total, folio, subtotal, folio, iva)
+            )
+
+            # 6. Registrar en bitácora de auditoría (Regla RN-11)[cite: 6, 10]
+            cursor.execute(
+                "INSERT INTO bitacora (usuario, fecha, accion, documento) VALUES (%s, NOW(), 'CONFIRMAR_VENTA', %s);",
+                (usuario, folio)
+            )
+
+            # 7. Confirmar todos los cambios si no hubo errores[cite: 9]
+            self.conn.commit()
+            return {"status": "exito", "mensaje": f"Documento {folio} procesado correctamente."}
+
+        except (Exception, DatabaseError) as error:
+            # 8. Reversión automática en caso de cualquier fallo
+            # Si falla la creación de la póliza o el descuento de inventario, nada se guarda
+            self.conn.rollback()
+            return {"status": "error", "mensaje": f"Transacción cancelada (ROLLBACK ejecutado): {str(error)}"}
+        
+        finally:
+            cursor.close()
+
+# Documentación: Gestor Transaccional ERP
+
+## 1. Descripción General
+La clase `GestorTransaccionalERP` es un controlador diseñado para garantizar la **integridad transaccional ACID** (Atomicidad, Consistencia, Aislamiento y Durabilidad) durante las operaciones críticas del ERP, específicamente en el proceso de ventas. 
+
+Este componente se encarga de coordinar la actualización simultánea del inventario, la generación de cuentas por cobrar, el registro contable y la auditoría, asegurando que todas las operaciones se completen con éxito o, en caso de cualquier fallo, se reviertan en su totalidad sin dejar registros inconsistentes en la base de datos.
+
+## 2. Requerimientos Cubiertos
+El código implementa las siguientes reglas de negocio y requerimientos técnicos del proyecto:
+- **RF-02 / RN-01 (Todo o Nada):** Uso de `BEGIN`, `COMMIT` y `ROLLBACK` para asegurar la ejecución atómica.
+- **RF-04 / RN-03 (Verificación de existencias):** Consulta de stock disponible antes de la venta y rechazo si es insuficiente para evitar inventarios negativos.
+- **RF-05 / RN-02 (Partida Doble):** Generación de la póliza contable asegurando que los cargos y abonos estén balanceados.
+- **RF-06 (Control de Concurrencia):** Uso de bloqueos pesimistas (`FOR UPDATE`) para evitar condiciones de carrera.
+- **RF-07 / RN-11 (Bitácora de auditoría):** Registro inmutable de la acción confirmada.
+- **RF-11 (Manejo de errores):** Captura de excepciones, reversión de cambios y retorno de mensajes claros.
+
+## 3. Arquitectura y Métodos
+
+### Clase: `GestorTransaccionalERP`
+**Constructor:** `__init__(self, db_connection)`
+- **Parámetros:** 
+  - `db_connection`: Objeto de conexión activa a la base de datos PostgreSQL (psycopg2).
+- **Propósito:** Inicializa el gestor con la conexión a la base de datos sobre la cual operará.
+
+### Método Principal: `ejecutar_transaccion_venta`
+Coordina de principio a fin el registro de una venta.
+
+**Parámetros de entrada:**
+- `id_producto` (int): Identificador único del artículo vendido.
+- `id_cliente` (int): Identificador del cliente que realiza la compra.
+- `cantidad` (numeric/int): Número de unidades solicitadas.
+- `folio` (str/int): Identificador o número de folio único asignado a la transacción.
+- `total` (numeric): Importe total de la venta (Subtotal + IVA - Descuentos).
+- `subtotal` (numeric): Importe de la venta antes de impuestos.
+- `iva` (numeric): Monto correspondiente al impuesto trasladado.
+- `usuario` (str/int): Identificador del usuario que realiza la operación.
+
+**Valor de retorno:**
+Un diccionario (JSON-like) con el resultado de la operación:
+- **En caso de éxito:** `{"status": "exito", "mensaje": "Documento [folio] procesado correctamente."}`
+- **En caso de error:** `{"status": "error", "mensaje": "Transacción cancelada (ROLLBACK ejecutado): [Detalle del error]"}`
+
+## 4. Flujo de Ejecución (Paso a Paso)
+
+1. **Apertura de Transacción (`BEGIN`):** Se inicia un bloque transaccional manual para agrupar los movimientos.
+2. **Bloqueo Pesimista (`FOR UPDATE`):** Se consulta el registro del producto en el inventario y se bloquea la fila. Esto impide que otra conexión lea o modifique ese stock hasta que esta transacción termine.
+3. **Validación de Capa de Negocio:** Se verifica si el producto existe y si su `existencia` es mayor o igual a la `cantidad` solicitada. Si no lo es, se lanza una excepción.
+4. **Descuento de Inventario:** Se ejecuta el `UPDATE` restando la cantidad vendida. Se confía en que la base de datos cuente con una restricción `CHECK (existencia >= 0)`.
+5. **Generación de Cuenta por Cobrar:** Se inserta el registro del pasivo a favor de la empresa con estatus 'PENDIENTE'.
+6. **Asiento Contable:** Se insertan los registros de la póliza asegurando el cargo a "Clientes" por el Total, y los abonos a "Ventas" por el Subtotal y a "IVA trasladado" por el monto del impuesto.
+7. **Auditoría:** Se registra la acción "CONFIRMAR_VENTA" asociándola al usuario y folio en la tabla de bitácora.
+8. **Confirmación (`COMMIT`):** Si todos los pasos anteriores se ejecutaron sin lanzar errores, se confirman los cambios en el disco y se liberan los bloqueos de fila.
+
+### Manejo de Excepciones (`try-except`)
+Si cualquier comando SQL falla (ej. violación de clave foránea, constraint de stock negativo) o si la validación de inventario inicial lanza un error:
+- El flujo salta inmediatamente al bloque `except`.
+- Se ejecuta `self.conn.rollback()`, revirtiendo cualquier cambio parcial (ej. se cancela el descuento del inventario si falló la póliza).
+- Se retorna el mensaje de error al usuario.
+
+## 5. Dependencias
+- Requiere la librería `psycopg2` para la conexión y manejo de errores (`DatabaseError`) con PostgreSQL.
+- Asume la existencia de las tablas: `inventario`, `cuenta_por_cobrar`, `poliza_detalle` y `bitacora` con los campos especificados en el diagrama de modelo y requerimientos de integridad.

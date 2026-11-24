@@ -1,0 +1,130 @@
+{
+  "standard": "ANSI/ISA-95",
+  "version": "Model-Based Manufacturing Operations Management (MOM) - Business Partner & Asset Domain",
+  "metadata": {
+    "generated_at": "2026-11-10T20:34:00Z"
+  },
+  "enterprise_model": {
+    "site": "TechAssembly_Plant_SLP",
+    "area": "Enterprise_Master_Data_Management",
+    "operations_definition": [
+      {
+        "module": "Business Partner Master Data Management (ISA-95 Party)",
+        "process_segment": "Partner Lifecycle, Roles and Component Supplier Governance for TechAssembly",
+        "events_and_messages": [
+          {
+            "event_id": "EVT-MOM-BP-001",
+            "message_type": "BusinessPartnerCreateRequest",
+            "direction": "CRM_ERP_to_MOM",
+            "timestamp": "2026-11-10T08:00:00Z",
+            "description": "Creación inicial de un Socio Comercial proveedor de componentes electrónicos para TechAssembly con soporte para roles múltiples[cite: 1].",
+            "payload": {
+              "EnterpriseName": "TechAssembly",
+              "BusinessPartnerID": "BP-PROV-COMP-901",
+              "TaxID": "TAS951012ABC",
+              "LegalName": "Global Electronic Components S.A. de C.V.",
+              "CommercialName": "ElectroParts SLP",
+              "PartnerType": "ORGANIZATION",
+              "Roles": ["VENDOR_COMPONENTS", "SUPPLIER_HARDWARE"],
+              "Addresses": [
+                {
+                  "AddressType": "FISCAL",
+                  "Street": "Parque Industrial Tres Naciones Zona Norte #400",
+                  "City": "San Luis Potosi",
+                  "State": "SLP",
+                  "PostalCode": "78395",
+                  "Country": "MX"
+                },
+                {
+                  "AddressType": "DELIVERY",
+                  "Street": "TechAssembly Receiving Dock 02",
+                  "City": "San Luis Potosi",
+                  "State": "SLP",
+                  "PostalCode": "78399",
+                  "Country": "MX"
+                }
+              ],
+              "ContactPersons": [
+                {
+                  "ContactID": "CNT-HW-01",
+                  "Name": "Ingrid Garza",
+                  "Role": "Key Account Manager - Hardware Components",
+                  "Email": "igarza@electroparts.mx",
+                  "Phone": "+524449876543"
+                }
+              ],
+              "FinancialData": {
+                "CreditLimit": 1200000.00,
+                "Currency": "MXN",
+                "PaymentTerms": "45_DAYS",
+                "BankDetails": {
+                  "BankName": "BBVA Mexico",
+                  "AccountCLABE": "012580009876543210"
+                }
+              }
+            }
+          },
+          {
+            "event_id": "EVT-MOM-BP-002",
+            "message_type": "BusinessPartnerRoleAssignment",
+            "direction": "ERP_to_MOM",
+            "timestamp": "2026-11-10T08:05:00Z",
+            "description": "Asignación de rol comercial de proveedor de componentes críticos (CPUs, GPUs, RAM, Placas Base) para las computadoras de TechAssembly[cite: 1].",
+            "payload": {
+              "EnterpriseName": "TechAssembly",
+              "BusinessPartnerID": "BP-PROV-COMP-901",
+              "AddedRole": "VENDOR_CRITICAL_COMPONENTS",
+              "PurchasingOrganization": "ORG-TECH-SLP-PURCH",
+              "AssignedCurrency": "USD",
+              "Incoterm": "DDP"
+            }
+          },
+          {
+            "event_id": "EVT-MOM-BP-003",
+            "message_type": "BusinessPartnerStatusUpdate",
+            "direction": "Compliance_to_MOM",
+            "timestamp": "2026-11-10T07:30:00Z",
+            "description": "Actualización de estatus operativo o validación de cumplimiento para recepción de lotes de componentes en TechAssembly[cite: 1].",
+            "payload": {
+              "EnterpriseName": "TechAssembly",
+              "BusinessPartnerID": "BP-PROV-COMP-901",
+              "BlockStatus": false,
+              "BlockReason": "NONE",
+              "BlockedByModule": [],
+              "ModifiedBy": "ULISES.LOREDO"
+            }
+          },
+          {
+            "event_id": "EVT-MOM-BP-004",
+            "message_type": "BusinessPartnerFinancialRiskEvaluation",
+            "direction": "Finance_System_to_MOM",
+            "timestamp": "2026-11-10T09:15:00Z",
+            "description": "Evaluación financiera y ajuste de línea de crédito para proveedor de componentes de computadoras[cite: 1].",
+            "payload": {
+              "EnterpriseName": "TechAssembly",
+              "BusinessPartnerID": "BP-PROV-COMP-901",
+              "PreviousCreditLimit": 1000000.00,
+              "NewCreditLimit": 1500000.00,
+              "RiskScore": "LOW",
+              "EvaluatedBy": "FIN-SYSTEM-AUTO"
+            }
+          },
+          {
+            "event_id": "EVT-MOM-BP-005",
+            "message_type": "BusinessPartnerSyncNotification",
+            "direction": "MOM_to_Legacy_Systems",
+            "timestamp": "2026-11-10T09:20:00Z",
+            "description": "Sincronización de catálogos de socios comerciales con sistemas ERP legados para la línea de ensamblaje de equipos TechAssembly[cite: 1].",
+            "payload": {
+              "EnterpriseName": "TechAssembly",
+              "BusinessPartnerID": "BP-PROV-COMP-901",
+              "LegacyCustomerMapping": "CUS-LEGACY-TECH-01",
+              "LegacyVendorMapping": "VEN-LEGACY-COMP-44",
+              "SyncStatus": "SUCCESS"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

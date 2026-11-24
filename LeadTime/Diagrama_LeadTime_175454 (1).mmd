@@ -1,0 +1,114 @@
+flowchart TB
+    subgraph USR["USUARIO DEL ERP"]
+        direction TB
+        INI((Inicio))
+        U1["Ingresar artículo, cantidad,<br/>fecha requerida y fecha de referencia"]
+        U2["Consultar fechas, desglose<br/>y advertencias"]
+        U3{"¿Solicitar nuevo cálculo?"}
+        FIN((Fin))
+    end
+ 
+    subgraph LT["MÓDULO LEAD TIME — VALIDACIÓN"]
+        direction TB
+        L1["Consultar artículo y datos<br/>de planificación"]
+        L2["Validar identificadores, referencias,<br/>cantidades, unidades y vigencias"]
+        L3{"¿Información íntegra<br/>y suficiente?"}
+        L4["Identificar datos faltantes o inválidos<br/>y marcar NO CALCULABLE"]
+        L5{"¿Tipo de abastecimiento?"}
+    end
+ 
+    subgraph MAT["MATERIALES COMPRADOS"]
+        direction TB
+        M1["Consultar proveedor-material<br/>y plazo vigente RF-01"]
+        M2["Consultar inventario libre,<br/>reservas y recepciones RF-05"]
+        M3["Calcular disponibilidad por fecha<br/>y cantidad faltante"]
+        M4{"¿Hay faltantes<br/>para la fecha necesaria?"}
+        M5["Usar existencias y recepciones<br/>que cubren la necesidad"]
+        M6["Consultar parámetros autorizados<br/>y vigencia RF-02"]
+        M7["Calcular plazo de abastecimiento<br/>sin duplicar transporte,<br/>recepción e inspección RF-04"]
+        M8["Calcular fecha de disponibilidad<br/>y solicitud sugerida RF-03 / RF-07"]
+        M9["Consolidar disponibilidad<br/>de material y detectar retraso RF-06"]
+    end
+ 
+    subgraph FAB["PRODUCTOS INTERNOS"]
+        direction TB
+        P1["Consultar BOM vigente, rutas,<br/>operaciones y dependencias RF-08"]
+        P2{"¿BOM y operaciones<br/>válidas y sin ciclos?"}
+        P3["Identificar componentes comprados<br/>y subconjuntos fabricados"]
+        P4["Evaluar necesidades por nivel BOM<br/>y disponibilidad por operación RF-13"]
+        P5{"¿Existen componentes<br/>no disponibles a tiempo?"}
+        P6["Calcular disponibilidad de faltantes<br/>mediante abastecimiento o fabricación"]
+        P7["Determinar fechas de disponibilidad<br/>de componentes y subconjuntos"]
+        P8["Calcular preparación y proceso<br/>por lote y recursos RF-09"]
+        P9["Evaluar precedencias, secuencias<br/>y operaciones paralelas RF-10"]
+        P10["Calcular fecha estimada de fin<br/>y fecha sugerida de inicio RF-11 / RF-12"]
+        P11["Detectar retrasos por materiales<br/>y fabricación RF-14"]
+    end
+ 
+    subgraph RES["MÓDULO LEAD TIME — RESULTADOS"]
+        direction TB
+        R1["Aplicar calendarios laborales,<br/>turnos, festivos y conversiones"]
+        R2["Consolidar duración y fechas<br/>estimadas de disponibilidad"]
+        R3{"¿Se cumple<br/>la fecha requerida?"}
+        R4["Marcar planificación viable"]
+        R5["Generar advertencia de retraso"]
+        R6["Mostrar desglose de tiempos,<br/>faltantes y advertencias RF-15"]
+        R7["Distinguir fechas estimadas,<br/>confirmadas y reales"]
+        R8["Guardar resultado, versión,<br/>calendario y trazabilidad"]
+        R9["Recalcular con parámetros vigentes<br/>sin sobrescribir historial RF-16"]
+    end
+ 
+    subgraph EXT["DATOS DE OTROS MÓDULOS MRP"]
+        direction TB
+        X1[("Catálogo de artículos")]
+        X2[("Compras y proveedores")]
+        X3[("Inventarios y recepciones")]
+        X4[("BOM, rutas y operaciones")]
+        X5[("Calendarios laborales")]
+    end
+ 
+    INI --> U1 --> L1 --> L2 --> L3
+    X1 -.-> L1
+    L3 -- No --> L4 --> R6
+    L3 -- Sí --> L5
+ 
+    L5 -- Comprado --> M1
+    X2 -.-> M1
+    M1 --> M2 --> M3 --> M4
+    X3 -.-> M2
+    M4 -- No --> M5 --> M9
+    M4 -- Sí --> M6 --> M7 --> M8 --> M9
+    X2 -.-> M6
+    M9 --> R1
+ 
+    L5 -- Fabricado --> P1
+    X4 -.-> P1
+    P1 --> P2
+    P2 -- No --> L4
+    P2 -- Sí --> P3 --> P4 --> P5
+    X3 -.-> P4
+    P5 -- Sí --> P6 --> P7
+    P5 -- No --> P7
+    P7 --> P8 --> P9 --> P10 --> P11
+    P11 --> R1
+ 
+    R1 --> R2 --> R3
+    X5 -.-> R1
+    R3 -- Sí --> R4 --> R6
+    R3 -- No --> R5 --> R6
+    R6 --> R7 --> R8 --> U2
+    U2 --> U3
+    U3 -- No --> FIN
+    U3 -- Sí --> R9 --> L1
+ 
+    classDef evento fill:#d9f3e4,stroke:#258451,color:#145335
+    classDef tarea fill:#e8f0ff,stroke:#4e79b5,color:#183b66
+    classDef decision fill:#fff0ca,stroke:#bf891c,color:#60430b
+    classDef error fill:#fbe1e1,stroke:#bd4545,color:#722929
+    classDef datos fill:#f0eaff,stroke:#8565b1,color:#483268
+ 
+    class INI,FIN evento
+    class L3,L5,M4,P2,P5,R3,U3 decision
+    class L4,R5 error
+    class X1,X2,X3,X4,X5 datos
+    class U1,U2,L1,L2,M1,M2,M3,M5,M6,M7,M8,M9,P1,P3,P4,P6,P7,P8,P9,P10,P11,R1,R2,R4,R6,R7,R8,R9 tarea

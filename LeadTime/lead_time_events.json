@@ -1,0 +1,82 @@
+[
+  {
+    "id": "EVT-001",
+    "flujo": "materiales",
+    "evento": "ARR_MUELLE",
+    "sku": "MOTHERBOARD-X570",
+    "timestamp": "2026-11-10T08:00:00Z",
+    "descripcion": "Llegada de tarjetas madre a la planta"
+  },
+  {
+    "id": "EVT-002",
+    "flujo": "materiales",
+    "evento": "INICIO_ESPERA",
+    "sku": "MOTHERBOARD-X570",
+    "timestamp": "2026-11-10T08:20:00Z",
+    "descripcion": "Inicio de descarga en muelle"
+  },
+  {
+    "id": "EVT-003",
+    "flujo": "materiales",
+    "evento": "INICIO_INSPECCION",
+    "sku": "MOTHERBOARD-X570",
+    "timestamp": "2026-11-10T09:00:00Z",
+    "descripcion": "Ingreso a laboratorio de calidad"
+  },
+  {
+    "id": "EVT-004",
+    "flujo": "materiales",
+    "evento": "FIN_INSPECCION",
+    "sku": "MOTHERBOARD-X570",
+    "timestamp": "2026-11-10T10:30:00Z",
+    "descripcion": "Lote aprobado por calidad"
+  },
+  {
+    "id": "EVT-005",
+    "flujo": "materiales",
+    "evento": "DISPONIBLE_MRP",
+    "sku": "MOTHERBOARD-X570",
+    "timestamp": "2026-11-10T11:00:00Z",
+    "descripcion": "Ingreso al almacén e impacto en el MRP"
+  },
+  {
+    "id": "EVT-006",
+    "flujo": "productos_internos",
+    "evento": "INICIO_SETUP",
+    "sku": "PC-GAMER-MOD-X",
+    "timestamp": "2026-11-10T13:00:00Z",
+    "descripcion": "Preparación de la línea de ensamble"
+  },
+  {
+    "id": "EVT-007",
+    "flujo": "productos_internos",
+    "evento": "INICIO_PROCESAMIENTO",
+    "sku": "PC-GAMER-MOD-X",
+    "timestamp": "2026-11-10T13:30:00Z",
+    "descripcion": "Montaje físico de componentes"
+  },
+  {
+    "id": "EVT-008",
+    "flujo": "productos_internos",
+    "evento": "INICIO_TRANSITO",
+    "sku": "PC-GAMER-MOD-X",
+    "timestamp": "2026-11-10T15:00:00Z",
+    "descripcion": "Envío por banda hacia estación de pruebas"
+  },
+  {
+    "id": "EVT-009",
+    "flujo": "productos_internos",
+    "evento": "FIN_TRANSITO",
+    "sku": "PC-GAMER-MOD-X",
+    "timestamp": "2026-11-10T15:12:00Z",
+    "descripcion": "Conexión en racks de pruebas"
+  },
+  {
+    "id": "EVT-010",
+    "flujo": "productos_internos",
+    "evento": "PRODUCTO_TERMINADO",
+    "sku": "PC-GAMER-MOD-X",
+    "timestamp": "2026-11-10T18:30:00Z",
+    "descripcion": "Pruebas superadas, empaque y fin de producción"
+  }
+]

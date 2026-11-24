@@ -1,0 +1,45 @@
+name: Rutas Neo4j Graph CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_quantity:
+        description: "Cantidad de Gaming PCs a fabricar"
+        required: true
+        default: "30"
+  push:
+    branches:
+      - "feature/178920"
+    paths:
+      - "Rutas/**"
+      - ".github/workflows/rutas_neo4j_178920.yml"
+
+jobs:
+  neo4j-rutas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      ORDER_QUANTITY: ${{ github.event.inputs.order_quantity || '30' }}
+      NEO4J_URI: ${{ secrets.NEO4J_URI }}
+      NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+      NEO4J_USER: ${{ secrets.NEO4J_USERNAME }}
+      NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install neo4j python-dotenv
+
+      - name: Run Rutas Graph Script
+        run: |
+          python Rutas/neo4j_rutas.py

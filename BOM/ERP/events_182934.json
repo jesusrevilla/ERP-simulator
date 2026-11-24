@@ -1,0 +1,211 @@
+{
+  "empresa": {
+    "nombre": "TechAssembly S.A.",
+    "lineas_departamentos": [
+      {
+        "id_departamento": "DEP-ING-MFG",
+        "nombre": "Departamento de Ingeniería de Manufactura",
+        "nivel_isa95": "Nivel 4 (Gestión de Datos PLM/MRP)",
+        "maquinas_empleados": [
+          {
+            "tipo": "empleado",
+            "id": "EMP-701",
+            "nombre": "Ingeniero de Producto",
+            "eventos_bom_mrp": [
+              {
+                "id_evento": "EVT-BOM-101",
+                "timestamp": "2026-11-10T08:00:00Z",
+                "tipo_evento": "CreacionEncabezadoBOM",
+                "descripcion": "Alta de la cabecera de la lista de materiales vinculada al SKU de Producto Terminado PT-GAMING-PC ('Gaming PC').",
+                "modifica_bom": true,
+                "detona_mrp": false,
+                "referencia_documento": "RF-01.1 / RN-01"
+              },
+              {
+                "id_evento": "EVT-BOM-102",
+                "timestamp": "2026-11-10T08:15:30Z",
+                "tipo_evento": "AsignacionMateriasPrimas",
+                "descripcion": "Adición de los componentes base al BOM del Gaming PC: CPU Ryzen 7, Motherboard B650, RAM 16GB DDR5, SSD 1TB NVMe, Power Supply 750W y Graphics Card RTX.",
+                "modifica_bom": true,
+                "detona_mrp": false,
+                "referencia_documento": "RF-01.2 / RN-02"
+              },
+              {
+                "id_evento": "EVT-BOM-103",
+                "timestamp": "2026-11-10T08:30:15Z",
+                "tipo_evento": "ErrorIncompatibilidad_UOM",
+                "descripcion": "Intento fallido de agregar pasta térmica en 'Metros'. El sistema bloquea el cambio porque la unidad base en el catálogo es 'Gramos'.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RN-04 / PU-BOM-007"
+              },
+              {
+                "id_evento": "EVT-BOM-104",
+                "timestamp": "2026-11-10T08:45:00Z",
+                "tipo_evento": "ErrorGrafoAciclico_DAG",
+                "descripcion": "El sistema rechaza la operación al intentar agregar el 'Gaming PC' como componente hijo de su propio subensamble de enfriamiento (referencia circular).",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-04.1 / RN-13"
+              },
+              {
+                "id_evento": "EVT-BOM-105",
+                "timestamp": "2026-11-10T09:10:00Z",
+                "tipo_evento": "ErrorTipoArticulo_MP_Padre",
+                "descripcion": "El ingeniero intenta crear un BOM usando el 'SSD 1TB NVMe' como encabezado. Rechazado porque una Materia Prima no puede tener una lista de materiales.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-04.3 / RN-15"
+              },
+              {
+                "id_evento": "EVT-BOM-106",
+                "timestamp": "2026-11-10T09:30:00Z",
+                "tipo_evento": "Transicion_BorradorActivo",
+                "descripcion": "La estructura del 'Gaming PC' se aprueba y pasa a estado 'Activo', habilitando el cálculo de requerimientos para el MRP.",
+                "modifica_bom": true,
+                "detona_mrp": true,
+                "referencia_documento": "RF-02.2 / RN-07"
+              },
+              {
+                "id_evento": "EVT-BOM-107",
+                "timestamp": "2026-11-10T14:00:00Z",
+                "tipo_evento": "ClonacionBOM_ECO",
+                "descripcion": "Se duplica el BOM activo hacia la versión v1.1 en estado Borrador para gestionar un cambio de ingeniería (sustituir la RAM 16GB DDR5 por un nuevo proveedor).",
+                "modifica_bom": true,
+                "detona_mrp": false,
+                "referencia_documento": "RF-02.4 / RN-09"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id_departamento": "DEP-PLANIFICACION",
+        "nombre": "Planificación y Control de Producción",
+        "nivel_isa95": "Nivel 4 (Sistema MRP)",
+        "maquinas_empleados": [
+          {
+            "tipo": "empleado",
+            "id": "EMP-204",
+            "nombre": "Planificador Master (MPS)",
+            "eventos_bom_mrp": [
+              {
+                "id_evento": "EVT-MRP-201",
+                "timestamp": "2026-11-10T10:00:00Z",
+                "tipo_evento": "ExplosionMateriales_MRP",
+                "descripcion": "Ingresa un pedido de 50 unidades de 'Gaming PC'. El MRP explota la receta y genera órdenes de compra de 50 'CPU Ryzen 7' y 50 'Graphics Card RTX'.",
+                "modifica_bom": false,
+                "detona_mrp": true,
+                "referencia_documento": "Funciones Principales MRP"
+              },
+              {
+                "id_evento": "EVT-MRP-202",
+                "timestamp": "2026-11-10T10:30:00Z",
+                "tipo_evento": "Calculo_CostoEstandar_Arbol",
+                "descripcion": "El sistema suma el costo individual de la Motherboard B650, RAM 16GB DDR5, CPU Ryzen 7 y el resto de los componentes para determinar el costo estándar del Gaming PC.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-03.2 / RN-11"
+              },
+              {
+                "id_evento": "EVT-MRP-203",
+                "timestamp": "2026-11-10T11:15:22Z",
+                "tipo_evento": "Consulta_WhereUsed",
+                "descripcion": "Alerta de retraso portuario para el 'SSD 1TB NVMe'. El planificador ejecuta una consulta inversa (Implosión) para ver qué otras computadoras además del Gaming PC están afectadas.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-03.3 / RN-12"
+              },
+              {
+                "id_evento": "EVT-MRP-204",
+                "timestamp": "2026-11-10T11:45:00Z",
+                "tipo_evento": "Generacion_SummarizedBOM",
+                "descripcion": "El sistema genera una vista aplanada colapsando subensambles para consolidar todos los tornillos y consumibles compartidos en una sola línea de compra.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-03.1 / RN-10"
+              },
+              {
+                "id_evento": "EVT-MRP-205",
+                "timestamp": "2026-11-10T12:30:00Z",
+                "tipo_evento": "Reprogramacion_RetrasoProveedor",
+                "descripcion": "El proveedor de la 'Power Supply 750W' actualiza su tiempo de entrega (Lead Time). El MRP se ejecuta nuevamente para retrasar las órdenes de fabricación del Gaming PC.",
+                "modifica_bom": false,
+                "detona_mrp": true,
+                "referencia_documento": "Funciones Principales MRP"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id_departamento": "LINEA-ENSAMBLE-PC",
+        "nombre": "Línea de Ensamble de Equipos",
+        "nivel_isa95": "Nivel 3 (Sistemas MES / Control de Piso)",
+        "maquinas_empleados": [
+          {
+            "tipo": "empleado",
+            "id": "EMP-405",
+            "nombre": "Operador de Línea",
+            "eventos_bom_mrp": [
+              {
+                "id_evento": "EVT-MES-301",
+                "timestamp": "2026-11-10T13:10:00Z",
+                "tipo_evento": "BloqueoEdicionBOM_Activo",
+                "descripcion": "El operador intenta cambiar la cantidad requerida de 'Motherboard B650' directamente en el sistema de piso. Bloqueado por inmutabilidad de BOM activo.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "RF-04.2 / RN-14"
+              },
+              {
+                "id_evento": "EVT-MES-302",
+                "timestamp": "2026-11-10T14:20:00Z",
+                "tipo_evento": "Consumo_SubensambleFantasma",
+                "descripcion": "Se ensambla un módulo de enfriamiento líquido catalogado como 'Phantom Assembly'. El sistema descuenta los tubos y líquidos directamente, sin buscar el subensamble en inventario.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "Glosario - Phantom Assembly"
+              },
+              {
+                "id_evento": "EVT-MES-303",
+                "timestamp": "2026-11-10T15:05:00Z",
+                "tipo_evento": "DeclaracionMerma_ScrapExcedido",
+                "descripcion": "Se dañan los pines de un 'CPU Ryzen 7'. El operador registra la merma, lo que detona una ejecución neta del MRP para pedir un reemplazo urgente.",
+                "modifica_bom": false,
+                "detona_mrp": true,
+                "referencia_documento": "RN-03 / Glosario - Merma"
+              },
+              {
+                "id_evento": "EVT-MES-304",
+                "timestamp": "2026-11-10T15:50:30Z",
+                "tipo_evento": "ReporteFaltanteLinea_Starvation",
+                "descripcion": "Faltante físico de la 'Graphics Card RTX' en la estación de trabajo a pesar de que el sistema marcaba existencias. Activa una alerta crítica al almacén y al MRP.",
+                "modifica_bom": false,
+                "detona_mrp": true,
+                "referencia_documento": "Integridad Referencial y MRP"
+              },
+              {
+                "id_evento": "EVT-MES-305",
+                "timestamp": "2026-11-10T16:30:00Z",
+                "tipo_evento": "Registro_TerminoEnsamble_Backflushing",
+                "descripcion": "Se notifica el empaquetado final de un lote de 'Gaming PC'. El sistema deduce automáticamente el inventario de la 'RAM 16GB DDR5', 'SSD 1TB NVMe' y todos los componentes definidos en el BOM.",
+                "modifica_bom": false,
+                "detona_mrp": true,
+                "referencia_documento": "Glosario - Backflushing"
+              },
+              {
+                "id_evento": "EVT-MES-306",
+                "timestamp": "2026-11-10T17:15:00Z",
+                "tipo_evento": "BloqueoBorrado_IntegridadReferencial",
+                "descripcion": "Intento de eliminar físicamente la versión del BOM desde el panel de control. El sistema prohíbe el borrado porque el BOM está vinculado a las órdenes de producción del Gaming PC que acaban de ensamblarse.",
+                "modifica_bom": false,
+                "detona_mrp": false,
+                "referencia_documento": "Integridad Referencial 3 / PU-BOM-022"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "empresa": "Empresa",
+  "producto": "PC Gaming",
+  "tema_principal": "Lead Time (Tiempo de Entrega y Ciclo de Produccion)",
+  "estandar": "ISA-95 (Jerarquia de Niveles de Manufactura)",
+  "descripcion_proceso": "Trazabilidad completa del Lead Time: desde la recepcion de la orden de compra de la PC Gaming, revision de stock, tiempo de fabricacion y entrega final al cliente.",
+  "niveles_isa_95": [
+    {
+      "nivel": 4,
+      "nombre": "Planificacion de Negocio y Logistica (ERP)",
+      "eventos": [
+        {
+          "id_evento": "EVT-N4-01",
+          "nombre": "Recepcion de Orden de Compra (OC)",
+          "descripcion": "Ingreso de la orden de compra del cliente para ensamble de PC Gaming.",
+          "timestamp": "2026-11-10T08:00:00"
+        },
+        {
+          "id_evento": "EVT-N4-02",
+          "nombre": "Verificacion de Stock y Disponibilidad de Componentes",
+          "descripcion": "Consulta en ERP de inventario de tarjetas graficas, procesadores y memoria RAM.",
+          "timestamp": "2026-11-10T08:05:15"
+        }
+      ]
+    },
+    {
+      "nivel": 3,
+      "nombre": "Gestion de Operaciones de Manufactura (MES)",
+      "eventos": [
+        {
+          "id_evento": "EVT-N3-01",
+          "nombre": "Liberacion de Orden de Produccion al Piso",
+          "descripcion": "Asignacion del lote de PC Gaming a la linea de produccion activa.",
+          "timestamp": "2026-11-10T08:15:00"
+        },
+        {
+          "id_evento": "EVT-N3-02",
+          "nombre": "Inicio de Conteo de Lead Time de Produccion",
+          "descripcion": "Registro del tiempo de inicio de ciclo para la fabricacion y pruebas.",
+          "timestamp": "2026-11-10T08:30:00"
+        },
+        {
+          "id_evento": "EVT-N3-03",
+          "nombre": "Fin de Produccion y Control de Calidad",
+          "descripcion": "Termino del ensamble y aprobacion de pruebas de estres termico de la PC Gaming.",
+          "timestamp": "2026-11-10T11:30:00"
+        }
+      ]
+    },
+    {
+      "nivel": 2,
+      "nombre": "Control de Supervision (SCADA / HMI)",
+      "eventos": [
+        {
+          "id_evento": "EVT-N2-01",
+          "nombre": "Monitoreo de Ciclo en Estacion de Ensamble",
+          "descripcion": "Supervision en pantalla HMI del tiempo empleado en la instalacion de componentes criticos.",
+          "timestamp": "2026-11-10T08:45:00"
+        }
+      ]
+    },
+    {
+      "nivel": 1,
+      "nombre": "Control Basico (PLC / Sensores)",
+      "eventos": [
+        {
+          "id_evento": "EVT-N1-01",
+          "nombre": "Registro de Tiempos de Atornillado y Torque",
+          "descripcion": "Captura automatica por sensor del tiempo de fijacion de tarjeta madre.",
+          "timestamp": "2026-11-10T08:40:10"
+        }
+      ]
+    },
+    {
+      "nivel": 0,
+      "nombre": "Proceso Fisico",
+      "eventos": [
+        {
+          "id_evento": "EVT-N0-01",
+          "nombre": "Empaque y Preparacion para Envio",
+          "descripcion": "Fin del Lead Time total con la PC Gaming empacada y lista para despacho logistico.",
+          "timestamp": "2026-11-10T12:00:00"
+        }
+      ]
+    }
+  ]
+}

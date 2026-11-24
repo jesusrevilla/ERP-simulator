@@ -1,0 +1,26 @@
+[
+    {
+        "timestamp": "2026-11-10T08:00:00",
+        "producto": "Computadora",
+        "evento": "Ingreso de pedido de venta",
+        "comentario": "Se ingresa un pedido de venta para el producto final, generando la necesidad bruta en el sistema."
+    },
+    {
+        "timestamp": "2026-11-10T08:15:00",
+        "producto": "Computadora",
+        "evento": "Inicio de corrida del MRP",
+        "comentario": "El MRP genera el árbol completo de recomendaciones y órdenes, escalonando fechas según el lead time anidado de los componentes."
+    },
+    {
+        "timestamp": "2026-11-10T08:16:30",
+        "producto": "Computadora",
+        "evento": "Cálculo de Lead Time retroactivo y Alerta",
+        "comentario": "El cálculo del lead time arroja una fecha de inicio retroactiva debido a escasez de tiempo operativo. Se emite alerta de quiebre de inventario."
+    },
+    {
+        "timestamp": "2026-11-10T08:17:00",
+        "producto": "Computadora",
+        "evento": "Reprogramación de orden (Urgencia)",
+        "comentario": "Como el sistema MRP no puede programar en el pasado, la orden se programa para el día actual y se etiqueta con estatus de urgencia o retraso proyectado."
+    }
+]

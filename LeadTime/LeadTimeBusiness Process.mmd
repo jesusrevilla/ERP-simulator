@@ -1,0 +1,79 @@
+graph TD
+    %% Estilos Globales
+    classDef pool fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef event fill:#ffe6cc,stroke:#d79b00,stroke-width:2px;
+    classDef activity fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px;
+    classDef gateway fill:#fff2cc,stroke:#d6b656,stroke-width:2px;
+    classDef data fill:#f5f5f5,stroke:#666,stroke-width:1px,stroke-dasharray: 5 5;
+
+    %% Proceso Principal: Gestión de Lead Time
+    subgraph Sistema_Lead_Time [Proceso de Gestión y Optimización de Plazo de Entrega]
+        
+        %% Evento de Inicio
+        Inicio([Inicios de Cálculo/Abastecimiento]):::event
+
+        %% Flujo de Abastecimiento Externo (Materiales)
+        subgraph Abastecimiento_Externo [Abastecimiento de Materiales Externos]
+            RF01[RF-01: Capturar tiempo desde Orden de Compra hasta Recepción]:::activity
+            RN01_Check{¿Lead Time extranjero > 30 días?}:::gateway
+            Costo_Check{"¿Diferencia de costo local < 10%?"}:::gateway
+            Sugerir_Local[RN-01: Sugerir Alternativa Local automáticamente]:::activity
+        end
+
+        %% Flujo de Producción Interna (Productos)
+        subgraph Producción_Interna [Fabricación de Productos Internos]
+            RF02[RF-02: Calcular Lead Time de Fabricación <br> Setup + Procesamiento + Tránsito]:::activity
+            RN02[RN-02: Aplicar Factor de Eficiencia de Planta Semanal]:::activity
+            Validar_Dominio{¿Lead Time > 0?}:::gateway
+            Error_Validacion[Prueba UT-02: Lanzar Excepción Controlada]:::activity
+        end
+
+        %% Control de Desviaciones y Aprobación
+        subgraph Control_y_Aprobaciones [Control de Desviaciones y Sincronización]
+            RF03{RF-03: ¿Lead Time real > umbral histórico / óptimo?}:::gateway
+            Alerta[Emitir Notificación Automática de Desviación]:::activity
+            RN03_Check{"¿Incremento manual > 15% en Lead Time Maestro?"}:::gateway
+            PF02_Rol{¿Rol de Operador?}:::gateway
+            Denegar[Denegar Acceso]:::activity
+            Aprobacion[RN-03 / PF-02: Flujo de Aprobación Digital del Gerente de Operaciones]:::activity
+            RF04[RF-04: Sincronizar con MRP para ajustar fechas]:::activity
+        end
+
+        %% Evento de Fin
+        Fin([Fin del Proceso / Datos Actualizados]):::event
+
+    end
+
+    %% Base de Datos / Catálogo (Integridad de Datos)
+    Catalogo[(Catálogo Maestro de Artículos <br> SKU / ID Único)]:::data
+
+    %% Conexiones de Flujo
+    Inicio --> RF01
+    Inicio --> RF02
+
+    %% Flujo Abastecimiento
+    RF01 --> RN01_Check
+    RN01_Check -- Sí --> Costo_Check
+    RN01_Check -- No --> RF03
+    Costo_Check -- Sí --> Sugerir_Local --> RF03
+    Costo_Check -- No --> RF03
+
+    %% Flujo Producción
+    RF02 --> RN02 --> Validar_Dominio
+    Validar_Dominio -- Sí --> RF03
+    Validar_Dominio -- No --> Error_Validacion --> Fin
+
+    %% Flujo Control, Alertas y Aprobación
+    RF03 -- Sí --> Alerta --> RN03_Check
+    RF03 -- No --> RN03_Check
+
+    RN03_Check -- Sí --> PF02_Rol
+    RN03_Check -- No --> RF04
+
+    PF02_Rol -- Sí --> Denegar --> Fin
+    PF02_Rol -- No / Es Gerente --> Aprobacion --> RF04
+
+    RF04 --> Fin
+
+    %% Relaciones de Integridad Referencial
+    RF02 -.-> |Integridad Referencial: Verificar Activo| Catalogo

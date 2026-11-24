@@ -1,0 +1,154 @@
+================================================================================
+AGENTES 
+--------------------------------------------------------------------------------
+AGENTE 1: "SKU SENTINEL & DATA STEWARD" (Clasificador, Deduplicador y Sustitutos)
+--------------------------------------------------------------------------------
+1. Resumen y Objetivo:
+Es el filtro inteligente de entrada y calidad del catalogo maestro (Item_Master). 
+Evita que un componente se de de alta duplicado con distinto nombre (ej. 
+"Memoria Kingston Fury 16 GB DDR5" vs "RAM DDR5 16GB Kingston Fury") o con 
+datos inconsistentes (precio menor al costo o unidad de medida invalida). 
+Ademas, cuando un articulo critico se agota, busca automaticamente componentes 
+compatibles y sustitutos en el grafo de productos.
+
+2. Funcionamiento en Tres Fases:
+- Fase 1 - Deduplicacion y Clasificacion Estructural: Al intentar dar de alta 
+  o modificar un SKU, evalua sus atributos tecnicos contra el catalogo vigente. 
+  Si detecta coincidencia estructural en sus propiedades clave, bloquea el alta 
+  duplicada y sugiere el SKU existente, protegiendo la regla de clave irrepetible.
+- Fase 2 - Validacion de Reglas de Integridad del Maestro: Verifica la coherencia 
+  entre los campos del articulo (ItemType, UnitOfMeasure, ListPrice >= 
+  StandardCost, y SafetyStock > 0 para componentes criticos).
+- Fase 3 - Recomendacion de Sustitutos y Segmentacion ABC: Si un componente 
+  (ej. SSD 1TB NVMe) no tiene existencias, recorre el grafo de compatibilidad en 
+  Neo4j (:Item)-[:COMPATIBLE_WITH]->(:Item) para encontrar el reemplazo mas 
+  cercano compatible con la Motherboard y con stock disponible. Asimismo, 
+  clasifica los articulos por criticidad y rotacion en el catalogo.
+
+3. Algoritmos Aplicados (Parciales 1 y 2):
+- Satisfaccion de Restricciones (CSP) con Consistencia de Nodo y AC-3: Para 
+  validar dominios de atributos tecnicos, evitar duplicados por equivalencia de 
+  atributos y asegurar coherencia entre precios, costos y unidades de medida.
+- Busqueda en Anchura (BFS) y Busqueda Voraz (Greedy Best-First Search): Para 
+  recorrer el grafo de compatibilidad y sustitucion en Neo4j, encontrando el 
+  componente sustituto compatible mas cercano con inventario disponible.
+
+4. Propuesta de Mejora al Esquema de Datos:
+- Agregar al esquema JSON / tabla Item_Master el objeto estructurado 
+  "atributosTecnicos" con campos normalizados (marca, modelo, capacidad, tipo; 
+  ej. {"marca": "Kingston", "capacidad": "16GB", "tipo": "DDR5"}) junto con los 
+  campos "Category" y "SubstituteGroup". Esto permite al CSP comparar atributos 
+  exactos en lugar de depender solo de texto libre, y automatiza la creacion 
+  de relaciones en Neo4j.
+
+--------------------------------------------------------------------------------
+AGENTE 2: "ITEMMASTER GUARDIAN & INVENTORY OPTIMIZER"
+--------------------------------------------------------------------------------
+1. Resumen y Objetivo:
+Agente hibrido autonomo que opera de forma ciclica en segundo plano y ante 
+eventos transaccionales. Su proposito es supervisar la integridad logica de 
+los articulos dentro de las estructuras de materiales (BOM) y calibrar de 
+forma optima los niveles de inventario para anticiparse a rupturas de stock o 
+bloqueos por inventario negativo.
+
+2. Arquitectura de Funcionamiento:
+- Sub-agente Supervisor de Estructuras (Simbolico-Logico): Monitorea la 
+  integridad de los SKUs y sus relaciones dentro de las estructuras de 
+  ensamble (CPU Ryzen 7, Motherboard B650, RAM, SSD, PSU y GPU), asegurando que 
+  ningun articulo inactivo u obsoleto sea utilizado en movimientos nuevos y que 
+  no existan dependencias circulares en los subensambles.
+- Sub-agente Optimizador de Umbrales de Stock: Evalua continuamente el 
+  comportamiento de entradas y salidas para ajustar los puntos de reorden y 
+  alertar antes de que el inventario llegue a cero critico.
+
+3. Algoritmos Aplicados (Parciales 1 y 2):
+- Agentes Basados en Conocimiento y Model Checking (Logica Proposicional): Para 
+  evaluar reglas de negocio booleanas sobre el estado del articulo (Activo, 
+  Obsoleto, Bloqueado) y la validez de las transacciones.
+- Busqueda en Profundidad (DFS): Para rastrear dependencias directas e 
+  indirectas de un articulo antes de permitir su modificacion o baja en el 
+  catalogo maestro.
+- Busqueda Local y Optimizacion (Hill Climbing con Restricciones de Lead Time): 
+  Para ajustar incrementalmente los umbrales de alerta temprana de stock y 
+  minimizar el riesgo de desabasto.
+
+4. Propuesta de Mejora al Esquema de Datos:
+- Incorporar en el esquema JSON de los items la propiedad explicita 
+  "UmbralAlertaTemprana" (EarlyWarningThreshold), permitiendo al agente 
+  disparar alertas preventivas de reabastecimiento antes de tocar el SafetyStock.
+
+--------------------------------------------------------------------------------
+AGENTE 3: "WAREHOUSE TRANSFER PLANNER" (Planificador de Transferencias)
+--------------------------------------------------------------------------------
+1. Resumen y Objetivo:
+En el sistema ERP, el stock se gestiona por almacen (Inventory_Stock con 
+restriccion QuantityAvailable >= 0). Actualmente, si un almacen no cubre una 
+salida solicitada, el flujo BPMN bloquea la operacion por la regla de "Cero 
+Inventario Negativo", aunque exista stock excedente en otro almacen. Este 
+agente busca automaticamente la secuencia optima de transferencias internas 
+para cubrir la demanda sin violar el SafetyStock de ningun almacen.
+
+2. Arquitectura de Funcionamiento:
+- Sub-agente Planificador de Transferencias: Modela la distribucion de inventario 
+  como un espacio de estados (cantidad de cada ItemCode por almacen). Evalua 
+  acciones de transferencia ("Mover X piezas de Almacen A a Almacen B") para 
+  abastecer el almacen destino al menor costo y numero de movimientos.
+- Sub-agente Validador del Plan: Verifica que cada paso propuesto mantenga los 
+  saldos por encima del SafetyStock y confirme que el almacen destino este 
+  activo (cumpliendo la compuerta "Validar Almacen Destino Activo" del diagrama).
+
+3. Algoritmos Aplicados (Parciales 1 y 2):
+- Busqueda Informada A*: Utiliza como funcion heuristica h(n) la cantidad de 
+  piezas faltantes en el almacen solicitante y como costo g(n) el costo/tiempo 
+  de traslado entre almacenes.
+- Busqueda de Costo Uniforme (UCS): Para comparar y garantizar la ruta de 
+  transferencia de menor costo operativo cuando existen multiples almacenes 
+  con excedente.
+
+4. Propuesta de Mejora al Esquema de Datos:
+- Crear la tabla maestra "Warehouse_Route" con los atributos (AlmacenOrigen, 
+  AlmacenDestino, TiempoTraslado, CostoTraslado) para alimentar la funcion de 
+  costo real de los algoritmos A* y UCS.
+
+--------------------------------------------------------------------------------
+AGENTE 4: "AIGCI - EJECUTOR TRANSACCIONAL Y CONTROL DE INTEGRIDAD ACID"
+--------------------------------------------------------------------------------
+1. Resumen y Objetivo:
+Actua como el motor de ejecucion y auditoria en la capa inferior del diagrama 
+BPMN ("Sistema ERP - Reglas e Integridad"). Consolida las decisiones tomadas 
+por los agentes anteriores para ejecutar fisica y contablemente las Entradas, 
+Salidas y Transferencias de mercancia bajo propiedades estrictas ACID.
+
+2. Funcionamiento en Cinco Etapas (Alineado al Diagrama BPMN):
+1. Recepcion de solicitud: Captura tipo de movimiento, SKU, cantidad, almacen 
+   origen y almacen destino.
+2. Validacion de estado del articulo: Consulta Item_Master para verificar que 
+   el SKU este activo y no obsoleto/suspendido.
+3. Evaluacion de condiciones de movimiento:
+   - Entrada: Verifica datos de mercancia, lotes y numeros de serie.
+   - Salida: Verifica que Stock Actual >= Cantidad Solicitada.
+   - Transferencia: Verifica existencias en origen y estado activo en destino.
+4. Ejecucion atomica (COMMIT / ROLLBACK): Actualiza los saldos de inventario 
+   solo si todas las restricciones se cumplen; de lo contrario, bloquea la 
+   operacion ("Fin Rechazado") evitando inventario negativo.
+5. Registro y auditoria: Persiste la transaccion en Inventory_Movements e 
+   Inventory_Transaction registrando saldo anterior, saldo nuevo, usuario y fecha.
+
+3. Algoritmos Aplicados (Parciales 1 y 2):
+- Busqueda en Espacio de Estados con Verificacion de Restricciones (State-Space 
+  Validation): Modela la transaccion como una transicion entre estados validos 
+  de la base de datos; ante la violacion de cualquier invariante (ej. stock < 0), 
+  ejecuta un retroceso inmediato (ROLLBACK) para preservar la consistencia.
+
+--------------------------------------------------------------------------------
+RESUMEN DE ALGORITMOS POR AGENTE (ALINEACION CON PARCIALES 1 Y 2)
+--------------------------------------------------------------------------------
+* Agente 1 (SKU Sentinel & Data Steward): CSP (Node Consistency + AC-3) y 
+  Busqueda en Grafos (BFS / Greedy Best-First Search en Neo4j).
+* Agente 2 (ItemMaster Guardian): Logica Proposicional (Model Checking), 
+  Busqueda en Profundidad (DFS) y Busqueda Local (Hill Climbing).
+* Agente 3 (Warehouse Transfer Planner): Busqueda Informada (A*) y Busqueda de 
+  Costo Uniforme (UCS).
+* Agente 4 (AIGCI - Control Transaccional): Validacion en Espacio de Estados y 
+  Satisfaccion de Restricciones Transaccionales (ACID).
+================================================================================

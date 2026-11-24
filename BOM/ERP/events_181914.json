@@ -1,0 +1,151 @@
+{
+  "domain": "Bill of Materials",
+  "industry": "Ensamble de computadoras",
+  "timestampFormat": "ISO 8601 UTC",
+  "events": [
+    {
+      "id": 1,
+      "eventType": "BOM.Created",
+      "description": "Cabecera de la BOM de un equipo (laptop, desktop) con código, versión, cantidad base y unidad",
+      "reference": "P3: RF01, RN01",
+      "isa95Verb": "Sync",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "createdAt"]
+    },
+    {
+      "id": 2,
+      "eventType": "BOM.TypeAssigned",
+      "description": "Tipo de BOM: Sales, Assembly, Template o Production (ej. kit de accesorios con mouse, USB y mochila)",
+      "reference": "TB1000: Case Study Non-Production BOM, Tasks 1, 3 y 4",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "assignedAt"]
+    },
+    {
+      "id": 3,
+      "eventType": "BOM.ComponentChanged",
+      "description": "Alta, cambio o baja de un componente (placa madre, CPU, RAM, SSD, batería, tornillos) con cantidad, unidad y merma",
+      "reference": "P3: RF02, RN04, RN08",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "modifiedAt"]
+    },
+    {
+      "id": 4,
+      "eventType": "BOM.ValidationFailed",
+      "description": "Cantidad no positiva, unidad incompatible, componente duplicado o ciclo en la estructura",
+      "reference": "P3: RF04, RN02, RN03, RN04, PF02",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "validatedAt"]
+    },
+    {
+      "id": 5,
+      "eventType": "BOM.ApprovalRequested",
+      "description": "Ingeniería guarda el borrador y solicita aprobación a producción",
+      "reference": "P3: PF01",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "requestedAt"]
+    },
+    {
+      "id": 6,
+      "eventType": "BOM.Approved",
+      "description": "Versión aprobada por producción, con su vigencia (inicio incluido, fin excluido)",
+      "reference": "P3: RF05, RN05, RN06",
+      "isa95Verb": "Sync",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "approvedAt", "effectiveFrom", "effectiveTo"]
+    },
+    {
+      "id": 7,
+      "eventType": "BOM.AccessDenied",
+      "description": "Un usuario sin permiso intenta editar una versión aprobada o aprobar; la operación se rechaza sin cambiar datos",
+      "reference": "P3: RN09, PU10, PF06",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "deniedAt"]
+    },
+    {
+      "id": 8,
+      "eventType": "BOM.RevisionCreated",
+      "description": "Nueva versión copiada de una aprobada; la sucesora se publica y la anterior se cierra en una sola transacción",
+      "reference": "P3: RF06, RN06, PF04",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "createdAt", "publishedAt", "predecessorClosedAt"]
+    },
+    {
+      "id": 9,
+      "eventType": "BOM.Obsoleted",
+      "description": "Versión obsoleta: ya no se selecciona, pero se conserva para consulta histórica",
+      "reference": "P3: RN05",
+      "isa95Verb": "Change",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "obsoletedAt"]
+    },
+    {
+      "id": 10,
+      "eventType": "BOM.VersionResolved",
+      "description": "Selección de la versión vigente por producto y fecha de demanda, incluidos los subensambles",
+      "reference": "P3: RF05, RN07, PU08, PF05",
+      "isa95Verb": "Get",
+      "direction": "MES->ERP",
+      "timestamps": ["eventTimestamp", "demandDate", "resolvedAt"]
+    },
+    {
+      "id": 11,
+      "eventType": "BOM.Exploded",
+      "description": "Cantidades brutas para N equipos, acumulando componentes compartidos y aplicando merma y redondeo",
+      "reference": "P3: RF07, RN08, PU04, PU06, PU09, PF03",
+      "isa95Verb": "Process",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "demandDate", "explodedAt"]
+    },
+    {
+      "id": 12,
+      "eventType": "BOM.ExplosionRejected",
+      "description": "No hay versión aprobada de la BOM o de un subensamble; se detiene la planificación sin requerimientos parciales",
+      "reference": "P3: RN07, PF05",
+      "isa95Verb": "Respond",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "demandDate", "rejectedAt"]
+    },
+    {
+      "id": 13,
+      "eventType": "BOM.OrderVersionSnapshotted",
+      "description": "La orden conserva la versión exacta de la BOM usada en todos los niveles, aunque después se publique otra revisión",
+      "reference": "P3: RF08, RN07, PF04",
+      "isa95Verb": "Sync",
+      "direction": "ERP->MES",
+      "timestamps": ["eventTimestamp", "snapshotAt"]
+    },
+    {
+      "id": 14,
+      "eventType": "BOM.WhereUsedQueried",
+      "description": "Consulta de qué equipos usan un componente (ej. qué laptops llevan cierto SSD)",
+      "reference": "P3: RF03, PF07",
+      "isa95Verb": "Get",
+      "direction": "MES->ERP",
+      "timestamps": ["eventTimestamp", "requestedAt"]
+    },
+    {
+      "id": 15,
+      "eventType": "BOM.AuditRecorded",
+      "description": "Registro de quién creó, cambió o aprobó la BOM, con valores anteriores y nuevos",
+      "reference": "P3: RF08, RN09, PF07",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "auditedAt"]
+    },
+    {
+      "id": 16,
+      "eventType": "BOM.ConcurrencyConflict",
+      "description": "Edición desactualizada o intento de publicar vigencias superpuestas para el mismo producto",
+      "reference": "P3: PF06, Integridad transaccional",
+      "isa95Verb": null,
+      "direction": "ERP internal",
+      "timestamps": ["eventTimestamp", "detectedAt"]
+    }
+  ]
+}

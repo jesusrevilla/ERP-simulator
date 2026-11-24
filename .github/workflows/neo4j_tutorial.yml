@@ -1,0 +1,63 @@
+
+name: Neo4j Tutorial AuraDB
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - feature/185393
+    paths:
+      - "neo4j_tutorial/**"
+      - ".github/workflows/neo4j_tutorial.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  neo4j-tutorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      NEO4J_URI: ${{ secrets.NEO4J_URI }}
+      NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+      NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+      NEO4J_DATABASE: neo4j
+
+    defaults:
+      run:
+        working-directory: neo4j_tutorial
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install neo4j python-dotenv pandas tqdm
+
+      - name: Verify Secrets
+        run: |
+          python - <<'PY'
+          import os
+          for key in ("NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD"):
+              if not os.getenv(key):
+                  raise SystemExit(f"Falta configurar el secreto: {key}")
+          print("Credenciales configuradas")
+          PY
+
+      - name: Test Connection
+        run: python conexion.py
+
+      - name: Ingest Football Data
+        run: python ingest_football_data.py
+
+      - name: Run Queries
+        run: python consultas.py

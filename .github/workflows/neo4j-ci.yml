@@ -1,0 +1,41 @@
+name: Neo4j Tutorial Pipeline CI
+
+on:
+  push:
+    branches: [ "feature/185003", "development", "main" ]
+  pull_request:
+    branches: [ "development", "main" ]
+
+jobs:
+  run-neo4j-tutorial:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install neo4j python-dotenv pandas tqdm
+
+    - name: Run Football Data Ingestion
+      env:
+        NEO4J_URI: ${{ secrets.NEO4J_URI }}
+        NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+        NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+      run: |
+        python ingest_football_data.py
+
+    - name: Run Tutorial Analysis Queries
+      env:
+        NEO4J_URI: ${{ secrets.NEO4J_URI }}
+        NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+        NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+      run: |
+        python run_queries.py

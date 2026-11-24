@@ -1,0 +1,105 @@
+```mermaid
+flowchart TD
+    Inicio([Inicio de Transacción]) --> ValToken[Validar Token o ID de Mensaje]
+    ValToken --> VerifDuplicado{¿Mensaje Válido y Único?}
+    VerifDuplicado -- No --> RechazarDup[Rechazar por Doble Procesamiento] --> Fin([Fin])
+    VerifDuplicado -- Sí --> BloqueoReg[Aplicar Mecanismo de Bloqueo Transaccional / Filas]
+    BloqueoReg --> ValidarInventario{¿Validar Inventario Físico, Comprometido y Lotes?}
+    ValidarInventario -- Stock Insuficiente o Lote Inválido --> AlertaStock[Lanzar Excepción y Retener Orden] --> Fin
+    ValidarInventario -- Stock Suficiente y Válido --> OperacionAtomica[Ejecutar Transacción Atómica: Descontar Insumos según BOM + Registrar Costo]
+    OperacionAtomica --> FalloSistema{¿Ocurre Fallo Técnico o Interrupción?}
+    FalloSistema -- Sí --> RollbackDB[Revertir Cambios Automáticamente / Rollback] --> Fin
+    FalloSistema -- No --> GuardarAudit[Registrar en Historial Detallado e Inmutable / Audit Log]
+    GuardarAudit --> ActualizarOrden[Actualizar Estado de Orden a Cerrada] --> Fin
+
+    style Inicio fill:#d4edda,stroke:#28a745,stroke-width:2px
+    style Fin fill:#f8d7da,stroke:#dc3545,stroke-width:2px
+    style OperacionAtomica fill:#cce5ff,stroke:#004085,stroke-width:2px
+    style RollbackDB fill:#fff3cd,stroke:#856404,stroke-width:2px
+```
+Definición de requerimientos funcionales
+RF-01: El sistema debe validar la existencia de inventario físico y comprometido antes de autorizar
+transacciones de consumo para órdenes de trabajo.
+RF-02: El sistema debe implementar mecanismos de bloqueo (transaccional o a nivel de
+filas/registros) para evitar condiciones de carrera, cuando múltiples usuarios o procesos
+automáticos modifiquen el mismo recurso simultáneamente.
+RF-03: Ante caídas imprevistas del servidor o interrupciones de servicios, el sistema debe ser capaz
+de identificar transacciones inconclusas al reiniciar.
+RF-04: El sistema debe registrar un historial detallado e inmutable de cada transacción crítica que
+afecte inventarios, costos o planificación de materiales.
+Descripción de las reglas de negocio que aplican
+1- Ninguna transacción de salida o consumo de materiales puede dejar el stock físico o
+disponible en un valor menor a cero.
+2- Al confirmar la producción de N unidades de un producto terminado, el sistema debe
+descontar automáticamente del inventario la cantidad exacta de insumos requerida según
+el BOM activo.
+3- El inventario que ya ha sido asignado a una Orden de Trabajo (OT) o liberado para
+producción queda clasificado como Stock Comprometido y no puede ser consumido,
+vendido ni transferido por otra orden.
+4- Si un artículo requiere control de lote/serie (según la ficha técnica del insumo), el sistema
+prohíbe completar el movimiento de inventario si no se especifica el número de lote de
+origen.
+5- Si una operación requiere modificar múltiples entidades (por ejemplo: descontar materia
+prima + ingresar producto terminado + actualizar estado de la OT + registrar costo), todos
+los pasos deben ejecutarse con éxito.
+6- Para transacciones enviadas desde colectores de datos (escáneres de código de barras en
+piso) o servicios externos (APIs/ERPs), el sistema debe validar un token único o ID de
+mensaje para evitar el doble procesamiento accidental de una misma transacción.
+Pruebas unitarias
+PU-01: Atomicidad y Rollback
+Objetivo: Verificar que ante un fallo técnico a mitad de proceso, la base de datos revierta
+automáticamente el descuento de inventario previo.
+Resultado esperado: No hay cambios parciales; el inventario y las órdenes vuelven a su estado
+original.
+PU-02: Control de Stock Negativo
+Objetivo: Comprobar que el sistema rechace el consumo si la cantidad solicitada supera el
+stock disponible.
+Resultado esperado: Se lanza una excepción de stock insuficiente y los registros quedan
+intactos.
+PU-03: Integridad de Listas de Materiales (BOM)
+Objetivo: Validar que no se pueda modificar o eliminar un BOM si tiene órdenes de
+producción activas asociadas.
+Resultado esperado: El sistema bloquea la operación y protege la estructura vigente.
+PU-04: Concurrencia (Race Conditions)
+Objetivo: Asegurar que dos transacciones paralelas intentando tomar la misma unidad de
+stock no generen inconsistencias.
+Resultado esperado: Solo una transacción tiene éxito; la otra es rechazada o bloqueada de
+forma segura.
+PU-05: Inmutabilidad del Audit Log
+Objetivo: Garantizar que los registros históricos de movimientos no puedan ser alterados ni
+borrados.
+Resultado esperado: El sistema deniega cualquier intento de modificación sobre la
+bitácora.
+Pruebas Funcionales
+PF-01: Cierre Atómico de Orden de Producción
+Objetivo: Comprobar que al cerrar una orden se descuenten los insumos y se ingrese el
+producto terminado de forma sincronizada.
+Resultado esperado: El inventario se actualiza correctamente en ambos extremos y la
+orden pasa a estado "Cerrada".
+PF-02: Bloqueo por Stock Insuficiente
+Objetivo: Validar que el operario reciba una alerta visual y se detenga el despacho si el
+material no cuenta con existencias.
+Resultado esperado: Transacción rechazada en pantalla y orden retenida por falta de
+material.
+PF-03: Restricción de Edición de BOM
+Objetivo: Asegurar que la interfaz impida al usuario modificar una estructura de diseño si
+hay producción en curso.
+Resultado esperado: Mensaje de bloqueo impidiendo guardar los cambios en el BOM
+activo.
+PF-04: Concurrencia en Terminales de Piso
+Objetivo: Validar la respuesta del sistema cuando dos operarios escanean la misma pieza
+final en simultáneo desde diferentes estaciones.
+Resultado esperado: El primer operario completa la salida; el segundo recibe un aviso de
+que el artículo ya no está disponible.
+PF-05: Consulta de Historial de Auditoría
+Objetivo: Verificar que el auditor pueda filtrar y revisar el historial de movimientos pero sin
+privilegios para alterarlo.
+Resultado esperado: Despliegue exitoso de la bitácora con los botones de edición/borrado
+inhabilitados.
+Integridad de los datos
+Para que el sistema MRP funcione correctamente, la Integridad de Transacciones trabaja de la
+mano con la Integridad de Datos. Mientras que la integridad de datos define las reglas
+estructurales estáticas (como la unicidad de las claves primarias, las restricciones de dominio en las
+cantidades y la integridad referencial entre las Listas de Materiales - BOM y las órdenes), la
+integridad de transacciones actúa como el mecanismo dinámico que protege esas reglas durante el
+movimiento operativo.

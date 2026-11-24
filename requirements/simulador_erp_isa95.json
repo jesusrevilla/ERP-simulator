@@ -1,0 +1,105 @@
+{
+  "estandar": "ISA-95 / IEC 62264",
+  "proyecto": {
+    "nombre": "Simulador-ERP",
+    "materia": "Sistemas ERP",
+    "institucion": "Universidad Politécnica de San Luis Potosí",
+    "carrera": "Ingeniería en Tecnologías de la Información",
+    "fecha": "2026-11-03",
+    "autor": {
+      "nombre": "Daniel Alejandro Venegas Rivera",
+      "matricula": "177603"
+    },
+    "docente": "Mtro. Jesús Alberto Revilla Silva",
+    "modulo": "Sistemas Virtuales - Recibos y Entregas"
+  },
+  "niveles_isa_95": {
+    "nivel_4_planificacion_negocio_y_logistica": {
+      "descripcion": "Nivel de ERP: Gestión de órdenes, inventario maestro, reglas de negocio y logística empresarial.",
+      "requerimientos_funcionales": {
+        "recepcion_mercancia": [
+          "Registrar la entrada de productos asociada a una Orden de Compra previa.",
+          "Ingresar la cantidad física recibida de cada producto.",
+          "Actualizar automáticamente el inventario (aumentando el stock) al confirmar el recibo."
+        ],
+        "entrega_mercancia": [
+          "Registrar la salida de productos asociada a una Orden de Venta o Pedido.",
+          "Verificar la disponibilidad de stock antes de autorizar la salida.",
+          "Actualizar automáticamente el inventario (disminuyendo el stock) al confirmar la entrega."
+        ]
+      },
+      "reglas_negocio": {
+        "recibos": [
+          "No se puede recibir mercancía si no existe una Orden de Compra previa aprobada.",
+          "Alertar si la cantidad recibida es mayor a la solicitada en la Orden de Compra (exceso de mercancía)."
+        ],
+        "entregas": [
+          "Stock insuficiente: No se puede confirmar una entrega si el inventario actual es menor a la cantidad solicitada en el pedido.",
+          "Una vez confirmada la entrega, el inventario se descuenta de forma inmediata y el registro ya no se puede modificar libremente (requiere cancelación o nota de crédito)."
+        ]
+      },
+      "integridad_datos": {
+        "relaciones": "Un recibo o una entrega siempre debe estar ligado obligatoriamente a una orden de compra o venta existente.",
+        "restricciones_valores": "Las cantidades de los productos en recibos, entregas e inventarios nunca pueden ser negativas.",
+        "transaccionalidad": "Si al registrar una entrega ocurre un error de red o de sistema a mitad del proceso, la base de datos debe revertir todo para evitar que se descuente el inventario sin que se haya generado correctamente el comprobante de entrega."
+      }
+    },
+    "nivel_3_gestion_operaciones_manufactura_mom": {
+      "descripcion": "Nivel de MES/WMS: Ejecución de flujos operativos, seguimiento de tareas, validación funcional y automatización de procesos.",
+      "flujo_operativo_seguimiento": {
+        "proceso": "Monitoreo semanal de grupo de trabajo",
+        "evento_inicio": "Grupo de trabajo activo",
+        "evento_temporizador": "Viernes 6 PM",
+        "actividades": [
+          "Verificar el estado del grupo de trabajo",
+          "Enviar lista actual de asuntos (artefacto asociado: Lista de asuntos)"
+        ],
+        "compuerta_decision": {
+          "pregunta": "¿Grupo de trabajo continúa activo?",
+          "si": "Enviar lista actual de asuntos y regresar al ciclo (Viernes 6 PM)",
+          "no": "Fin del proceso"
+        }
+      },
+      "pruebas_funcionales": {
+        "flujo_recepcion_exitosa": [
+          "Crear una Orden de Compra de 10 piezas del producto 'Lápiz'.",
+          "Ir al módulo de Recibos, seleccionar la Orden de Compra y registrar la recepción de las 10 piezas."
+        ],
+        "flujo_bloqueo_stock_insuficiente": [
+          "Intentar registrar una entrega de 50 piezas de un producto del cual solo hay 5 en inventario."
+        ]
+      }
+    },
+    "nivel_2_control_supervision": {
+      "descripcion": "Nivel de Lógica de Control y Verificación Unitaria: Funciones atómicas de validación y actualización de estado.",
+      "pruebas_unitarias": [
+        {
+          "nombre": "Prueba de actualización de stock por recepción",
+          "objetivo": "Verificar que se sume correctamente la cantidad al stock actual."
+        },
+        {
+          "nombre": "Prueba de validación de stock disponible",
+          "objetivo": "Verificar si hay suficiente stock."
+        },
+        {
+          "nombre": "Prueba de actualización de stock por entrega",
+          "objetivo": "Verificar que se reste correctamente la cantidad del stock actual."
+        }
+      ]
+    },
+    "nivel_1_sensado_manipulacion": {
+      "descripcion": "Nivel de Captura de Datos Físicos (Escáneres/Terminales de almacén)",
+      "operaciones_simuladas": [
+        "Lectura/ingreso de cantidad física recibida en almacén",
+        "Confirmación física de salida de mercancía"
+      ]
+    },
+    "nivel_0_proceso_fisico": {
+      "descripcion": "Nivel de Proceso Físico Real",
+      "elementos_fisicos": [
+        "Mercancía física en almacén (ej. producto 'Lápiz')",
+        "Movimiento físico de entrada y salida de inventario"
+      ]
+    }
+  }
+}

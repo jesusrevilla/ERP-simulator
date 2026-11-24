@@ -1,0 +1,49 @@
+{
+  "OperationsResponse": {
+    "ID": "RSP-999",
+    "OperationsRequestID": "999",
+    "ResponseState": "Completed",
+    "ActualStartTime": "2026-11-10T08:00:00Z",
+    "ActualEndTime": "2026-11-10T13:00:00Z",
+    
+    "SegmentResponse": [
+      {
+        "ProcessSegmentID": "Etapa_1_Base",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T08:00:00Z",
+        "ActualEndTime": "2026-11-10T09:30:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "Motherboard_B650", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "CPU_Ryzen7", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "RAM_16GB", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } },
+          { "MaterialDefinitionID": "SSD_1TB", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      },
+      {
+        "ProcessSegmentID": "Etapa_2_Energia",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T10:00:00Z",
+        "ActualEndTime": "2026-11-10T11:00:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "PowerSupply_750W", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      },
+      {
+        "ProcessSegmentID": "Etapa_3_Graficos",
+        "State": "Completed",
+        "ActualStartTime": "2026-11-10T11:30:00Z",
+        "ActualEndTime": "2026-11-10T12:30:00Z",
+        "MaterialActual": [
+          { "MaterialDefinitionID": "GPU_RTX", "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" } }
+        ]
+      }
+    ],
+
+    "MaterialProducedActual": [
+      {
+        "MaterialDefinitionID": "Gaming_PC",
+        "Quantity": { "Value": 1, "UnitOfMeasure": "Pcs" }
+      }
+    ]
+  }
+}

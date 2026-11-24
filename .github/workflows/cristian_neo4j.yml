@@ -1,0 +1,66 @@
+name: Cristian - Neo4j ERP e ISA-95
+
+on:
+  push:
+    branches:
+      - feature/cristian-godinez-modulo-comercial
+    paths:
+      - "Inventario/eventos_CristianGodinez_ISA95.json"
+      - "neo4j_tutorial_cristian/**"
+      - "tests/test_neo4j_eventos_cristian.py"
+      - ".github/workflows/cristian_neo4j.yml"
+  workflow_dispatch:
+
+jobs:
+  tutorial-erp-neo4j:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7687:7687
+    env:
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: password
+      NEO4J_DATABASE: neo4j
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements.txt
+
+      - name: Ejecutar pruebas del catalogo y Cypher
+        run: python -m pytest tests/test_neo4j_eventos_cristian.py -q
+
+      - name: Verificar MRP sin conexion
+        run: python -m neo4j_tutorial_cristian.erp_graph --offline --quantity 30
+
+      - name: Esperar disponibilidad del servidor Neo4j
+        run: |
+          python - <<'PY'
+          import time
+          from neo4j import GraphDatabase
+          for attempt in range(60):
+              try:
+                  with GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password")) as driver:
+                      driver.verify_connectivity()
+                  print("Neo4j disponible")
+                  break
+              except Exception:
+                  time.sleep(2)
+          else:
+              raise RuntimeError("Neo4j no inicio")
+          PY
+
+      - name: Cargar grafo y validar faltantes reales
+        run: python -m neo4j_tutorial_cristian.erp_graph --quantity 30

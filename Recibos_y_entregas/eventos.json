@@ -1,0 +1,223 @@
+{
+  "enterprise": "TechAssembly S.A.",
+  "site": "Planta San Luis Potosí",
+  "area": "Módulo ERP - Logística Integral (Recibos y Entregas)",
+  "isa_95_hierarchy": {
+    "enterprise_level_4": "TechAssembly S.A.",
+    "site_level_3": "Planta San Luis Potosí",
+    "manufacturing_lines": [
+      {
+        "line_id": "LINE-INBOUND-01",
+        "line_name": "Línea de Logística de Entrada (Inbound)",
+        "machines": [
+          {
+            "machine_id": "MACH-DOCK-RECEIVE-01",
+            "machine_name": "Andén de Recepción y Estación ERP",
+            "sequence_activities": [
+              {
+                "step_code": "RF-01",
+                "action": "Consultar y seleccionar Orden de Compra aprobada",
+                "messages": [
+                  {
+                    "msg_id": "MSG-IN-001",
+                    "timestamp": "2026/11/10T08:00:00",
+                    "sender": "TechAssembly.PlantaSLP.Inbound.Dock01",
+                    "receiver": "TechAssembly.Enterprise.ERP.Core",
+                    "payload": {
+                      "operation": "GET_PURCHASE_ORDER",
+                      "po_number": "PO-2026-8890",
+                      "status": "Approved"
+                    }
+                  },
+                  {
+                    "msg_id": "MSG-IN-002",
+                    "timestamp": "2026/11/10T08:00:02",
+                    "sender": "TechAssembly.Enterprise.ERP.Core",
+                    "receiver": "TechAssembly.PlantaSLP.Inbound.Dock01",
+                    "payload": {
+                      "operation": "RESPONSE_PO_LINES",
+                      "items_expected": [
+                        {"item_id": "PROD-001", "qty": 100, "serial_required": true}
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-02",
+                "action": "Capturar número de lote, serie y fecha de caducidad",
+                "messages": [
+                  {
+                    "msg_id": "MSG-IN-003",
+                    "timestamp": "2026/11/10T08:05:10",
+                    "sender": "TechAssembly.PlantaSLP.Inbound.Dock01.Scanner",
+                    "receiver": "TechAssembly.Enterprise.ERP.TraceabilityManager",
+                    "payload": {
+                      "operation": "CAPTURE_TRACEABILITY",
+                      "batch_id": "L-2026-11-04-X",
+                      "serial_numbers": ["SN-1001", "SN-1002", "SN-1003"],
+                      "expiry_date": "2028-11-10"
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "GW_RN03",
+                "action": "Validar tolerancia superior (> 5%) según RN-03",
+                "messages": [
+                  {
+                    "msg_id": "MSG-IN-004",
+                    "timestamp": "2026/11/10T08:10:00",
+                    "sender": "TechAssembly.PlantaSLP.Inbound.Dock01.Scale",
+                    "receiver": "TechAssembly.Enterprise.ERP.BusinessRulesEngine",
+                    "payload": {
+                      "rule_id": "RN-03",
+                      "ordered_qty": 100,
+                      "received_qty": 105,
+                      "tolerance_limit_pct": 5.0,
+                      "exceeds_tolerance": false
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-03",
+                "action": "Asignar ubicación automática (Putaway)",
+                "messages": [
+                  {
+                    "msg_id": "MSG-IN-005",
+                    "timestamp": "2026/11/10T08:12:15",
+                    "sender": "TechAssembly.Enterprise.ERP.PutawayEngine",
+                    "receiver": "TechAssembly.PlantaSLP.Inbound.Dock01",
+                    "payload": {
+                      "operation": "ASSIGN_BIN_LOCATION",
+                      "bin_location": "A-02-04-B",
+                      "zone": "Zona Alta Rotación"
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-04",
+                "action": "Transacción ACID (DI-02) - Incrementar inventario y cerrar OC",
+                "messages": [
+                  {
+                    "msg_id": "MSG-IN-006",
+                    "timestamp": "2026/11/10T08:13:00",
+                    "sender": "TechAssembly.PlantaSLP.Inbound.Dock01",
+                    "receiver": "TechAssembly.Enterprise.ERP.Database (Row-Level Lock DI-01)",
+                    "payload": {
+                      "transaction_type": "ACID_COMMIT",
+                      "operation": "INCREMENT_INVENTORY_AND_CLOSE_PO",
+                      "po_number": "PO-2026-8890",
+                      "status": "Closed"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "line_id": "LINE-OUTBOUND-01",
+        "line_name": "Línea de Logística de Salida (Outbound)",
+        "machines": [
+          {
+            "machine_id": "MACH-DOCK-DISPATCH-01",
+            "machine_name": "Andén de Expedición y Estación de Picking",
+            "sequence_activities": [
+              {
+                "step_code": "RF-05",
+                "action": "Procesar Pedido de Venta",
+                "messages": [
+                  {
+                    "msg_id": "MSG-OUT-001",
+                    "timestamp": "2026/11/10T09:00:00",
+                    "sender": "TechAssembly.Enterprise.ERP.SalesModule",
+                    "receiver": "TechAssembly.PlantaSLP.Outbound.Dispatch01",
+                    "payload": {
+                      "operation": "PROCESS_SALES_ORDER",
+                      "sales_order_id": "SO-2026-5511",
+                      "requested_qty": 20
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "GW_RN01_RN02",
+                "action": "Validaciones RN-01 (Stock Negativo) y RN-02 (Lotes Vencidos)",
+                "messages": [
+                  {
+                    "msg_id": "MSG-OUT-002",
+                    "timestamp": "2026/11/10T09:01:30",
+                    "sender": "TechAssembly.Enterprise.ERP.BusinessRulesEngine",
+                    "receiver": "TechAssembly.PlantaSLP.Outbound.Dispatch01",
+                    "payload": {
+                      "check_stock_negative": "PASSED",
+                      "check_lot_expired": "PASSED",
+                      "available_stock": 100,
+                      "requested_qty": 20
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-06",
+                "action": "Picking y Bloqueo de Fila (DI-01)",
+                "messages": [
+                  {
+                    "msg_id": "MSG-OUT-003",
+                    "timestamp": "2026/11/10T09:03:00",
+                    "sender": "TechAssembly.PlantaSLP.Outbound.Dispatch01.OperatorTerminal",
+                    "receiver": "TechAssembly.Enterprise.ERP.Database",
+                    "payload": {
+                      "operation": "ROW_LEVEL_LOCK_ALLOCATION",
+                      "item_id": "PROD-FINISHED-01",
+                      "reserved_qty": 20
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-07",
+                "action": "Generar Packing List y Guía de Embarque",
+                "messages": [
+                  {
+                    "msg_id": "MSG-OUT-004",
+                    "timestamp": "2026/11/10T09:05:00",
+                    "sender": "TechAssembly.PlantaSLP.Outbound.Dispatch01",
+                    "receiver": "TechAssembly.Enterprise.ERP.ShippingService",
+                    "payload": {
+                      "operation": "EMIT_PACKING_LIST",
+                      "package_id": "PKG-9921",
+                      "carrier": "Logística Express SLP"
+                    }
+                  }
+                ]
+              },
+              {
+                "step_code": "RF-08",
+                "action": "Transacción ACID (DI-02) - Goods Issue y Contabilización",
+                "messages": [
+                  {
+                    "msg_id": "MSG-OUT-005",
+                    "timestamp": "2026/11/10T09:08:00",
+                    "sender": "TechAssembly.PlantaSLP.Outbound.Dispatch01",
+                    "receiver": "TechAssembly.Enterprise.ERP.AccountingEngine",
+                    "payload": {
+                      "transaction_type": "ACID_COMMIT",
+                      "operation": "GOODS_ISSUE_DISCOUNT_STOCK",
+                      "sales_order_id": "SO-2026-5511",
+                      "accounting_entry_status": "Posted"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

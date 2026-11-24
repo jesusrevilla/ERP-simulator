@@ -1,0 +1,106 @@
+name: IA Agent - BOM Guardian & MongoDB Loader
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-ci-database:
+    uses: ./.github/workflows/ci.yml
+
+  enviar-grafo-y-mongo:
+    needs: call-ci-database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar entorno Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias (Neo4j y MongoDB)
+        run: pip install neo4j pymongo
+
+      - name: Cargar eventos JSON en MongoDB
+        run: |
+          cat << 'EOF' > cargar_mongo.py
+          import json
+          import glob
+          from pymongo import MongoClient
+
+          print("Conectando a MongoDB en localhost:27017...")
+          client = MongoClient("mongodb://localhost:27017/")
+          db = client["erp_database"]
+          coleccion = db["eventos_bom"]
+
+          archivos = glob.glob("BOM/*.json")
+          
+          if not archivos:
+              print(" No se encontraron archivos .json en la carpeta BOM.")
+          else:
+              total_insertados = 0
+              for ruta in archivos:
+                  print(f"Procesando archivo: {ruta}")
+                  with open(ruta, 'r', encoding='utf-8') as f:
+                      datos = json.load(f)
+                      eventos_a_insertar = []
+                      
+                      if "events" in datos:
+                          eventos_a_insertar.extend(datos["events"])
+                      elif "empresa" in datos:
+                          deptos = datos["empresa"].get("lineas_departamentos", [])
+                          for depto in deptos:
+                              maquinas = depto.get("maquinas_empleados", [])
+                              for maquina in maquinas:
+                                  if "eventos_bom_mrp" in maquina:
+                                      eventos_a_insertar.extend(maquina["eventos_bom_mrp"])
+                      
+                      if eventos_a_insertar:
+                          coleccion.insert_many(eventos_a_insertar)
+                          total_insertados += len(eventos_a_insertar)
+                          print(f" -> {len(eventos_a_insertar)} eventos extraídos e insertados.")
+                      else:
+                          coleccion.insert_one(datos)
+                          total_insertados += 1
+                          print(" -> Documento completo insertado (estructura no reconocida).")
+                          
+              print(f"✅ Carga exitosa. Total de eventos insertados en MongoDB: {total_insertados}")
+          EOF
+          
+          python cargar_mongo.py
+
+      - name: Enviar Grafo de IA (Detección de Ciclos en BOM) a Neo4j
+        run: |
+          cat << 'EOF' > agente_bom.py
+          from neo4j import GraphDatabase
+
+          URI = "bolt://localhost:7687"
+          AUTH = ("neo4j", "password")
+
+          with GraphDatabase.driver(URI, auth=AUTH) as driver:
+              with driver.session() as session:
+                  print("Iniciando inyección del Grafo de IA (Estructura BOM)...")
+                  
+                  session.run("""
+                      MERGE (pc:Product {name: 'Gaming PC'})
+                      MERGE (mb:Component {name: 'Motherboard B650'})
+                      MERGE (cpu:Component {name: 'CPU Ryzen 7'})
+                      MERGE (pc)-[:REQUIRES]->(mb)
+                      MERGE (mb)-[:REQUIRES]->(cpu)
+                  """)
+                  print("Grafo BOM inyectado exitosamente en Neo4j.")
+                  
+                  result = session.run("""
+                      MATCH path = (n)-[:REQUIRES*]->(n)
+                      RETURN path LIMIT 1
+                  """)
+                  
+                  if result.single():
+                      print("ALERTA DE IA: ¡Ciclo infinito detectado en la estructura BOM! Un componente no puede requerirse a sí mismo.")
+                  else:
+                      print("Validación IA exitosa: La estructura es un Grafo Acíclico Dirigido (DAG) validado.")
+          EOF
+          
+          python agente_bom.py

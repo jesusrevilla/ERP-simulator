@@ -1,0 +1,71 @@
+name: Validacion DB Rutas (PostgreSQL + Neo4j) - 183636
+
+on:
+  push:
+    branches: [ "feature/183636" ]
+    paths:
+      - 'Rutas/183636_db_rutas/**'
+      - '.github/workflows/rutas_db_183636.yml'
+  workflow_dispatch:
+
+jobs:
+  validar-infraestructura-rutas:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: erp_user
+          POSTGRES_PASSWORD: erp_password
+          POSTGRES_DB: erp_rutas
+        ports:
+          - 5432:5432
+
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/erp_password
+        ports:
+          - 7474:7474
+          - 7687:7687
+
+    steps:
+      - name: Descargar repositorio (Checkout)
+        uses: actions/checkout@v4
+
+      - name: Esperar a que PostgreSQL y Neo4j estén listos
+        run: |
+          PG_CONTAINER=$(docker ps -qf "ancestor=postgres:15")
+          NEO4J_CONTAINER=$(docker ps -qf "ancestor=neo4j:5-community")
+
+          echo "Esperando a PostgreSQL..."
+          until docker exec "$PG_CONTAINER" pg_isready -U erp_user -d erp_rutas; do
+            sleep 2
+          done
+
+          echo "Esperando a Neo4j..."
+          until docker exec "$NEO4J_CONTAINER" cypher-shell -u neo4j -p erp_password "RETURN 1;" >/dev/null 2>&1; do
+            sleep 3
+          done
+          echo "Ambos motores están listos."
+
+      - name: Ejecutar scripts SQL en PostgreSQL (Esquema, Lógica y Pruebas)
+        run: |
+          PG_CONTAINER=$(docker ps -qf "ancestor=postgres:15")
+
+          echo "=== 1. Creando esquema y tablas ==="
+          docker exec -i "$PG_CONTAINER" psql -v ON_ERROR_STOP=1 -U erp_user -d erp_rutas < Rutas/183636_db_rutas/sql/01_schema_rutas.sql
+
+          echo "=== 2. Creando vistas, procedimiento y trigger ==="
+          docker exec -i "$PG_CONTAINER" psql -v ON_ERROR_STOP=1 -U erp_user -d erp_rutas < Rutas/183636_db_rutas/sql/02_logic_rutas.sql
+
+          echo "=== 3. Ejecutando pruebas y consultas analíticas ==="
+          docker exec -i "$PG_CONTAINER" psql -v ON_ERROR_STOP=1 -U erp_user -d erp_rutas < Rutas/183636_db_rutas/sql/03_test_and_queries.sql
+
+      - name: Ejecutar Knowledge Graph y consultas Cypher en Neo4j
+        run: |
+          NEO4J_CONTAINER=$(docker ps -qf "ancestor=neo4j:5-community")
+
+          echo "=== Cargando grafo y ejecutando consultas Cypher ==="
+          docker exec -i "$NEO4J_CONTAINER" cypher-shell -u neo4j -p erp_password < Rutas/183636_db_rutas/cypher/04_knowledge_graph_rutas.cypher

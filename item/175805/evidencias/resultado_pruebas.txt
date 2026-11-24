@@ -1,0 +1,27 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: item/175805
+plugins: platformdirs-4.13.5, anyio-4.15.1
+collecting ... collected 18 items
+
+pruebas/test_sku_sentinel_175805.py::test_duplicado_estructural_se_bloquea_y_sugiere_sku_existente PASSED [  5%]
+pruebas/test_sku_sentinel_175805.py::test_clave_estructural_ignora_mayusculas_y_espacios PASSED [ 11%]
+pruebas/test_sku_sentinel_175805.py::test_itemcode_repetido_se_bloquea PASSED [ 16%]
+pruebas/test_sku_sentinel_175805.py::test_articulo_nuevo_distinto_se_aprueba_en_fase1 PASSED [ 22%]
+pruebas/test_sku_sentinel_175805.py::test_similitud_del_ejemplo_del_documento PASSED [ 27%]
+pruebas/test_sku_sentinel_175805.py::test_clasificacion_por_descripcion PASSED [ 33%]
+pruebas/test_sku_sentinel_175805.py::test_catalogo_vigente_cumple_las_reglas PASSED [ 38%]
+pruebas/test_sku_sentinel_175805.py::test_precio_menor_al_costo_unidad_invalida_y_safety_stock_cero PASSED [ 44%]
+pruebas/test_sku_sentinel_175805.py::test_csp_detecta_combinacion_invalida PASSED [ 50%]
+pruebas/test_sku_sentinel_175805.py::test_csp_acepta_combinacion_valida PASSED [ 55%]
+pruebas/test_sku_sentinel_175805.py::test_ac3_infiere_dominio_cuando_falta_capacidad PASSED [ 61%]
+pruebas/test_sku_sentinel_175805.py::test_consistencia_de_nodo_valor_fuera_de_dominio PASSED [ 66%]
+pruebas/test_sku_sentinel_175805.py::test_ac3_devuelve_false_si_un_dominio_queda_vacio PASSED [ 72%]
+pruebas/test_sku_sentinel_175805.py::test_bfs_encuentra_sustituto_nvme_compatible PASSED [ 77%]
+pruebas/test_sku_sentinel_175805.py::test_greedy_coincide_con_bfs_en_este_grafo PASSED [ 83%]
+pruebas/test_sku_sentinel_175805.py::test_sustituto_de_ram_ddr5_no_es_ddr4 PASSED [ 88%]
+pruebas/test_sku_sentinel_175805.py::test_sin_sustituto_devuelve_none PASSED [ 94%]
+pruebas/test_sku_sentinel_175805.py::test_abc_clasifica_todo_y_el_mayor_valor_es_a PASSED [100%]
+
+============================== 18 passed in 0.02s ==============================

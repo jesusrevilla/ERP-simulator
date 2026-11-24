@@ -1,0 +1,53 @@
+
+==============================================================================
+FASE 1 y 2 - Altas de prueba (deduplicación + validación de integridad)
+==============================================================================
+
+> Alta solicitada: RAM-KINGSTON-FURY-16G - RAM DDR5 16GB Kingston Fury
+  Fase 1 (deduplicación): BLOQUEADO
+    - Duplicado estructural de RAM-KF-16-D5 (misma categoría, marca, modelo, capacidad y tipo). Usar el SKU existente.
+    * Aviso: Descripción 100% similar a RAM-KF-16-D5 ('Memoria Kingston Fury 16 GB DDR5')
+  DECISIÓN FINAL: BLOQUEADO. Usar el SKU existente RAM-KF-16-D5
+
+> Alta solicitada: SSD-KNV2-4TB - SSD Kingston NV2 NVMe 4 TB
+  Fase 1 (deduplicación): APROBADO
+  Fase 2 (integridad): RECHAZADO (3 violación(es))
+    - UnitOfMeasure 'PAQUETE' no es válida: ['CAJA', 'KG', 'LT', 'M', 'PZA']
+    - ListPrice (4000) menor que StandardCost (4500)
+    - SafetyStock debe ser mayor que 0 en componentes críticos
+  DECISIÓN FINAL: RECHAZADO
+
+> Alta solicitada: RAM-KF-64-D5 - Memoria Kingston Fury 64 GB DDR5
+  Fase 1 (deduplicación): APROBADO
+  Fase 2 (integridad): CORRECTO
+  DECISIÓN FINAL: APROBADO
+
+> Alta solicitada: RAM-KV-64-D4 - Memoria Kingston ValueRAM 64 GB DDR4
+  Fase 1 (deduplicación): APROBADO
+  Fase 2 (integridad): RECHAZADO (1 violación(es))
+    - Combinación inválida en RAM: tipo 'DDR4' con capacidad '64GB' (AC-3 vació un dominio)
+  DECISIÓN FINAL: RECHAZADO
+
+==============================================================================
+FASE 2 - Auditoría del catálogo vigente
+==============================================================================
+Los 16 artículos del catálogo cumplen las reglas de integridad.
+
+==============================================================================
+FASE 3 - Sustitutos para artículos críticos sin existencias
+==============================================================================
+
+> RAM-KF-16-D5 (Memoria Kingston Fury 16 GB DDR5) sin existencias
+  BFS    -> RAM-CV-16-D5 (Memoria Corsair Vengeance 16 GB DDR5), existencias 35, 2 saltos, 14 nodos explorados
+  Greedy -> RAM-CV-16-D5 (Memoria Corsair Vengeance 16 GB DDR5), existencias 35, 2 saltos, 3 nodos explorados
+
+> SSD-SAM980-1TB (SSD Samsung 980 NVMe 1 TB) sin existencias
+  BFS    -> SSD-WD770-1TB (SSD WD Black SN770 NVMe 1 TB), existencias 25, 2 saltos, 14 nodos explorados
+  Greedy -> SSD-WD770-1TB (SSD WD Black SN770 NVMe 1 TB), existencias 25, 2 saltos, 3 nodos explorados
+
+==============================================================================
+FASE 3 - Segmentación ABC (DemandaAnual x StandardCost)
+==============================================================================
+Clase A (9): CPU-R7-7700X, MB-B650-ASUS, GPU-RTX4060-MSI, RAM-KF-16-D5, CPU-R5-7600, GPU-RX7600-SAPH, SSD-SAM980-1TB, RAM-KF-32-D5, RAM-CV-16-D5
+Clase B (3): SSD-WD770-1TB, SSD-KNV2-2TB, PSU-CV750
+Clase C (4): PSU-MWE850, MB-B550-GIGA, SSD-CRMX500-1TB, RAM-KV-16-D4

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_BusinessPartners_183016" targetNamespace="https://github.com/jesusrevilla/ERP-simulator/business-partners/183016">
+  <bpmn:process id="BP_BankChange_183016" name="Control seguro de cambio de cuenta bancaria de proveedor" isExecutable="false">
+    <bpmn:documentation>Modelo BPMN 2.0 de planeacion funcional. Datos simulados. El cambio no se implementa en SAP Business One en esta entrega.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_BP_183016">
+      <bpmn:lane id="Lane_1" name="Proveedor">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Compras">
+        <bpmn:flowNodeRef>Register</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_3" name="Maestros">
+        <bpmn:flowNodeRef>Validate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Eligible</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Reject</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndNo</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_4" name="Finanzas">
+        <bpmn:flowNodeRef>Verify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Verified</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Approve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Accepted</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_5" name="Tesoreria">
+        <bpmn:flowNodeRef>Notify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndOK</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Cambio solicitado">
+      <bpmn:outgoing>f01</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Register" name="Registrar solicitud">
+      <bpmn:incoming>f01</bpmn:incoming>
+      <bpmn:outgoing>f02</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Validate" name="Validar BP y documento">
+      <bpmn:incoming>f02</bpmn:incoming>
+      <bpmn:outgoing>f03</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Eligible" name="Proveedor elegible">
+      <bpmn:incoming>f03</bpmn:incoming>
+      <bpmn:outgoing>f04</bpmn:outgoing>
+      <bpmn:outgoing>f05</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Verify" name="Verificar por canal historico">
+      <bpmn:incoming>f04</bpmn:incoming>
+      <bpmn:outgoing>f06</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Verified" name="Identidad confirmada">
+      <bpmn:incoming>f06</bpmn:incoming>
+      <bpmn:outgoing>f07</bpmn:outgoing>
+      <bpmn:outgoing>f08</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Approve" name="Revisar aprobacion independiente">
+      <bpmn:incoming>f07</bpmn:incoming>
+      <bpmn:outgoing>f09</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Accepted" name="Autorizado sin conflicto">
+      <bpmn:incoming>f09</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Activate" name="Activar version en transaccion">
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Notify" name="Notificar cuenta aprobada">
+      <bpmn:incoming>f12</bpmn:incoming>
+      <bpmn:outgoing>f13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndOK" name="Cambio activo">
+      <bpmn:incoming>f13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Reject" name="Rechazar y auditar causa">
+      <bpmn:incoming>f05</bpmn:incoming>
+      <bpmn:incoming>f08</bpmn:incoming>
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndNo" name="Solicitud rechazada">
+      <bpmn:incoming>f14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f01" sourceRef="Start" targetRef="Register" />
+    <bpmn:sequenceFlow id="f02" sourceRef="Register" targetRef="Validate" />
+    <bpmn:sequenceFlow id="f03" sourceRef="Validate" targetRef="Eligible" />
+    <bpmn:sequenceFlow id="f04" sourceRef="Eligible" targetRef="Verify" name="Si" />
+    <bpmn:sequenceFlow id="f05" sourceRef="Eligible" targetRef="Reject" name="No" />
+    <bpmn:sequenceFlow id="f06" sourceRef="Verify" targetRef="Verified" />
+    <bpmn:sequenceFlow id="f07" sourceRef="Verified" targetRef="Approve" name="Si" />
+    <bpmn:sequenceFlow id="f08" sourceRef="Verified" targetRef="Reject" name="No" />
+    <bpmn:sequenceFlow id="f09" sourceRef="Approve" targetRef="Accepted" />
+    <bpmn:sequenceFlow id="f10" sourceRef="Accepted" targetRef="Activate" name="Si" />
+    <bpmn:sequenceFlow id="f11" sourceRef="Accepted" targetRef="Reject" name="No" />
+    <bpmn:sequenceFlow id="f12" sourceRef="Activate" targetRef="Notify" />
+    <bpmn:sequenceFlow id="f13" sourceRef="Notify" targetRef="EndOK" />
+    <bpmn:sequenceFlow id="f14" sourceRef="Reject" targetRef="EndNo" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_BP_183016">
+    <bpmndi:BPMNPlane id="Plane_BP_183016" bpmnElement="BP_BankChange_183016">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><dc:Bounds x="80" y="215" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Register_di" bpmnElement="Register"><dc:Bounds x="160" y="190" width="135" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Validate_di" bpmnElement="Validate"><dc:Bounds x="335" y="190" width="140" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Eligible_di" bpmnElement="Eligible"><dc:Bounds x="515" y="207" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Verify_di" bpmnElement="Verify"><dc:Bounds x="600" y="190" width="150" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Verified_di" bpmnElement="Verified"><dc:Bounds x="790" y="207" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve"><dc:Bounds x="875" y="190" width="155" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Accepted_di" bpmnElement="Accepted"><dc:Bounds x="1070" y="207" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activate_di" bpmnElement="Activate"><dc:Bounds x="1160" y="190" width="150" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Notify_di" bpmnElement="Notify"><dc:Bounds x="1345" y="190" width="135" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndOK_di" bpmnElement="EndOK"><dc:Bounds x="1520" y="215" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Reject_di" bpmnElement="Reject"><dc:Bounds x="890" y="370" width="150" height="85"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndNo_di" bpmnElement="EndNo"><dc:Bounds x="1085" y="395" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f01_di" bpmnElement="f01">
+        <di:waypoint x="116" y="233"/>
+        <di:waypoint x="160" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f02_di" bpmnElement="f02">
+        <di:waypoint x="295" y="232.5"/>
+        <di:waypoint x="335" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f03_di" bpmnElement="f03">
+        <di:waypoint x="475" y="232.5"/>
+        <di:waypoint x="515" y="232"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f04_di" bpmnElement="f04">
+        <di:waypoint x="565" y="232"/>
+        <di:waypoint x="600" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f05_di" bpmnElement="f05">
+        <di:waypoint x="540" y="257"/>
+        <di:waypoint x="540" y="335"/>
+        <di:waypoint x="965" y="335"/>
+        <di:waypoint x="965" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f06_di" bpmnElement="f06">
+        <di:waypoint x="750" y="232.5"/>
+        <di:waypoint x="790" y="232"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f07_di" bpmnElement="f07">
+        <di:waypoint x="840" y="232"/>
+        <di:waypoint x="875" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f08_di" bpmnElement="f08">
+        <di:waypoint x="815" y="257"/>
+        <di:waypoint x="815" y="335"/>
+        <di:waypoint x="965" y="335"/>
+        <di:waypoint x="965" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f09_di" bpmnElement="f09">
+        <di:waypoint x="1030" y="232.5"/>
+        <di:waypoint x="1070" y="232"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1120" y="232"/>
+        <di:waypoint x="1160" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1095" y="257"/>
+        <di:waypoint x="1095" y="335"/>
+        <di:waypoint x="965" y="335"/>
+        <di:waypoint x="965" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1310" y="232.5"/>
+        <di:waypoint x="1345" y="232.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f13_di" bpmnElement="f13">
+        <di:waypoint x="1480" y="232.5"/>
+        <di:waypoint x="1520" y="233"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f14_di" bpmnElement="f14">
+        <di:waypoint x="1040" y="412.5"/>
+        <di:waypoint x="1085" y="413"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

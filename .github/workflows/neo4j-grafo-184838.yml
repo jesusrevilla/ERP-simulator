@@ -1,0 +1,53 @@
+name: Neo4j Grafo 184838
+
+on:
+  push:
+    branches: [ "feature/184838" ]
+  workflow_dispatch:
+
+jobs:
+  grafo-neo4j-184838:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7474:7474
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p password 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NEO4J_HOST: localhost
+      NEO4J_PORT: 7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set Python Path
+        run: |
+          echo "PYTHONPATH=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+
+      - name: Crear y Consultar Grafo Simple (184838)
+        run: |
+          python -m src.grafo_184838

@@ -1,0 +1,57 @@
+{
+  "alerta_id": "ALT-GPU-01",
+  "component_sku": "GPU001",
+  "stock_actual": 20,
+  "demanda_componente": 30,
+  "deficit_unidades": 10,
+  "productos_terminados": [
+    "PC001",
+    "WS001"
+  ],
+  "subensambles": [
+    "SUB-GPU"
+  ],
+  "usos_detallados": [
+    {
+      "sku_afectado": "SUB-GPU",
+      "tipo_item": "SE",
+      "profundidad": 1,
+      "consumo_unitario_total": 1.0,
+      "ruta_ensamble": [
+        "SUB-GPU",
+        "GPU001"
+      ]
+    },
+    {
+      "sku_afectado": "WS001",
+      "tipo_item": "PT",
+      "profundidad": 1,
+      "consumo_unitario_total": 2.0,
+      "ruta_ensamble": [
+        "WS001",
+        "GPU001"
+      ]
+    },
+    {
+      "sku_afectado": "PC001",
+      "tipo_item": "PT",
+      "profundidad": 2,
+      "consumo_unitario_total": 1.0,
+      "ruta_ensamble": [
+        "PC001",
+        "SUB-GPU",
+        "GPU001"
+      ]
+    }
+  ],
+  "recomendacion_llm": {
+    "modelo": "whereused-llm-sim-v1",
+    "nivel_riesgo": "CRITICO",
+    "acciones": [
+      "Priorizar compra urgente de 10 unidades de GPU001.",
+      "Evaluar sustituto homologado vía ECO para 2 producto(s) terminado(s): PC001, WS001.",
+      "Reprogramar ensamble de subensambles intermedios: SUB-GPU."
+    ],
+    "resumen": "Componente GPU001 impacta 2 PT y 1 SE."
+  }
+}

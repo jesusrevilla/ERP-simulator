@@ -1,0 +1,7 @@
+test_analisis_impacto_desabasto_y_plan_llm (test_agente_where_used.TestAgenteWhereUsedImpacto.test_analisis_impacto_desabasto_y_plan_llm) ... ok
+test_implosion_multinivel_solo_activos_e_inactivos (test_agente_where_used.TestAgenteWhereUsedImpacto.test_implosion_multinivel_solo_activos_e_inactivos) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK

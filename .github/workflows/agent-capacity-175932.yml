@@ -1,0 +1,74 @@
+name: APReceiptCapacityAgent 175932
+on:
+  push:
+    branches: ['feature/175932']
+    paths: ['AR&AP/agents/175932/**', '.github/workflows/agent-capacity-175932.yml']
+  pull_request:
+    paths: ['AR&AP/agents/175932/**', '.github/workflows/agent-capacity-175932.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capacity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: AR&AP/agents/175932/03_implementacion
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: agent_test
+          POSTGRES_PASSWORD: ephemeral_test_only
+          POSTGRES_DB: agent_tests
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U agent_test -d agent_tests"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      mongo:
+        image: mongo:7
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok'"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/ephemeral_test_only
+          NEO4J_server_memory_heap_initial__size: 256m
+          NEO4J_server_memory_heap_max__size: 512m
+          NEO4J_server_memory_pagecache_size: 256m
+        ports: ['7687:7687']
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p ephemeral_test_only 'RETURN 1;'"
+          --health-interval 10s --health-timeout 10s --health-retries 20
+    env:
+      CAPACITY_TEST_MODE: '1'
+      PG_DSN: postgresql://agent_test:ephemeral_test_only@localhost:5432/agent_tests
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: ephemeral_test_only
+      MONGO_URI: mongodb://localhost:27017
+      MONGO_DATABASE: agent_tests
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Syntax
+        run: python -m py_compile *.py
+      - name: Real backend tests and evidence
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          python -u verify_project.py 2>&1 | tee evidence/execution.log
+      - name: Upload evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capacity-agent-175932-evidence
+          path: AR&AP/agents/175932/03_implementacion/evidence/

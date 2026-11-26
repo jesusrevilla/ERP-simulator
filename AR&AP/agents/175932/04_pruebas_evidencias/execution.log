@@ -1,0 +1,20 @@
+test_accepts_integer_and_three_decimals (test_unit.QuantityContract.test_accepts_integer_and_three_decimals) ... ok
+test_preserves_decimal (test_unit.QuantityContract.test_preserves_decimal) ... ok
+test_rejects_invalid_quantities (test_unit.QuantityContract.test_rejects_invalid_quantities) ... ok
+test_accumulated_excess_and_exact_boundary (test_integration.CapacityIntegration.test_accumulated_excess_and_exact_boundary) ... ok
+test_concurrent_invoices_cannot_overbook (test_integration.CapacityIntegration.test_concurrent_invoices_cannot_overbook) ... ok
+test_concurrent_same_event_is_idempotent (test_integration.CapacityIntegration.test_concurrent_same_event_is_idempotent) ... ok
+test_credit_releases_only_original_invoice_capacity (test_integration.CapacityIntegration.test_credit_releases_only_original_invoice_capacity) ... ok
+test_credit_requires_invoice_from_same_receipt (test_integration.CapacityIntegration.test_credit_requires_invoice_from_same_receipt) ... ok
+test_duplicate_document_does_not_consume_twice (test_integration.CapacityIntegration.test_duplicate_document_does_not_consume_twice) ... ok
+test_fractional_quantities_remain_exact (test_integration.CapacityIntegration.test_fractional_quantities_remain_exact) ... ok
+test_invalid_contract_missing_and_inactive_receipts (test_integration.CapacityIntegration.test_invalid_contract_missing_and_inactive_receipts) ... ok
+test_projection_failure_keeps_outbox_and_retry_deduplicates (test_integration.CapacityIntegration.test_projection_failure_keeps_outbox_and_retry_deduplicates) ... ok
+test_rejected_replay_does_not_change_with_new_state (test_integration.CapacityIntegration.test_rejected_replay_does_not_change_with_new_state) ... ok
+test_replay_and_conflicting_key (test_integration.CapacityIntegration.test_replay_and_conflicting_key) ... ok
+test_sql_invariant_and_receipt_adapter_conflict (test_integration.CapacityIntegration.test_sql_invariant_and_receipt_adapter_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 3.065s
+
+OK

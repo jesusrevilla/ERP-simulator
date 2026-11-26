@@ -1,0 +1,2239 @@
+{
+  "status": "passed",
+  "executed_at_utc": "2026-11-26T22:51:12.530530+00:00",
+  "source_commit": "cddb6f810fb9aa345aee967274d7b64583e5f6b3",
+  "run_url": "https://github.com/armekmc54-ops/ERP-simulator/actions/runs/45907283467",
+  "tests_run": 15,
+  "tests": [
+    {
+      "test": "test_unit.QuantityContract.test_accepts_integer_and_three_decimals",
+      "status": "passed"
+    },
+    {
+      "test": "test_unit.QuantityContract.test_preserves_decimal",
+      "status": "passed"
+    },
+    {
+      "test": "test_unit.QuantityContract.test_rejects_invalid_quantities",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_accumulated_excess_and_exact_boundary",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_concurrent_invoices_cannot_overbook",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_concurrent_same_event_is_idempotent",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_credit_releases_only_original_invoice_capacity",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_credit_requires_invoice_from_same_receipt",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_duplicate_document_does_not_consume_twice",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_fractional_quantities_remain_exact",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_invalid_contract_missing_and_inactive_receipts",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_projection_failure_keeps_outbox_and_retry_deduplicates",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_rejected_replay_does_not_change_with_new_state",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_replay_and_conflicting_key",
+      "status": "passed"
+    },
+    {
+      "test": "test_integration.CapacityIntegration.test_sql_invariant_and_receipt_adapter_conflict",
+      "status": "passed"
+    }
+  ],
+  "versions": {
+    "python": "3.12.16",
+    "postgresql": "16.16 (Debian 16.16-1.pgdg13+1)",
+    "neo4j": "5.26.34",
+    "mongodb": "7.0.48"
+  },
+  "demo": [
+    {
+      "kind": "INVOICE",
+      "agent": "APReceiptCapacityAgent",
+      "reason": "CAPACITY_RESERVED",
+      "replay": false,
+      "status": "ACCEPTED",
+      "item_id": "CPU",
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "event_id": "DEMO-01",
+      "quantity": 6,
+      "received": "10.000",
+      "invoice_id": null,
+      "receipt_id": "REC-DEMO",
+      "document_id": "FP-DEMO-01",
+      "reported_at": "2026-11-26T22:51:11.760766+00:00",
+      "supplier_id": "PROV-DEMO",
+      "consumed_after": "6.000",
+      "available_after": "4.000",
+      "consumed_before": "0.000"
+    },
+    {
+      "kind": "INVOICE",
+      "agent": "APReceiptCapacityAgent",
+      "reason": "CAPACITY_EXCEEDED",
+      "replay": false,
+      "status": "REJECTED",
+      "item_id": "CPU",
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "event_id": "DEMO-02",
+      "quantity": 6,
+      "received": "10.000",
+      "invoice_id": null,
+      "receipt_id": "REC-DEMO",
+      "document_id": "FP-DEMO-02",
+      "reported_at": "2026-11-26T22:51:11.768817+00:00",
+      "supplier_id": "PROV-DEMO",
+      "consumed_after": "6.000",
+      "available_after": "4.000",
+      "consumed_before": "6.000"
+    },
+    {
+      "kind": "CREDIT_QUANTITY",
+      "agent": "APReceiptCapacityAgent",
+      "reason": "CAPACITY_RELEASED",
+      "replay": false,
+      "status": "ACCEPTED",
+      "item_id": "CPU",
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "event_id": "DEMO-03",
+      "quantity": 2,
+      "received": "10.000",
+      "invoice_id": "FP-DEMO-01",
+      "receipt_id": "REC-DEMO",
+      "document_id": "NC-DEMO-01",
+      "reported_at": "2026-11-26T22:51:11.777081+00:00",
+      "supplier_id": "PROV-DEMO",
+      "consumed_after": "4.000",
+      "available_after": "6.000",
+      "consumed_before": "6.000"
+    },
+    {
+      "kind": "INVOICE",
+      "agent": "APReceiptCapacityAgent",
+      "reason": "CAPACITY_RESERVED",
+      "replay": false,
+      "status": "ACCEPTED",
+      "item_id": "CPU",
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "event_id": "DEMO-04",
+      "quantity": 6,
+      "received": "10.000",
+      "invoice_id": null,
+      "receipt_id": "REC-DEMO",
+      "document_id": "FP-DEMO-02",
+      "reported_at": "2026-11-26T22:51:11.785378+00:00",
+      "supplier_id": "PROV-DEMO",
+      "consumed_after": "10.000",
+      "available_after": "0.000",
+      "consumed_before": "4.000"
+    }
+  ],
+  "state": {
+    "receipts": [
+      {
+        "receipt_id": "REC-DEMO",
+        "received": "10.000",
+        "consumed": "10.000",
+        "available": "0.000"
+      },
+      {
+        "receipt_id": "test_accumulated_excess_and_exact_boundary-R",
+        "received": "10.000",
+        "consumed": "10.000",
+        "available": "0.000"
+      },
+      {
+        "receipt_id": "test_concurrent_invoices_cannot_overbook-R",
+        "received": "10.000",
+        "consumed": "6.000",
+        "available": "4.000"
+      },
+      {
+        "receipt_id": "test_concurrent_same_event_is_idempotent-R",
+        "received": "10.000",
+        "consumed": "6.000",
+        "available": "4.000"
+      },
+      {
+        "receipt_id": "test_credit_releases_only_original_invoice_capacity-R",
+        "received": "10.000",
+        "consumed": "10.000",
+        "available": "0.000"
+      },
+      {
+        "receipt_id": "test_credit_requires_invoice_from_same_receipt-R",
+        "received": "10.000",
+        "consumed": "5.000",
+        "available": "5.000"
+      },
+      {
+        "receipt_id": "test_credit_requires_invoice_from_same_receipt-R2",
+        "received": "10.000",
+        "consumed": "0.000",
+        "available": "10.000"
+      },
+      {
+        "receipt_id": "test_duplicate_document_does_not_consume_twice-R",
+        "received": "10.000",
+        "consumed": "4.000",
+        "available": "6.000"
+      },
+      {
+        "receipt_id": "test_fractional_quantities_remain_exact-R",
+        "received": "10.000",
+        "consumed": "0.500",
+        "available": "9.500"
+      },
+      {
+        "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+        "received": "10.000",
+        "consumed": "0.000",
+        "available": "10.000"
+      },
+      {
+        "receipt_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-R",
+        "received": "10.000",
+        "consumed": "6.000",
+        "available": "4.000"
+      },
+      {
+        "receipt_id": "test_rejected_replay_does_not_change_with_new_state-R",
+        "received": "10.000",
+        "consumed": "0.000",
+        "available": "10.000"
+      },
+      {
+        "receipt_id": "test_replay_and_conflicting_key-R",
+        "received": "10.000",
+        "consumed": "6.000",
+        "available": "4.000"
+      },
+      {
+        "receipt_id": "test_sql_invariant_and_receipt_adapter_conflict-R",
+        "received": "10.000",
+        "consumed": "0.000",
+        "available": "10.000"
+      }
+    ],
+    "pending_reports": 0,
+    "discrepancies": []
+  },
+  "events_postgresql": 31,
+  "events_neo4j": 31,
+  "events_mongodb": 31,
+  "graph": {
+    "nodes": [
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:0",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_accumulated_excess_and_exact_boundary-1",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.727424+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:1",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_accumulated_excess_and_exact_boundary-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2",
+        "labels": [
+          "Supplier175932"
+        ],
+        "props": {
+          "supplier_id": "SUP-DEMO"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:3",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_accumulated_excess_and_exact_boundary-1"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:4",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_EXCEEDED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_accumulated_excess_and_exact_boundary-2",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.736699+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "6.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:5",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_accumulated_excess_and_exact_boundary-2"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:6",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 4,
+          "event_id": "test_accumulated_excess_and_exact_boundary-3",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.746065+00:00",
+          "consumed_after": "10.000",
+          "available_after": "0.000",
+          "consumed_before": "6.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:7",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_accumulated_excess_and_exact_boundary-3"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:8",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_concurrent_invoices_cannot_overbook-one",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.770488+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:9",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_concurrent_invoices_cannot_overbook-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:10",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_concurrent_invoices_cannot_overbook-one"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:11",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_EXCEEDED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_concurrent_invoices_cannot_overbook-two",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.771599+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "6.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:12",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_concurrent_invoices_cannot_overbook-two"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:13",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_concurrent_same_event_is_idempotent-same",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.795595+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:14",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_concurrent_same_event_is_idempotent-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:15",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_concurrent_same_event_is_idempotent-same"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:16",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_credit_releases_only_original_invoice_capacity-1",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.819772+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_credit_releases_only_original_invoice_capacity-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:18",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_credit_releases_only_original_invoice_capacity-1"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:19",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RELEASED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 2,
+          "event_id": "test_credit_releases_only_original_invoice_capacity-2",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.828115+00:00",
+          "consumed_after": "4.000",
+          "available_after": "6.000",
+          "consumed_before": "6.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:20",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "CREDIT_QUANTITY",
+          "document_id": "test_credit_releases_only_original_invoice_capacity-2"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:21",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CREDIT_EXCEEDED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 5,
+          "event_id": "test_credit_releases_only_original_invoice_capacity-3",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.838107+00:00",
+          "consumed_after": "4.000",
+          "available_after": "6.000",
+          "consumed_before": "4.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:22",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "CREDIT_QUANTITY",
+          "document_id": "test_credit_releases_only_original_invoice_capacity-3"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:23",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_credit_releases_only_original_invoice_capacity-4",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.846662+00:00",
+          "consumed_after": "10.000",
+          "available_after": "0.000",
+          "consumed_before": "4.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:24",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_credit_releases_only_original_invoice_capacity-4"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:25",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVOICE_NOT_FOUND",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 1,
+          "event_id": "test_credit_requires_invoice_from_same_receipt-credit",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.903223+00:00",
+          "consumed_after": "0.000",
+          "available_after": "10.000",
+          "consumed_before": "0.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:26",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_credit_requires_invoice_from_same_receipt-R2"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:27",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "CREDIT_QUANTITY",
+          "document_id": "test_credit_requires_invoice_from_same_receipt-credit"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:28",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_credit_requires_invoice_from_same_receipt-original"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:29",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 5,
+          "event_id": "test_credit_requires_invoice_from_same_receipt-original",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.874509+00:00",
+          "consumed_after": "5.000",
+          "available_after": "5.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:30",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_credit_requires_invoice_from_same_receipt-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:31",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 4,
+          "event_id": "test_duplicate_document_does_not_consume_twice-1",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.921765+00:00",
+          "consumed_after": "4.000",
+          "available_after": "6.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:32",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_duplicate_document_does_not_consume_twice-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:33",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_duplicate_document_does_not_consume_twice-1"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:34",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "DOCUMENT_EXISTS",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 4,
+          "event_id": "test_duplicate_document_does_not_consume_twice-retry",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.933192+00:00",
+          "consumed_after": "4.000",
+          "available_after": "6.000",
+          "consumed_before": "4.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:35",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": "0.125",
+          "event_id": "test_fractional_quantities_remain_exact-one",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.956966+00:00",
+          "consumed_after": "0.125",
+          "consumed_before": "0.000",
+          "available_after": "9.875",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:36",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_fractional_quantities_remain_exact-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:37",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_fractional_quantities_remain_exact-one"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:38",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": "0.375",
+          "event_id": "test_fractional_quantities_remain_exact-two",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.96941+00:00",
+          "consumed_after": "0.500",
+          "consumed_before": "0.125",
+          "available_after": "9.500",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:39",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_fractional_quantities_remain_exact-two"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:40",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "RECEIPT_NOT_FOUND",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-1",
+          "quantity": 6,
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:08.994024+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:41",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "missing"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:42",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-1"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:43",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-10",
+          "quantity": 0,
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.003063+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:45",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-10"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:46",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-11",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.013056+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:47",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-11"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:48",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-12",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.021638+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:49",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-12"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:50",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-13",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.031069+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:51",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-13"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:52",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-14",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.038999+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:53",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-14"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:54",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INVALID_EVENT",
+          "agent": "APReceiptCapacityAgent",
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-extra",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.048001+00:00",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:55",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-extra"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:56",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "INACTIVE_RECEIPT",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_invalid_contract_missing_and_inactive_receipts-inactive",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.069475+00:00",
+          "consumed_after": "0.000",
+          "available_after": "10.000",
+          "consumed_before": "0.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:57",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_invalid_contract_missing_and_inactive_receipts-inactive"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:58",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-projection",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:09.08836+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:59",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:60",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-projection"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:61",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "DEMO-01",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.760766+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "0.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "REC-DEMO"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:63",
+        "labels": [
+          "Supplier175932"
+        ],
+        "props": {
+          "supplier_id": "PROV-DEMO"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:64",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "FP-DEMO-01"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:65",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_EXCEEDED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "DEMO-02",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.768817+00:00",
+          "consumed_after": "6.000",
+          "available_after": "4.000",
+          "consumed_before": "6.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:66",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "FP-DEMO-02"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:67",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RELEASED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 2,
+          "event_id": "DEMO-03",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.777081+00:00",
+          "consumed_after": "4.000",
+          "available_after": "6.000",
+          "consumed_before": "6.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:68",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "CREDIT_QUANTITY",
+          "document_id": "NC-DEMO-01"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:69",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "DEMO-04",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.785378+00:00",
+          "consumed_after": "10.000",
+          "available_after": "0.000",
+          "consumed_before": "4.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:70",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_EXCEEDED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 11,
+          "event_id": "test_rejected_replay_does_not_change_with_new_state-rejected",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.648874+00:00",
+          "consumed_after": "0.000",
+          "available_after": "10.000",
+          "consumed_before": "0.000",
+          "status": "REJECTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:71",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_rejected_replay_does_not_change_with_new_state-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:72",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_rejected_replay_does_not_change_with_new_state-rejected"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:73",
+        "labels": [
+          "Decision175932"
+        ],
+        "props": {
+          "reason": "CAPACITY_RESERVED",
+          "agent": "APReceiptCapacityAgent",
+          "quantity": 6,
+          "event_id": "test_replay_and_conflicting_key-1",
+          "activity": "CHECK_ACCUMULATED_CAPACITY",
+          "reported_at": "2026-11-26T22:51:11.683637+00:00",
+          "consumed_after": "6.000",
+          "consumed_before": "0.000",
+          "available_after": "4.000",
+          "status": "ACCEPTED"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:74",
+        "labels": [
+          "Receipt175932"
+        ],
+        "props": {
+          "receipt_id": "test_replay_and_conflicting_key-R"
+        }
+      },
+      {
+        "id": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:75",
+        "labels": [
+          "Document175932"
+        ],
+        "props": {
+          "kind": "INVOICE",
+          "document_id": "test_replay_and_conflicting_key-1"
+        }
+      }
+    ],
+    "relationships": [
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:0",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:3"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:0",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:1"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:1",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:4",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:5"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:4",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:1"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:6",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:7"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:6",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:1"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:8",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:10"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:8",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:9"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:9",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:11",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:12"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:11",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:9"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:13",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:15"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:13",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:14"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:14",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:16",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:18"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:16",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:19",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:20"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:19",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:20",
+        "type": "CREDITS",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:18"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:21",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:22"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:21",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:22",
+        "type": "CREDITS",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:18"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:23",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:24"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:23",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:17"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:25",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:27"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:25",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:26"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:26",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:27",
+        "type": "CREDITS",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:28"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:29",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:28"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:29",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:30"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:30",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:31",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:32"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:31",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:33"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:32",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:34",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:32"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:34",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:33"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:35",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:36"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:35",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:37"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:36",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:38",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:39"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:38",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:36"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:40",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:41"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:40",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:42"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:43",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:45"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:43",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:46",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:46",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:47"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:48",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:48",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:49"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:50",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:51"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:50",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:52",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:53"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:52",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:54",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:55"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:54",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:56",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:57"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:56",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:44"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:58",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:60"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:58",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:59"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:59",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:61",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:64"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:61",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:63"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:65",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:65",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:66"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:67",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:67",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:68"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:68",
+        "type": "CREDITS",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:64"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:69",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:62"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:69",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:66"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:70",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:71"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:70",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:72"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:71",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:73",
+        "type": "REPORTS_ON",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:74"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:73",
+        "type": "ABOUT",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:75"
+      },
+      {
+        "source": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:74",
+        "type": "RECEIVED_FROM",
+        "target": "4:0af6bd33-56c6-4f53-b822-00a29ef6abb5:2"
+      }
+    ]
+  },
+  "mongo_events": [
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "FP-DEMO-01",
+      "event_id": "DEMO-01",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "REC-DEMO",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.760766+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "PROV-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "6.000",
+      "document_id": "FP-DEMO-02",
+      "event_id": "DEMO-02",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_EXCEEDED",
+      "receipt_id": "REC-DEMO",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.768817+00:00",
+      "status": "REJECTED",
+      "supplier_id": "PROV-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "6.000",
+      "consumed_after": "4.000",
+      "consumed_before": "6.000",
+      "document_id": "NC-DEMO-01",
+      "event_id": "DEMO-03",
+      "invoice_id": "FP-DEMO-01",
+      "item_id": "CPU",
+      "kind": "CREDIT_QUANTITY",
+      "quantity": 2,
+      "reason": "CAPACITY_RELEASED",
+      "receipt_id": "REC-DEMO",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.777081+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "PROV-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "0.000",
+      "consumed_after": "10.000",
+      "consumed_before": "4.000",
+      "document_id": "FP-DEMO-02",
+      "event_id": "DEMO-04",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "REC-DEMO",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.785378+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "PROV-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_accumulated_excess_and_exact_boundary-1",
+      "event_id": "test_accumulated_excess_and_exact_boundary-1",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_accumulated_excess_and_exact_boundary-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.727424+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "6.000",
+      "document_id": "test_accumulated_excess_and_exact_boundary-2",
+      "event_id": "test_accumulated_excess_and_exact_boundary-2",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_EXCEEDED",
+      "receipt_id": "test_accumulated_excess_and_exact_boundary-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.736699+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "0.000",
+      "consumed_after": "10.000",
+      "consumed_before": "6.000",
+      "document_id": "test_accumulated_excess_and_exact_boundary-3",
+      "event_id": "test_accumulated_excess_and_exact_boundary-3",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 4,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_accumulated_excess_and_exact_boundary-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.746065+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_concurrent_invoices_cannot_overbook-one",
+      "event_id": "test_concurrent_invoices_cannot_overbook-one",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_concurrent_invoices_cannot_overbook-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.770488+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "6.000",
+      "document_id": "test_concurrent_invoices_cannot_overbook-two",
+      "event_id": "test_concurrent_invoices_cannot_overbook-two",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_EXCEEDED",
+      "receipt_id": "test_concurrent_invoices_cannot_overbook-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.771599+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_concurrent_same_event_is_idempotent-same",
+      "event_id": "test_concurrent_same_event_is_idempotent-same",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_concurrent_same_event_is_idempotent-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.795595+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_credit_releases_only_original_invoice_capacity-1",
+      "event_id": "test_credit_releases_only_original_invoice_capacity-1",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_credit_releases_only_original_invoice_capacity-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.819772+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "6.000",
+      "consumed_after": "4.000",
+      "consumed_before": "6.000",
+      "document_id": "test_credit_releases_only_original_invoice_capacity-2",
+      "event_id": "test_credit_releases_only_original_invoice_capacity-2",
+      "invoice_id": "test_credit_releases_only_original_invoice_capacity-1",
+      "item_id": "CPU",
+      "kind": "CREDIT_QUANTITY",
+      "quantity": 2,
+      "reason": "CAPACITY_RELEASED",
+      "receipt_id": "test_credit_releases_only_original_invoice_capacity-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.828115+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "6.000",
+      "consumed_after": "4.000",
+      "consumed_before": "4.000",
+      "document_id": "test_credit_releases_only_original_invoice_capacity-3",
+      "event_id": "test_credit_releases_only_original_invoice_capacity-3",
+      "invoice_id": "test_credit_releases_only_original_invoice_capacity-1",
+      "item_id": "CPU",
+      "kind": "CREDIT_QUANTITY",
+      "quantity": 5,
+      "reason": "CREDIT_EXCEEDED",
+      "receipt_id": "test_credit_releases_only_original_invoice_capacity-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.838107+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "0.000",
+      "consumed_after": "10.000",
+      "consumed_before": "4.000",
+      "document_id": "test_credit_releases_only_original_invoice_capacity-4",
+      "event_id": "test_credit_releases_only_original_invoice_capacity-4",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_credit_releases_only_original_invoice_capacity-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.846662+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "10.000",
+      "consumed_after": "0.000",
+      "consumed_before": "0.000",
+      "document_id": "test_credit_requires_invoice_from_same_receipt-credit",
+      "event_id": "test_credit_requires_invoice_from_same_receipt-credit",
+      "invoice_id": "test_credit_requires_invoice_from_same_receipt-original",
+      "item_id": "CPU",
+      "kind": "CREDIT_QUANTITY",
+      "quantity": 1,
+      "reason": "INVOICE_NOT_FOUND",
+      "receipt_id": "test_credit_requires_invoice_from_same_receipt-R2",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.903223+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "5.000",
+      "consumed_after": "5.000",
+      "consumed_before": "0.000",
+      "document_id": "test_credit_requires_invoice_from_same_receipt-original",
+      "event_id": "test_credit_requires_invoice_from_same_receipt-original",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 5,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_credit_requires_invoice_from_same_receipt-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.874509+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "6.000",
+      "consumed_after": "4.000",
+      "consumed_before": "0.000",
+      "document_id": "test_duplicate_document_does_not_consume_twice-1",
+      "event_id": "test_duplicate_document_does_not_consume_twice-1",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 4,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_duplicate_document_does_not_consume_twice-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.921765+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "6.000",
+      "consumed_after": "4.000",
+      "consumed_before": "4.000",
+      "document_id": "test_duplicate_document_does_not_consume_twice-1",
+      "event_id": "test_duplicate_document_does_not_consume_twice-retry",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 4,
+      "reason": "DOCUMENT_EXISTS",
+      "receipt_id": "test_duplicate_document_does_not_consume_twice-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.933192+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "9.875",
+      "consumed_after": "0.125",
+      "consumed_before": "0.000",
+      "document_id": "test_fractional_quantities_remain_exact-one",
+      "event_id": "test_fractional_quantities_remain_exact-one",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": "0.125",
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_fractional_quantities_remain_exact-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.956966+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "9.500",
+      "consumed_after": "0.500",
+      "consumed_before": "0.125",
+      "document_id": "test_fractional_quantities_remain_exact-two",
+      "event_id": "test_fractional_quantities_remain_exact-two",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": "0.375",
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_fractional_quantities_remain_exact-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.96941+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-1",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-1",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "RECEIPT_NOT_FOUND",
+      "receipt_id": "missing",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:08.994024+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-10",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-10",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": 0,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.003063+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-11",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-11",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": null,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.013056+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-12",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-12",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": null,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.021638+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-13",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-13",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": null,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.031069+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-14",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-14",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": null,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.038999+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": null,
+      "consumed_after": null,
+      "consumed_before": null,
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-extra",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-extra",
+      "invoice_id": null,
+      "item_id": null,
+      "kind": "INVOICE",
+      "quantity": null,
+      "reason": "INVALID_EVENT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": null,
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.048001+00:00",
+      "status": "REJECTED",
+      "supplier_id": null
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "10.000",
+      "consumed_after": "0.000",
+      "consumed_before": "0.000",
+      "document_id": "test_invalid_contract_missing_and_inactive_receipts-inactive",
+      "event_id": "test_invalid_contract_missing_and_inactive_receipts-inactive",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "INACTIVE_RECEIPT",
+      "receipt_id": "test_invalid_contract_missing_and_inactive_receipts-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.069475+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-projection",
+      "event_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-projection",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_projection_failure_keeps_outbox_and_retry_deduplicates-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:09.08836+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "10.000",
+      "consumed_after": "0.000",
+      "consumed_before": "0.000",
+      "document_id": "test_rejected_replay_does_not_change_with_new_state-rejected",
+      "event_id": "test_rejected_replay_does_not_change_with_new_state-rejected",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 11,
+      "reason": "CAPACITY_EXCEEDED",
+      "receipt_id": "test_rejected_replay_does_not_change_with_new_state-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.648874+00:00",
+      "status": "REJECTED",
+      "supplier_id": "SUP-DEMO"
+    },
+    {
+      "activity": "CHECK_ACCUMULATED_CAPACITY",
+      "agent": "APReceiptCapacityAgent",
+      "available_after": "4.000",
+      "consumed_after": "6.000",
+      "consumed_before": "0.000",
+      "document_id": "test_replay_and_conflicting_key-1",
+      "event_id": "test_replay_and_conflicting_key-1",
+      "invoice_id": null,
+      "item_id": "CPU",
+      "kind": "INVOICE",
+      "quantity": 6,
+      "reason": "CAPACITY_RESERVED",
+      "receipt_id": "test_replay_and_conflicting_key-R",
+      "received": "10.000",
+      "replay": false,
+      "reported_at": "2026-11-26T22:51:11.683637+00:00",
+      "status": "ACCEPTED",
+      "supplier_id": "SUP-DEMO"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+--- Alerta generada automáticamente ---
+┌─────────┬───────────┬────────────────┬───────────┬─────────────┬───────────┐
+│ (index) │ alerta_id │ sku            │ prioridad │ existencias │ estado    │
+├─────────┼───────────┼────────────────┼───────────┼─────────────┼───────────┤
+│ 0       │ 2         │ 'MB-B550-PLUS' │ 'CRITICA' │ '12.0000'   │ 'ABIERTA' │
+└─────────┴───────────┴────────────────┴───────────┴─────────────┴───────────┘
+--- BOM afectadas (where-used multinivel) ---
+┌─────────┬────────────────┬────────────────┬───────┬────────────────────────────────────────────┐
+│ (index) │ parent_sku     │ version_codigo │ nivel │ ruta                                       │
+├─────────┼────────────────┼────────────────┼───────┼────────────────────────────────────────────┤
+│ 0       │ 'ENS-BASE-AM4' │ 'v1'           │ 1     │ 'ENS-BASE-AM4 > MB-B550-PLUS'              │
+│ 1       │ 'PC-WS-300'    │ 'v1'           │ 1     │ 'PC-WS-300 > MB-B550-PLUS'                 │
+│ 2       │ 'PC-GAM-200'   │ 'v1'           │ 2     │ 'PC-GAM-200 > ENS-BASE-AM4 > MB-B550-PLUS' │
+│ 3       │ 'PC-OFI-100'   │ 'v1'           │ 2     │ 'PC-OFI-100 > ENS-BASE-AM4 > MB-B550-PLUS' │
+└─────────┴────────────────┴────────────────┴───────┴────────────────────────────────────────────┘
+--- KPI 3 al momento de la detección: % de BOM activas afectadas ---
+┌─────────┬────────────────────┐
+│ (index) │ boms_afectadas_pct │
+├─────────┼────────────────────┤
+│ 0       │ '80.00'            │
+└─────────┴────────────────────┘
+NOTICE OK RN-02 -> RN-02: MB-B550-PLUS está descontinuado; no se permiten compras ordinarias
+NOTICE OK RN-06 -> RN-06: la sustitución requiere una autorización APROBADA
+--- Candidatos y criterios incumplidos ---
+┌─────────┬──────────────────┬────────────┬─────────────────────────────────────┐
+│ (index) │ sku              │ compatible │ incumple                            │
+├─────────┼──────────────────┼────────────┼─────────────────────────────────────┤
+│ 0       │ 'MB-B550-LEGACY' │ true       │ null                                │
+│ 1       │ 'MB-B550-PRO'    │ true       │ null                                │
+│ 2       │ 'MB-X570-ELITE'  │ true       │ null                                │
+│ 3       │ 'MB-A520M-LITE'  │ false      │ 'form_factor, pcie_gen, ranuras_m2' │
+│ 4       │ 'MB-B650-AURA'   │ false      │ 'socket, tipo_memoria'              │
+└─────────┴──────────────────┴────────────┴─────────────────────────────────────┘
+--- Historial de sustituciones ---
+┌─────────┬────────────────┬───────────────────┬───────────────────┬──────────────────────┬───────────────┐
+│ (index) │ sustitucion_id │ anterior          │ nueva             │ politica             │ autorizo      │
+├─────────┼────────────────┼───────────────────┼───────────────────┼──────────────────────┼───────────────┤
+│ 0       │ 2              │ 'ENS-BASE-AM4 v1' │ 'ENS-BASE-AM4 v2' │ 'AGOTAR_EXISTENCIAS' │ 'ing.tecnico' │
+│ 1       │ 3              │ 'PC-WS-300 v1'    │ 'PC-WS-300 v2'    │ 'AGOTAR_EXISTENCIAS' │ 'ing.tecnico' │
+└─────────┴────────────────┴───────────────────┴───────────────────┴──────────────────────┴───────────────┘
+NOTICE OK RN-08 -> RN-08: sustituciones_bom es un registro histórico y no puede modificarse
+--- Evaluación de órdenes ---
+┌─────────┬──────────────┬───────────────┬────────────────┐
+│ (index) │ codigo_orden │ estado        │ decision       │
+├─────────┼──────────────┼───────────────┼────────────────┤
+│ 0       │ 'OF-0990'    │ 'EN_PROCESO'  │ 'CONSERVAR'    │
+│ 1       │ 'OF-1001'    │ 'PLANIFICADA' │ 'REPLANIFICAR' │
+│ 2       │ 'OF-1002'    │ 'PLANIFICADA' │ 'REPLANIFICAR' │
+└─────────┴──────────────┴───────────────┴────────────────┘
+--- KPI 1 y 2: tiempo de detección y de sustitución (horas) ---
+┌─────────┬────────────────┬─────────────┬───────────────┐
+│ (index) │ sku            │ deteccion_h │ sustitucion_h │
+├─────────┼────────────────┼─────────────┼───────────────┤
+│ 0       │ 'MB-B550-PLUS' │ '0.25'      │ '24.00'       │
+└─────────┴────────────────┴─────────────┴───────────────┘
+--- KPI 3: % de BOM activas afectadas por descontinuados (multinivel) ---
+┌─────────┬────────────────────┐
+│ (index) │ boms_afectadas_pct │
+├─────────┼────────────────────┤
+│ 0       │ '0.00'             │
+└─────────┴────────────────────┘
+--- KPI 4: % de recomendaciones de compra inválidas ---
+┌─────────┬──────────────────┬───────────────┐
+│ (index) │ corrida_mrp      │ invalidas_pct │
+├─────────┼──────────────────┼───────────────┤
+│ 0       │ 'MRP-2026-11-21' │ '0.00'        │
+└─────────┴──────────────────┴───────────────┘
+--- KPI 5: % de órdenes de fabricación retrasadas por descontinuados ---
+┌─────────┬───────────────────────┐
+│ (index) │ ordenes_afectadas_pct │
+├─────────┼───────────────────────┤
+│ 0       │ '0.00'                │
+└─────────┴───────────────────────┘
+--- KPI 6: tasa de sustitución exitosa ---
+┌─────────┬──────────────────────────────┐
+│ (index) │ tasa_sustitucion_exitosa_pct │
+├─────────┼──────────────────────────────┤
+│ 0       │ '100.00'                     │
+└─────────┴──────────────────────────────┘

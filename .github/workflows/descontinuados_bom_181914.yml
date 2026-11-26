@@ -1,0 +1,68 @@
+name: BOM - Componentes descontinuados (181914)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "BOM/Descontinuados_181914/**"
+      - "BOM/BD/schema.sql"
+      - "tests/test_descontinuados_181914.py"
+      - ".github/workflows/descontinuados_bom_181914.yml"
+  pull_request:
+    paths:
+      - "BOM/Descontinuados_181914/**"
+      - "BOM/BD/schema.sql"
+      - "tests/test_descontinuados_181914.py"
+      - ".github/workflows/descontinuados_bom_181914.yml"
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: erpdb
+          POSTGRES_USER: erp
+          POSTGRES_PASSWORD: erp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGDATABASE: erpdb
+      PGUSER: erp
+      PGPASSWORD: erp
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar pytest
+        run: pip install pytest
+
+      - name: Crear esquema BOM base y extensión de descontinuados
+        run: |
+          psql -v ON_ERROR_STOP=1 -f BOM/BD/schema.sql
+          psql -v ON_ERROR_STOP=1 -f BOM/Descontinuados_181914/sql/schema_descontinuados.sql
+
+      - name: Ejecutar escenario, reglas de negocio y KPIs en PostgreSQL
+        run: psql -v ON_ERROR_STOP=1 -f BOM/Descontinuados_181914/sql/escenario_y_consultas.sql
+
+      - name: Ejecutar simulación del proceso (agente de recomendación + MRP)
+        run: python BOM/Descontinuados_181914/gestor_descontinuados.py
+
+      - name: Pruebas unitarias
+        run: pytest tests/test_descontinuados_181914.py

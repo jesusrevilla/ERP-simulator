@@ -1,0 +1,40 @@
+=== AS-IS: MRP sin gestión de ciclo de vida ===
+  Compra recomendada: MB-B550-PLUS     28
+  Compra recomendada: RAM-16-DDR4      20
+  Compra recomendada: SSD-1TB          30
+  Compra recomendada: PSU-650-B        25
+  KPIs AS-IS: {'tiempo_deteccion_h': None, 'tiempo_sustitucion_h': None, 'boms_afectadas_pct': 80.0, 'recomendaciones_invalidas_pct': 25.0, 'ordenes_afectadas_pct': 50.0, 'tasa_sustitucion_exitosa_pct': 0.0}
+
+=== TO-BE: alerta generada ===
+  Componente MB-B550-PLUS | prioridad CRITICA | existencias 12 | demanda abierta 45 | cobertura 27%
+  BOM afectada nivel 1: ENS-BASE-AM4-v1  ruta ENS-BASE-AM4 > MB-B550-PLUS
+  BOM afectada nivel 1: PC-WS-300-v1     ruta PC-WS-300 > MB-B550-PLUS
+  BOM afectada nivel 2: PC-OFI-100-v1    ruta PC-OFI-100 > ENS-BASE-AM4 > MB-B550-PLUS
+  BOM afectada nivel 2: PC-GAM-200-v1    ruta PC-GAM-200 > ENS-BASE-AM4 > MB-B550-PLUS
+  Órdenes afectadas: ['OF-1001', 'OF-1002', 'OF-0990']
+
+=== Recomendaciones del agente ===
+  1. MB-B550-PRO     puntuación 0.9620 {'inventario': 1.0, 'proveedor': 1.0, 'costo': 0.935, 'tiempo_entrega': 0.833, 'ciclo_vida': 1.0, 'impacto': 1.0}
+  2. MB-B550-LEGACY  puntuación 0.8800 {'inventario': 1.0, 'proveedor': 1.0, 'costo': 1.0, 'tiempo_entrega': 0.667, 'ciclo_vida': 0.3, 'impacto': 1.0}
+  3. MB-X570-ELITE   puntuación 0.6578 {'inventario': 0.303, 'proveedor': 1.0, 'costo': 0.435, 'tiempo_entrega': 0.767, 'ciclo_vida': 1.0, 'impacto': 0.8}
+  Descartado MB-A520M-LITE   form_factor: mATX != ATX; pcie_gen: 3 < 4; ranuras_m2: 1 < 2
+  Descartado MB-B650-AURA    socket: AM5 != AM4; tipo_memoria: DDR5 != DDR4
+
+=== MRP mientras la sustitución está pendiente ===
+  Consumo autorizado de stock: {'MB-B550-PLUS': 12}
+  Faltantes bloqueados (sin compra): {'MB-B550-PLUS': 28}
+  Compra recomendada: RAM-16-DDR4      20
+  Compra recomendada: SSD-1TB          30
+  Compra recomendada: PSU-650-B        25
+  KPIs al detectar: {'tiempo_deteccion_h': 0.25, 'tiempo_sustitucion_h': None, 'boms_afectadas_pct': 80.0, 'recomendaciones_invalidas_pct': 0.0, 'ordenes_afectadas_pct': 0.0, 'tasa_sustitucion_exitosa_pct': 0.0}
+
+=== Autorización y aplicación ===
+  APROBADA por ing.tecnico (RESPONSABLE_TECNICO) el 2026-11-21T09:15:00+00:00
+  {'boms_nuevas': ['ENS-BASE-AM4-v2', 'PC-WS-300-v2'], 'ordenes_reasignadas': ['OF-1001', 'OF-1002'], 'ordenes_conservadas': ['OF-0990']}
+
+=== MRP recalculado (TO-BE) ===
+  Consumo autorizado de stock: {'MB-B550-PLUS': 12}
+  Compra recomendada: RAM-16-DDR4      20
+  Compra recomendada: SSD-1TB          30
+  Compra recomendada: PSU-650-B        25
+  KPIs TO-BE: {'tiempo_deteccion_h': 0.25, 'tiempo_sustitucion_h': 24.0, 'boms_afectadas_pct': 0.0, 'recomendaciones_invalidas_pct': 0.0, 'ordenes_afectadas_pct': 0.0, 'tasa_sustitucion_exitosa_pct': 100.0}

@@ -1,0 +1,24 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14
+rootdir: ERP-simulator
+configfile: pytest.ini
+collecting ... collected 16 items
+
+tests/test_descontinuados_181914.py::test_transicion_invalida_desde_descontinuado PASSED [  6%]
+tests/test_descontinuados_181914.py::test_estado_desconocido_rechazado PASSED [ 12%]
+tests/test_descontinuados_181914.py::test_cambio_de_estado_queda_en_historial PASSED [ 18%]
+tests/test_descontinuados_181914.py::test_where_used_multinivel PASSED   [ 25%]
+tests/test_descontinuados_181914.py::test_alerta_critica_con_ordenes_y_cobertura_insuficiente PASSED [ 31%]
+tests/test_descontinuados_181914.py::test_componente_sin_uso_genera_alerta_baja PASSED [ 37%]
+tests/test_descontinuados_181914.py::test_recomendacion_ordenada_y_filtrada PASSED [ 43%]
+tests/test_descontinuados_181914.py::test_proximo_a_descontinuar_penalizado PASSED [ 50%]
+tests/test_descontinuados_181914.py::test_solo_responsable_tecnico_autoriza PASSED [ 56%]
+tests/test_descontinuados_181914.py::test_no_se_autoriza_sustituto_incompatible PASSED [ 62%]
+tests/test_descontinuados_181914.py::test_no_se_aplica_sin_autorizacion_aprobada PASSED [ 68%]
+tests/test_descontinuados_181914.py::test_sustitucion_crea_revision_y_conserva_historial PASSED [ 75%]
+tests/test_descontinuados_181914.py::test_mrp_as_is_recomienda_comprar_descontinuado PASSED [ 81%]
+tests/test_descontinuados_181914.py::test_mrp_no_compra_descontinuado_y_usa_stock PASSED [ 87%]
+tests/test_descontinuados_181914.py::test_mrp_sin_uso_de_stock_autorizado PASSED [ 93%]
+tests/test_descontinuados_181914.py::test_escenario_completo_kpis PASSED [100%]
+
+============================= 16 passed in 0.06s ==============================

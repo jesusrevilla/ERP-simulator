@@ -1,0 +1,60 @@
+name: Cargar JSON en MongoDB - AR&AP 183800
+
+on:
+  push:
+    branches:
+      - development
+      - feature/183800
+  workflow_dispatch:
+
+jobs:
+  cargar-mongo:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar pymongo
+        run: pip install pymongo
+
+      - name: Cargar eventos a la colección AR&AP
+        run: |
+          python - <<'EOF'
+          import json
+          from pymongo import MongoClient
+
+          archivo = "AR&AP/Eventos AR&AP ISA95.json"
+          with open(archivo, encoding="utf-8") as f:
+              datos = json.load(f)
+
+          eventos = datos["events"]
+          for e in eventos:
+              e["source"] = datos.get("source")
+              e["timezone"] = datos.get("timezone")
+
+          cliente = MongoClient("mongodb://127.0.0.1:27017")
+          coleccion = cliente["erpdb"]["AR&AP"]
+          coleccion.delete_many({})
+          coleccion.insert_many(eventos)
+
+          print("Eventos cargados:", coleccion.count_documents({}))
+          for doc in coleccion.find({}, {"_id": 0, "eventId": 1, "eventType": 1}):
+              print(doc)
+          EOF

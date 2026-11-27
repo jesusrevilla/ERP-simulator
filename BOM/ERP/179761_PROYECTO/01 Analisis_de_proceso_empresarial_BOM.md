@@ -1,6 +1,6 @@
 # Análisis del proceso empresarial - BOM
 
-**Matrícula:** 179761 | **Issue:** #244
+**Matrícula:** 179761 | **Issues:** #244 
 
 ##  Contexto
 

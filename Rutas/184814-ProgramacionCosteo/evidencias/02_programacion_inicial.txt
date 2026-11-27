@@ -1,0 +1,35 @@
+BEGIN
+INSERT 0 3
+INSERT 0 2
+INSERT 0 7
+INSERT 0 6
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 1
+INSERT 0 3
+INSERT 0 6
+INSERT 0 3
+INSERT 0 1
+UPDATE 1
+INSERT 0 2
+INSERT 0 3
+INSERT 0 3
+COMMIT
+orden_produccion_id | fecha_fin_anterior | fecha_fin_nueva | costo_planificado
+---------------------+--------------------+-----------------+-------------------
+1 | 2026-12-01 | 2026-12-21 | 717135.0000
+(1 row)
+
+orden_produccion_id | fecha_fin_anterior | fecha_fin_nueva | costo_planificado
+---------------------+--------------------+-----------------+-------------------
+2 | 2026-12-03 | 2026-12-16 | 478160.0000
+(1 row)
+
+orden_produccion_id | fecha_fin_anterior | fecha_fin_nueva | costo_planificado
+---------------------+--------------------+-----------------+-------------------
+3 | 2026-12-22 | 2026-12-31 | 239185.0000
+(1 row)
+
+UPDATE 1
+INSERT 0 4

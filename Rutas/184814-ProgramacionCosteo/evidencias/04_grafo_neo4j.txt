@@ -1,0 +1,26 @@
+Nodos cargados: {'CentroTrabajo': 3, 'Orden': 3, 'EtapaOrden': 9, 'Dia': 21}
+
+== propagacion_retraso {'etapa_id': 1}
+{'folio': 'OP-2026-001', 'etapas_afectadas': '[2, 3]'}
+
+== impacto_en_otras_ordenes {'etapa_id': 1}
+{'centro_trabajo': 'CT-ENS', 'orden_en_riesgo': 'OP-2026-002', 'etapa': '1', 'inicio': '2026-12-03'}
+{'centro_trabajo': 'CT-ENE', 'orden_en_riesgo': 'OP-2026-002', 'etapa': '2', 'inicio': '2026-12-09'}
+{'centro_trabajo': 'CT-ENS', 'orden_en_riesgo': 'OP-2026-003', 'etapa': '1', 'inicio': '2026-12-22'}
+{'centro_trabajo': 'CT-ENE', 'orden_en_riesgo': 'OP-2026-003', 'etapa': '2', 'inicio': '2026-12-24'}
+{'centro_trabajo': 'CT-GPU', 'orden_en_riesgo': 'OP-2026-003', 'etapa': '3', 'inicio': '2026-12-30'}
+
+== conflictos_centro_dia
+{'centro_trabajo': 'CT-ENS', 'fecha': '2026-12-03', 'horas': '16.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENS', 'fecha': '2026-12-04', 'horas': '16.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENS', 'fecha': '2026-12-07', 'horas': '16.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENS', 'fecha': '2026-12-08', 'horas': '12.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENE', 'fecha': '2026-12-09', 'horas': '16.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENE', 'fecha': '2026-12-10', 'horas': '16.0', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-ENE', 'fecha': '2026-12-11', 'horas': '12.33', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+{'centro_trabajo': 'CT-GPU', 'fecha': '2026-12-16', 'horas': '12.33', 'capacidad': '8.0', 'sobrecargado': 'True', 'ordenes': "['OP-2026-002', 'OP-2026-001']"}
+
+== duracion_acumulada
+{'folio': 'OP-2026-001', 'dias_laborables': '14', 'dias_espera': '1', 'dias_naturales': '21', 'fecha_fin': '2026-12-21', 'fecha_compromiso': '2026-12-18'}
+{'folio': 'OP-2026-002', 'dias_laborables': '10', 'dias_espera': '1', 'dias_naturales': '14', 'fecha_fin': '2026-12-16', 'fecha_compromiso': '2026-12-23'}
+{'folio': 'OP-2026-003', 'dias_laborables': '6', 'dias_espera': '1', 'dias_naturales': '10', 'fecha_fin': '2026-12-31', 'fecha_compromiso': '2027-01-08'}

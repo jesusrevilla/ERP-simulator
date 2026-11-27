@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/hostedtoolcache/Python/3.12.16/x64/bin/python
+rootdir: /home/runner/work/feature-184814/feature-184814
+configfile: pytest.ini
+collecting ... collected 22 items
+
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_fechas_de_30_gaming_pc PASSED [ 4%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_la_espera_retrasa_el_inicio_de_la_etapa PASSED [ 9%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_ninguna_etapa_se_programa_en_dia_no_laborable PASSED [ 13%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_se_salta_navidad_y_el_fin_de_semana PASSED [ 18%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_las_etapas_quedan_dentro_del_horizonte_de_la_orden PASSED [ 22%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_holgura_negativa_cuando_no_se_cumple_el_compromiso PASSED [ 27%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_orden_liberada_requiere_motivo PASSED [ 31%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_orden_cancelada_no_se_programa PASSED [ 36%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_retraso_recorre_las_etapas_siguientes PASSED [ 40%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_costo_planificado_es_la_suma_de_sus_componentes PASSED [ 45%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_desviacion_por_cpu_mas_caro PASSED [ 50%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_detecta_centro_sobreprogramado PASSED [ 54%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_reenumerar_abre_hueco_para_operacion_intermedia PASSED [ 59%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_no_se_reenumera_una_hoja_liberada PASSED [ 63%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_cada_programacion_queda_en_la_bitacora PASSED [ 68%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_la_bitacora_no_se_puede_modificar PASSED [ 72%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_la_bitacora_no_se_puede_borrar PASSED [ 77%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_grafo_tiene_ordenes_etapas_y_centros PASSED [ 81%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_grafo_propagacion_de_retraso PASSED [ 86%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_grafo_impacto_en_otras_ordenes PASSED [ 90%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_grafo_conflictos_centro_dia PASSED [ 95%]
+Rutas/184814-ProgramacionCosteo/test_programacion_costeo_184814.py::test_grafo_duracion_acumulada PASSED [100%]
+
+- generated xml file: /home/runner/work/feature-184814/feature-184814/evidencias/resultados_pytest.xml -
+============================== 22 passed in 0.87s ==============================

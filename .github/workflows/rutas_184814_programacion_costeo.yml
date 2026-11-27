@@ -1,0 +1,102 @@
+name: 184814 - Programación y Costeo de Órdenes por Ruta
+
+# Solo se ejecuta cuando cambian los archivos de 184814 (o a mano),
+# así no interfiere con los workflows de otros compañeros.
+on:
+  push:
+    paths:
+      - "Rutas/184814-ProgramacionCosteo/**"
+      - "Rutas/Scheme.sql"
+      - ".github/workflows/rutas_184814_programacion_costeo.yml"
+  pull_request:
+    paths:
+      - "Rutas/184814-ProgramacionCosteo/**"
+      - "Rutas/Scheme.sql"
+      - ".github/workflows/rutas_184814_programacion_costeo.yml"
+  workflow_dispatch:
+
+jobs:
+  programacion-costeo-184814:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash   # con pipefail: si falla un paso con "| tee", el paso falla
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: erp_rutas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7474:7474
+          - 7687:7687
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: erp_rutas
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      CARPETA: Rutas/184814-ProgramacionCosteo
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install psycopg2-binary neo4j pytest
+
+      - name: Esperar a Neo4j
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:7474 > /dev/null && echo "Neo4j listo" && exit 0
+            sleep 3
+          done
+          echo "Neo4j no respondió" && exit 1
+
+      - name: Crear esquema y datos semilla en PostgreSQL
+        run: |
+          mkdir -p evidencias
+          psql -v ON_ERROR_STOP=1 -q -f Rutas/Scheme.sql
+          psql -v ON_ERROR_STOP=1 -q -f "$CARPETA/01_esquema_programacion.sql"
+          psql -v ON_ERROR_STOP=1 -f "$CARPETA/02_datos_semilla.sql" | tee evidencias/02_programacion_inicial.txt
+
+      - name: Ejecutar consultas SQL para el agente
+        run: psql -v ON_ERROR_STOP=1 -f "$CARPETA/03_consultas_agente.sql" | tee evidencias/03_consultas_agente.txt
+
+      - name: Cargar el grafo en Neo4j y ejecutar consultas Cypher
+        run: python "$CARPETA/cargar_grafo.py" | tee evidencias/04_grafo_neo4j.txt
+
+      - name: Ejecutar pruebas
+        run: |
+          python -m pytest "$CARPETA" -v -p no:cacheprovider \
+            --junitxml=evidencias/resultados_pytest.xml | tee evidencias/05_pruebas.txt
+
+      - name: Guardar evidencias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-184814
+          path: evidencias/

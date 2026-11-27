@@ -1,0 +1,85 @@
+name: Cargar eventos A/P en MongoDB - Diego 183657
+
+on:
+  push:
+    branches:
+      - 'proyecto/183657'
+      - 'creautre/183657'
+      - 'feature/183657'
+      - 'development'
+    paths:
+      - 'AR&AP/eventos_ap.json'
+      - '.github/workflows/mongo_183657.yml'
+  workflow_dispatch:
+
+jobs:
+  cargar-eventos-ap:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Esperar a que MongoDB esté listo
+        run: |
+          echo "Esperando a MongoDB..."
+          sleep 10
+
+      - name: Agregar repositorio oficial de MongoDB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg curl
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+            --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | \
+            sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          sudo apt-get update
+
+      - name: Instalar MongoDB Shell y Database Tools
+        run: |
+          sudo apt-get install -y mongodb-mongosh mongodb-database-tools
+
+      - name: Crear base de datos y colección AP
+        run: |
+          mongosh mongodb://localhost:27017/erp_simulator --eval "
+            db.createCollection('AP');
+            print('✅ Colección AP creada exitosamente');
+          "
+
+      - name: Cargar eventos A/P en la colección AP
+        run: |
+          mongoimport --uri mongodb://localhost:27017/erp_simulator \
+            --collection AP \
+            --file "AR&AP/eventos_ap.json" \
+            --jsonArray \
+            --drop
+
+      - name: Verificar carga de datos
+        run: |
+          mongosh mongodb://localhost:27017/erp_simulator --eval "
+            const count = db.AP.countDocuments();
+            print('📊 Total de eventos en colección AP: ' + count);
+            print('---');
+            db.AP.find().forEach(doc => print(doc.id + ' - ' + doc.nombre));
+          "
+
+      - name: Resumen final
+        run: |
+          echo "=========================================="
+          echo "Eventos del módulo A/P cargados"
+          echo "Colección: AP"
+          echo "Base de datos: erp_simulator"
+          echo "Alumno: Diego - Matrícula 183657"
+          echo "=========================================="

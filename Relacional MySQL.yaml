@@ -1,0 +1,83 @@
+# ==============================================================================
+# VARIANTE 2: BASE DE DATOS RELACIONAL (SQL) - PROGRAMACIÓN DINÁMICA (MEMOIZATION)
+# Módulo: BOM - Explosión Multinivel con Cálculo de Mermas (Scrap) y Cacheo
+# ==============================================================================
+version: "1.0"
+database:
+  engine: mysql
+  version: "8.0"
+  charset: utf8mb4
+  collation: utf8mb4_unicode_ci
+  schema_name: erp_bom_dp
+
+algorithm_profile:
+  name: "Dynamic_Programming_Multilevel_Explosion"
+  category: "Memoized Tree Aggregation & Net Requirements"
+  complexity:
+    time: "O(V + E) amortizado con tabla de memoización"
+    space: "O(V)"
+  formulas:
+    gross_requirement: "cantidad_padre * cantidad_requerida"
+    scrap_adjusted_qty: "cantidad_bruta * (1 + factor_merma)"
+    net_requirement: "max(0, cantidad_ajustada - stock_disponible)"
+
+tables:
+  bom_headers:
+    description: "Cabecera de listas de materiales por producto padre"
+    columns:
+      id: { type: BIGINT, primary_key: true, auto_increment: true }
+      codigo_bom: { type: VARCHAR(30), unique: true, nullable: false }
+      producto_id: { type: BIGINT, nullable: false }
+      version: { type: VARCHAR(10), default: "1.0", nullable: false }
+      cantidad_base_lote: { type: DECIMAL(12,4), default: 1.0000, nullable: false }
+      estado: { type: ENUM("ACTIVO", "INACTIVO", "REVISION"), default: "ACTIVO" }
+      fecha_vigencia_inicio: { type: DATE, nullable: false }
+      fecha_vigencia_fin: { type: DATE, nullable: true }
+      created_at: { type: TIMESTAMP, default: CURRENT_TIMESTAMP }
+    indexes:
+      - { name: idx_bom_header_prod_estado, columns: ["producto_id", "estado"] }
+
+  bom_items:
+    description: "Detalle de componentes por cabecera BOM con porcentajes de merma"
+    columns:
+      id: { type: BIGINT, primary_key: true, auto_increment: true }
+      bom_header_id: { type: BIGINT, nullable: false, foreign_key: "bom_headers.id", on_delete: CASCADE }
+      componente_id: { type: BIGINT, nullable: false }
+      posicion: { type: INT, nullable: false }
+      cantidad_requerida: { type: DECIMAL(12,4), nullable: false }
+      factor_merma: { type: DECIMAL(6,4), default: 0.0000, check: "factor_merma >= 0 AND factor_merma < 1" }
+      es_fantasma: { type: BOOLEAN, default: false }
+    indexes:
+      - { name: idx_bom_items_header, columns: ["bom_header_id"] }
+      - { name: idx_bom_items_comp, columns: ["componente_id"] }
+
+  bom_dp_memo_cache:
+    description: "Tabla de memoización para subárboles ya explosionados en Programación Dinámica"
+    columns:
+      id: { type: BIGINT, primary_key: true, auto_increment: true }
+      bom_header_id: { type: BIGINT, nullable: false, foreign_key: "bom_headers.id", on_delete: CASCADE }
+      subcomponente_id: { type: BIGINT, nullable: false }
+      nivel_profundidad: { type: INT, nullable: false }
+      cantidad_unitaria_acumulada: { type: DECIMAL(14,6), nullable: false }
+      merma_acumulada: { type: DECIMAL(14,6), nullable: false }
+      hash_estructura: { type: CHAR(64), nullable: false }
+      actualizado_en: { type: TIMESTAMP, default: CURRENT_TIMESTAMP }
+    indexes:
+      - { name: uniq_dp_cache_key, columns: ["bom_header_id", "subcomponente_id", "hash_estructura"], unique: true }
+
+  inventory_balances:
+    description: "Saldos de inventario para cálculo de requerimientos netos tras explosión"
+    columns:
+      material_id: { type: BIGINT, primary_key: true }
+      stock_fisico: { type: DECIMAL(12,4), default: 0.0000 }
+      stock_reservado: { type: DECIMAL(12,4), default: 0.0000 }
+      stock_seguridad: { type: DECIMAL(12,4), default: 0.0000 }
+
+seed_data:
+  bom_headers:
+    - { id: 1, codigo_bom: "BOM-179686-A", producto_id: 100, version: "1.0", cantidad_base_lote: 1.0, estado: "ACTIVO", fecha_vigencia_inicio: "2026-01-01" }
+    - { id: 2, codigo_bom: "BOM-179686-B", producto_id: 200, version: "1.0", cantidad_base_lote: 1.0, estado: "ACTIVO", fecha_vigencia_inicio: "2026-01-01" }
+  bom_items:
+    - { id: 1, bom_header_id: 1, componente_id: 200, posicion: 10, cantidad_requerida: 2.0000, factor_merma: 0.0250, es_fantasma: false }
+    - { id: 2, bom_header_id: 1, componente_id: 301, posicion: 20, cantidad_requerida: 4.0000, factor_merma: 0.0100, es_fantasma: false }
+    - { id: 3, bom_header_id: 2, componente_id: 302, posicion: 10, cantidad_requerida: 3.0000, factor_merma: 0.0500, es_fantasma: false }

@@ -1,0 +1,39 @@
+name: Flujo MongoDB - Rutas (183636)
+
+on:
+  push:
+    branches: [ "main", "feature/183636" ]
+  workflow_dispatch:
+
+jobs:
+  cargar-rutas-mongo:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Descargar el repositorio (Checkout)
+        uses: actions/checkout@v3
+
+      - name: Descargar e instalar mongoimport oficial
+        run: |
+          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.tgz
+          tar -zxvf mongodb-database-tools-*.tgz
+          sudo cp mongodb-database-tools-*/bin/mongoimport /usr/local/bin/
+          mongoimport --version
+
+      - name: Leer JSONs y cargar eventos en colección Rutas
+        run: |
+          echo "Buscando archivos JSON en la carpeta Rutas..."
+          for file in Rutas/*.json; do
+            if [ -f "$file" ]; then
+              echo "Procesando eventos de: $file"
+              mongoimport --host localhost --port 27017 --db ERPSimulator --collection Rutas --file "$file" --jsonArray
+            else
+              echo "No se encontraron archivos JSON en la carpeta."
+            fi
+          done

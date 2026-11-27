@@ -1,0 +1,57 @@
+name: Rutas - Base de datos y reglas
+
+on:
+  push:
+    paths:
+      - "Rutas/**"
+      - ".github/workflows/rutas_182735.yml"
+  pull_request:
+    paths:
+      - "Rutas/**"
+  workflow_dispatch:
+
+jobs:
+  rutas:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: erp
+          POSTGRES_PASSWORD: erp
+          POSTGRES_DB: erp_rutas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U erp -d erp_rutas"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: erp
+      PGPASSWORD: erp
+      PGDATABASE: erp_rutas
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Crear el esquema de Rutas (Scheme.sql)
+        run: psql -v ON_ERROR_STOP=1 -f Rutas/Scheme.sql
+
+      - name: Verificar objetos creados
+        run: |
+          for t in hoja_ruta hoja_ruta_operacion orden_produccion orden_produccion_etapa despacho_produccion; do
+            psql -At -c "SELECT to_regclass('public.$t') IS NOT NULL" | grep -qx t || { echo "Falta la tabla $t"; exit 1; }
+          done
+          psql -At -c "SELECT count(*) || ' tablas' FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
+          psql -At -c "SELECT count(*) || ' triggers' FROM pg_trigger WHERE NOT tgisinternal"
+
+      - name: Ejecutar pruebas de las reglas de Rutas.md
+        run: python -m unittest discover -s Rutas/182735-IARutas -p "test_*.py" -v

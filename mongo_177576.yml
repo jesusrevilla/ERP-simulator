@@ -1,0 +1,193 @@
+name: MongoDB Recibos y Entregas - 177576
+
+on:
+  push:
+    branches:
+      - "feature/177576"
+    paths:
+      - "Recibos y las entregas/*.json"
+      - "Recibos_Entregas/*.json"
+      - "Recibos_y_entregas/*.json"
+      - "requirements/*.json"
+      - ".github/workflows/mongo_177576.yml"
+  workflow_dispatch:
+    inputs:
+      order_quantity:
+        description: "Cantidad de Gaming PCs para ci.yml"
+        required: true
+        default: "30"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  llamar-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Llamar y esperar a ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          CI_REF: ${{ github.ref_name }}
+          ORDER_QUANTITY: ${{ inputs.order_quantity || '30' }}
+        run: |
+          set -euo pipefail
+          started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          echo "Llamando a .github/workflows/ci.yml en $GH_REPO ($CI_REF)..."
+          gh workflow run ci.yml \
+            --repo "$GH_REPO" \
+            --ref "$CI_REF" \
+            -f "order_quantity=$ORDER_QUANTITY"
+
+          ci_run_id=""
+          for attempt in $(seq 1 60); do
+            ci_run_id="$(gh run list \
+              --repo "$GH_REPO" \
+              --workflow ci.yml \
+              --branch "$CI_REF" \
+              --event workflow_dispatch \
+              --json databaseId,createdAt \
+              --jq "[.[] | select(.createdAt >= \"$started_at\")] | first | .databaseId // empty")"
+            if [ -n "$ci_run_id" ]; then
+              break
+            fi
+            sleep 5
+          done
+
+          if [ -z "$ci_run_id" ]; then
+            echo "Error: No se encontró la ejecución iniciada para ci.yml."
+            exit 1
+          fi
+
+          echo "Esperando ejecución de ci.yml (Run ID: $ci_run_id)..."
+          gh run watch "$ci_run_id" --repo "$GH_REPO" --interval 10 --exit-status
+
+  cargar-mongodb:
+    needs: llamar-ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      MONGO_HOST: localhost
+      MONGO_PORT: 27017
+      MONGO_DB: erpdb
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verificar puerto MongoDB
+        run: |
+          nc -zv "$MONGO_HOST" "$MONGO_PORT" || true
+
+      - name: Esperar a MongoDB
+        run: |
+          python - << 'PY'
+          import os
+          import time
+          from pymongo import MongoClient
+
+          uri = f"mongodb://{os.environ['MONGO_HOST']}:{os.environ['MONGO_PORT']}/"
+          for intento in range(30):
+              try:
+                  client = MongoClient(uri, serverSelectionTimeoutMS=2000)
+                  client.admin.command("ping")
+                  client.close()
+                  print("MongoDB listo.")
+                  break
+              except Exception as err:
+                  print(f"Esperando MongoDB ({intento + 1}/30): {err}")
+                  time.sleep(2)
+          else:
+              raise SystemExit("Timeout esperando a MongoDB.")
+          PY
+
+      - name: Leer JSONs del tema y crear colecciones (coleccion.<nombre>)
+        run: |
+          python - << 'PY'
+          import json
+          import os
+          from pathlib import Path
+          from pymongo import MongoClient
+
+          topic_dirs = [
+              Path("Recibos y las entregas"),
+              Path("Recibos_Entregas"),
+              Path("Recibos_y_entregas"),
+              Path("requirements"),
+          ]
+
+          archivos_json = []
+          for folder in topic_dirs:
+              if folder.exists():
+                  archivos_json.extend(sorted(folder.rglob("*.json")))
+
+          if not archivos_json:
+              raise SystemExit("No se encontraron archivos .json del tema Recibos y Entregas.")
+
+          uri = f"mongodb://{os.environ['MONGO_HOST']}:{os.environ['MONGO_PORT']}/"
+          client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+          db = client[os.environ["MONGO_DB"]]
+
+          coleccion_tema = "coleccion.recibos_y_entregas"
+          if coleccion_tema not in db.list_collection_names():
+              db.create_collection(coleccion_tema)
+
+          for ruta in archivos_json:
+              nombre_tema = ruta.stem
+              nombre_coleccion = f"coleccion.{nombre_tema}"
+
+              if nombre_coleccion not in db.list_collection_names():
+                  db.create_collection(nombre_coleccion)
+
+              col = db[nombre_coleccion]
+              datos = json.loads(ruta.read_text(encoding="utf-8"))
+
+              if isinstance(datos, list):
+                  docs = [dict(item, _source_file=str(ruta)) if isinstance(item, dict) else {"valor": item, "_source_file": str(ruta)} for item in datos]
+                  col.delete_many({"_source_file": str(ruta)})
+                  if docs:
+                      col.insert_many(docs)
+                      db[coleccion_tema].delete_many({"_source_file": str(ruta)})
+                      db[coleccion_tema].insert_many([dict(d) for d in docs])
+              elif isinstance(datos, dict):
+                  doc = dict(datos)
+                  doc["_source_file"] = str(ruta)
+                  col.replace_one({"_source_file": str(ruta)}, doc, upsert=True)
+                  db[coleccion_tema].replace_one({"_source_file": str(ruta)}, dict(doc), upsert=True)
+              else:
+                  raise ValueError(f"Formato JSON no soportado en {ruta}")
+
+              print(
+                  f"Archivo '{ruta}' -> colección '{nombre_coleccion}' "
+                  f"(documentos: {col.count_documents({})})"
+              )
+
+          print("Colecciones creadas en", os.environ["MONGO_DB"], ":", sorted(db.list_collection_names()))
+          print(f"Total en '{coleccion_tema}': {db[coleccion_tema].count_documents({})}")
+          client.close()
+          PY

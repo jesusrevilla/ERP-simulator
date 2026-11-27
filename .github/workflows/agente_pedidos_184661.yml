@@ -1,0 +1,23 @@
+name: Agente 3 - Pedidos, stock y picking (184661)
+
+on:
+  workflow_dispatch:  
+  workflow_call:      
+
+jobs:
+  agente:
+    runs-on: ubuntu-latest
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7687:7687
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install neo4j
+      - run: python Recibos_y_entregas/agente_pedidos_184661.py Recibos_y_entregas/eventos.json

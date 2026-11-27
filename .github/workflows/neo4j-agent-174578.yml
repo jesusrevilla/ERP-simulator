@@ -1,0 +1,147 @@
+name: Neo4j Graph + AI Agent -> Resolve -> CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_quantity:
+        description: "Cantidad de Gaming PCs a fabricar"
+        required: true
+        default: "30"
+      run_ci:
+        description: "Disparar ci.yml al terminar"
+        type: boolean
+        default: true
+  push:
+    branches: [development]
+    paths:
+      - "src/**"
+      - "sql/**"
+      - "LeadTime/**"
+      - ".github/workflows/neo4j-agent-174578.yml"
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  ORDER_QUANTITY: ${{ inputs.order_quantity || '30' }}
+
+jobs:
+  graph-agent:
+    name: Grafo Neo4j + Agente IA
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: erpdb
+          POSTGRES_USER: erp
+          POSTGRES_PASSWORD: erp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7474:7474
+          - 7687:7687
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: erpdb
+      POSTGRES_USER: erp
+      POSTGRES_PASSWORD: erp
+      NEO4J_HOST: localhost
+      NEO4J_PORT: 7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      PYTHONPATH: ${{ github.workspace }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_MODEL_NAME: gpt-4o-mini
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install CrewAI (agente IA)
+        if: env.OPENAI_API_KEY != ''
+        run: pip install crewai
+
+      - name: Wait For Services
+        run: python src/wait_for_services.py
+
+      - name: Create Schema and Load Master Data (PostgreSQL)
+        run: |
+          python src/create_schema.py
+          python src/seed_data.py
+
+      - name: Load Graph In Neo4j
+        run: python -m src.neo4j_load
+
+      - name: Shortage Analysis In Graph
+        run: python -m src.neo4j_shortages
+
+      - name: Build MRP Context From Graph
+        run: python -m src.neo4j_agent_174578 context
+
+      - name: Run AI Agent (LeadTime LLM Orchestrator)
+        run: python -m src.neo4j_agent_174578 agent
+
+      - name: Resolve Graph (Purchase Orders + Stock)
+        run: python -m src.neo4j_agent_174578 resolve
+
+      - name: Final Report
+        run: python -m src.neo4j_agent_174578 report
+
+      - name: Upload Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graph-agent-${{ env.ORDER_QUANTITY }}
+          path: graph-agent/
+
+  trigger-ci:
+    name: Disparar ci.yml
+    needs: graph-agent
+    if: github.event_name == 'push' || inputs.run_ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run ci.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run ci.yml \
+            --repo "${{ github.repository }}" \
+            --ref "${{ github.ref_name }}" \
+            -f order_quantity="${ORDER_QUANTITY}"
+          echo "ci.yml disparado con order_quantity=${ORDER_QUANTITY}" >> "$GITHUB_STEP_SUMMARY"

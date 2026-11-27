@@ -1,0 +1,91 @@
+name: Inventario - Carga de eventos en MongoDB (178823)
+
+on:
+  push:
+    branches:
+      - feature/178823-inventario-mongo
+    paths:
+      - "Inventario/**"
+      - "src/load_topic_events.py"
+      - "tests/test_load_topic_events.py"
+      - ".github/workflows/ci_inventario_178823.yml"
+  workflow_dispatch:
+
+jobs:
+  cargar-inventario-mongo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      MONGO_HOST: localhost
+      MONGO_PORT: 27017
+      MONGO_DB: erp_simulator
+      TOPIC_FOLDER: Inventario
+      MONGO_COLLECTION: inventario
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar pruebas unitarias del cargador
+        run: python -m pytest tests/test_load_topic_events.py -v
+
+      - name: Validar los .json de Inventario sin conexion (offline)
+        run: python -m src.load_topic_events --topic "$TOPIC_FOLDER" --collection "$MONGO_COLLECTION" --offline
+
+      - name: Esperar disponibilidad de MongoDB
+        run: |
+          python - <<'PY'
+          import os
+          import time
+
+          from pymongo import MongoClient
+
+          host = os.environ["MONGO_HOST"]
+          port = os.environ["MONGO_PORT"]
+          uri = f"mongodb://{host}:{port}"
+
+          for attempt in range(30):
+              try:
+                  client = MongoClient(uri, serverSelectionTimeoutMS=2000)
+                  client.admin.command("ping")
+                  print("MongoDB disponible")
+                  break
+              except Exception as exc:
+                  print(f"MongoDB no listo todavia ({attempt + 1}/30): {exc}")
+                  time.sleep(2)
+          else:
+              raise RuntimeError("MongoDB no inicio a tiempo")
+          PY
+
+      - name: Crear la coleccion del tema y cargar los eventos .json
+        run: python -m src.load_topic_events --topic "$TOPIC_FOLDER" --collection "$MONGO_COLLECTION"
+
+      - name: Verificar los documentos cargados en MongoDB
+        run: |
+          mongosh "mongodb://$MONGO_HOST:$MONGO_PORT/$MONGO_DB" --quiet --eval '
+            const total = db.getCollection(process.env.MONGO_COLLECTION).countDocuments();
+            print("Documentos en la coleccion " + process.env.MONGO_COLLECTION + ": " + total);
+            printjson(db.getCollection(process.env.MONGO_COLLECTION).find().limit(2).toArray());
+          '

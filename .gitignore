@@ -1,7 +1,4 @@
-<<<<<<< HEAD
+.env
 venv/
 __pycache__/
 .pytest_cache/
-=======
-.env
->>>>>>> 7592fc5f26fe73f534c79e50330f9d255aa9948b

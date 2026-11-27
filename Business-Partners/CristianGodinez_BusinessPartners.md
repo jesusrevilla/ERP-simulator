@@ -1,43 +1,50 @@
 # Business Partners — aportación individual de Cristian Godinez
 
-**Asignatura:** CNO VI Sistemas ERP — grupo A26-T51A  
-**Alumno:** Cristian Ricardo Godinez Limones  
-**Profesor:** Jesús Alberto Revilla Silva  
-**Empresa del caso:** TechAssembly S.A.  
-**Actividad:** Reglas de negocio, eventos ISA-95 y tutorial de Neo4j centrados en socios de negocio  
-**Fecha:** 11 de noviembre de 2026
+- **Asignatura:** CNO VI Sistemas ERP — grupo A26-T51A
+- **Alumno:** Cristian Ricardo Godinez Limones
+- **Profesor:** Jesús Alberto Revilla Silva
+- **Empresa del caso:** TechAssembly S.A.
+- **Actividad:** Reglas de negocio, eventos ISA-95 y tutorial de Neo4j centrados en socios de negocio
+- **Fecha:** 11 de noviembre de 2026
 
 ## 1. Contexto y objetivo
 
 Mi equipo trabaja el módulo **Business Partners (socios de negocio)**, basado en conceptos de SAP Business One. Esta entrega **individual** implementa un flujo de datos maestros de clientes, proveedores y prospectos, con controles para contactos, direcciones, condiciones comerciales, crédito, bloqueos y conversión de clientes potenciales.
 
-La aportación toma como referencia los documentos existentes:
+La primera versión de esta aportación se integró en el [PR #91](https://github.com/jesusrevilla/ERP-simulator/pull/91). El catálogo está junto a esta guía. La implementación y las pruebas se encuentran en [CristianGodinez](CristianGodinez/). El [documento de requisitos](BusinessPartner.md) describe el alcance del módulo.
 
-- [BusinessPartner.md](BusinessPartner.md), con requerimientos del módulo, reglas y pruebas.
-- [Business-Partners/business-partners.md](../Business-Partners/business-partners.md), con interacción de socios, compras y MRP.
+### Avances del equipo del 9 al 15 de noviembre de 2026
 
-No se reproducen sus textos ni se cambian los trabajos de otros integrantes. Mi caso de estudio y catálogo de eventos son propios, aunque cubren el mismo módulo asignado.
+| Avance | Relación con esta aportación |
+|---|---|
+| [Flujo de socios de negocio y MRP](business-partners.md) | El flujo propone filtrar socios inactivos o bloqueados. El validador aplica ese control a órdenes de compra y de venta simuladas. |
+| [Reglas de proveedores](sql/supplier_rules.sql) | PostgreSQL guarda el proveedor preferente, el plazo de entrega, el mínimo de compra (MOQ) y el múltiplo de pedido por material. La prueba de compra de esta aportación cubre la elegibilidad del proveedor. |
+| [Recomendaciones de MRP](sql/mrp_recommendations.sql) | PostgreSQL define cantidad sugerida, fecha de liberación, estado, precio y acuerdo comercial por recomendación. La conexión pendiente consiste en vincular `supplier_code` con el `CardCode` de un proveedor y aplicar sus reglas antes de aprobar la orden. |
+| [Catálogo de actividades ISA-95](177301-ISA95-BP.json) | El equipo documentó actividades de cliente, proveedor, maquilador y operador logístico. El catálogo de esta carpeta reproduce una secuencia de eventos de un proveedor y de un prospecto que se convierte en cliente. |
+| [Tutorial Neo4j de Ulises](Neo4j-179019.py) | Su ejemplo muestra operaciones básicas de Neo4j con personas y películas. Esta aportación usa un grafo de socios, direcciones, contactos y eventos. |
+
+La [retroalimentación del equipo](sql/retroalimentacion_BP.md) pide enfocar el desarrollo en atributos propios del socio. Además del vínculo con MRP, quedan por definir la integración de certificados de análisis del proveedor y la trazabilidad de pedidos y ventanas de entrega del cliente. Esta entrega ejecuta el ciclo del socio con datos simulados y lo proyecta a Neo4j.
 
 ## 2. Alcance funcional del módulo
 
 | ID | Requerimiento | Evidencia de implementación |
 |---|---|---|
-| BP-RF01 | Alta de Business Partner con **CardCode**, tipo, grupo, identificación fiscal, nombre y moneda | \`BP_REGISTERED\`; validación de campos y de CardCode único |
-| BP-RF02 | Clasificación Cliente (C), Proveedor (V) o Lead (L) | \`bp_type\`; validación de tipos |
-| BP-RF03 | Asociar distintas direcciones fiscales/de entrega | \`ADDRESS_ADDED\`; llave \`address_id\` única por BP |
-| BP-RF04 | Asociar personas de contacto | \`CONTACT_ADDED\`; identificador único por BP |
-| BP-RF05 | Configurar condiciones de pago, grupos y etiquetas | \`PAYMENT_TERMS_UPDATED\`, \`PARTNER_TAG_ADDED\` |
-| BP-RF06 | Convertir prospecto a cliente sin perder datos | \`LEAD_CONVERTED\`; se conservan contactos y direcciones |
-| BP-RF07 | Definir límite de crédito y saldo abierto | \`CREDIT_LIMIT_UPDATED\`; importes enteros en centavos |
-| BP-RF08 | Bloquear o desbloquear compras/ventas según estatus | \`PARTNER_BLOCKED\`, \`PARTNER_UNBLOCKED\` |
-| BP-RF09 | Evaluar elegibilidad de documentos comerciales | \`DOCUMENT_ATTEMPTED\`, con decisión y causa trazables |
-| BP-RF10 | Desactivar socio sin borrar historial | \`PARTNER_DEACTIVATED\`; el grafo conserva eventos |
+| BP-RF01 | Alta de Business Partner con **CardCode**, tipo, grupo, identificación fiscal, nombre y moneda | `BP_REGISTERED`; validación de campos y de CardCode único |
+| BP-RF02 | Clasificación Cliente (C), Proveedor (V) o Lead (L) | `bp_type`; validación de tipos |
+| BP-RF03 | Asociar distintas direcciones fiscales/de entrega | `ADDRESS_ADDED`; llave `address_id` única por BP |
+| BP-RF04 | Asociar personas de contacto | `CONTACT_ADDED`; identificador único por BP |
+| BP-RF05 | Configurar condiciones de pago, grupos y etiquetas | `PAYMENT_TERMS_UPDATED`, `PARTNER_TAG_ADDED` |
+| BP-RF06 | Convertir prospecto a cliente sin perder datos | `LEAD_CONVERTED`; se conservan contactos y direcciones |
+| BP-RF07 | Definir límite de crédito y saldo abierto | `CREDIT_LIMIT_UPDATED`; importes enteros en centavos |
+| BP-RF08 | Bloquear o desbloquear compras/ventas según estatus | `PARTNER_BLOCKED`, `PARTNER_UNBLOCKED` |
+| BP-RF09 | Evaluar elegibilidad de documentos comerciales | `DOCUMENT_ATTEMPTED`, con decisión y causa trazables |
+| BP-RF10 | Desactivar socio sin borrar historial | `PARTNER_DEACTIVATED`; el grafo conserva eventos |
 
 > Los eventos son **datos de simulación**. Su proyección valida el flujo de negocio, pero no inserta órdenes reales ni se conecta a SAP B1. La jerarquía ISA-95 se usa como **referencia conceptual**, no como declaración de certificación.
 
 ## 3. Reglas de negocio
 
-1. **BP-RN01 — Unicidad:** no puede existir otro socio con el mismo \`CardCode\`.
+1. **BP-RN01 — Unicidad:** no puede existir otro socio con el mismo `CardCode`.
 2. **BP-RN02 — Identificación:** nombre, grupo, identificador fiscal, tipo y moneda son obligatorios.
 3. **BP-RN03 — Tipos:** C = cliente, V = proveedor, L = cliente potencial.
 4. **BP-RN04 — Direcciones y contactos:** se vinculan con un socio válido y tienen ID único.
@@ -56,38 +63,38 @@ Estas son reglas de **nuestro prototipo académico**; las políticas exactas y l
 
 ### A. Proveedor de componentes para Gaming PC
 
-Se da de alta el proveedor simulado \`BP-V-001\`, se crean una dirección fiscal y un contacto, se configuran pagos a 30 días y una etiqueta de proveedor crítico. El área administrativa lo bloquea para compras mientras se revisa su documentación.
+Se da de alta el proveedor simulado `BP-V-001`, se crean una dirección fiscal y un contacto, se configuran pagos a 30 días y una etiqueta de proveedor crítico. El área administrativa lo bloquea para compras mientras se revisa su documentación.
 
-Se intenta crear una orden de compra de **$2,500.00 MXN** y se obtiene \`REJECTED / BLOCKED\`. Tras quitar el bloqueo, el mismo escenario da \`APPROVED / NONE\`. No se afecta el inventario ni se crea una orden real.
+Se intenta crear una orden de compra de **$2,500.00 MXN** y se obtiene `REJECTED / BLOCKED`. Tras quitar el bloqueo, el mismo escenario da `APPROVED / NONE`. No se afecta el inventario ni se crea una orden real.
 
 ### B. Lead a cliente empresarial
 
-El socio simulado \`BP-L-001\` comienza como prospecto L, con contacto y dirección de envío. No se permite una orden de venta mientras sea L. Después se convierte a C conservando sus datos.
+El socio simulado `BP-L-001` comienza como prospecto L, con contacto y dirección de envío. No se permite una orden de venta mientras sea L. Después se convierte a C conservando sus datos.
 
-Con crédito autorizado de **$15,000.00 MXN** y saldo abierto inicial cero, una orden simulada de $10,000.00 se considera elegible y una de $18,000.00 se rechaza por \`CREDIT_LIMIT\`. Después se prueba bloqueo comercial, desbloqueo y desactivación.
+Con crédito autorizado de **$15,000.00 MXN** y saldo abierto inicial cero, una orden simulada de $10,000.00 se considera elegible y una de $18,000.00 se rechaza por `CREDIT_LIMIT`. Después se prueba bloqueo comercial, desbloqueo y desactivación.
 
-Los nombres, correos con dominio \`example.test\` y claves fiscales con prefijo \`SIMULADO-\` son ficticios, **no identificaciones fiscales válidas para facturación real**.
+Los nombres, correos con dominio `example.test` y claves fiscales con prefijo `SIMULADO-` son ficticios, **no identificaciones fiscales válidas para facturación real**.
 
 ## 5. Catálogo de eventos
 
-**Ruta:** \`Business-Partner/CristianGodinez_BP_events.json\`
+**Ruta:** `Business-Partners/CristianGodinez_BP_events.json`
 
 Se incluyen **22 eventos** con:
 
-- \`event_id\`, \`timestamp_utc\`, \`event_type\` y \`card_code\`.
-- Actor, sistema origen \`ERP_LEVEL_4\`, destino \`MOM_LEVEL_3\`.
-- \`payload\` específico: contacto, dirección, límites, bloqueo, conversión o intento de documento.
-- \`expected_result\` / \`expected_reason\` en eventos de evaluación de órdenes.
+- `event_id`, `timestamp_utc`, `event_type` y `card_code`.
+- Actor, sistema origen `ERP_LEVEL_4`, destino `MOM_LEVEL_3`.
+- `payload` específico: contacto, dirección, límites, bloqueo, conversión o intento de documento.
+- `expected_result` / `expected_reason` en eventos de evaluación de órdenes.
 
-Ejemplos de mensajes: \`BP_REGISTERED\`, \`CONTACT_ADDED\`, \`LEAD_CONVERTED\`, \`PARTNER_BLOCKED\`, \`CREDIT_LIMIT_UPDATED\`, \`DOCUMENT_ATTEMPTED\`.
+Ejemplos de mensajes: `BP_REGISTERED`, `CONTACT_ADDED`, `LEAD_CONVERTED`, `PARTNER_BLOCKED`, `CREDIT_LIMIT_UPDATED`, `DOCUMENT_ATTEMPTED`.
 
 ## 6. Algoritmo de validación
 
-**Ruta:** \`src/business_partner_events_cristian.py\`
+**Ruta:** `Business-Partners/CristianGodinez/business_partner_events_cristian.py`
 
 El proceso lee el catálogo, valida cronología y unicidad, proyecta cada evento al estado del socio y comprueba decisiones comerciales.
 
-\`\`\`mermaid
+```mermaid
 flowchart TD
     A([Inicio: alta de Business Partner]) --> B[Validar CardCode, nombre, grupo, tipo y fiscal]
     B --> C{¿Datos válidos y código único?}
@@ -108,46 +115,48 @@ flowchart TD
     W --> L
     Z --> L
     Y --> L
-\`\`\`
+```
 
 ## 7. Tutorial Neo4j — solo Business Partners
 
-**Ruta:** \`src/neo4j_business_partners_cristian.py\`
+**Ruta:** `Business-Partners/CristianGodinez/neo4j_business_partners_cristian.py`
 
 Se modelan **dos socios** y sus **22 eventos** mediante nodos separados:
 
-- \`CGBPartner\`: datos maestros de proveedor y cliente.
-- \`CGBPartnerContact\`: personas de contacto.
-- \`CGBPartnerAddress\`: direcciones fiscal y de entrega.
-- \`CGBPartnerEvent\`: eventos de alta, cambios y validaciones.
+- `CGBPartner`: datos maestros de proveedor y cliente.
+- `CGBPartnerContact`: personas de contacto.
+- `CGBPartnerAddress`: direcciones fiscal y de entrega.
+- `CGBPartnerEvent`: eventos de alta, cambios y validaciones.
 
-Las relaciones \`CG_HAS_CONTACT\`, \`CG_HAS_ADDRESS\` y \`CG_REFERS_TO_BP\` vinculan los nodos. Se utilizan \`MERGE\`, \`UNWIND\` y parámetros de Cypher, y se compara el número de nodos tras dos cargas para verificar **idempotencia**. Se evita \`DETACH DELETE\` para no alterar datos de otros participantes.
+Las relaciones `CG_HAS_CONTACT`, `CG_HAS_ADDRESS` y `CG_REFERS_TO_BP` vinculan los nodos. Se utilizan `MERGE`, `UNWIND` y parámetros de Cypher, y se compara el número de nodos tras dos cargas para verificar **idempotencia**. Se evita `DETACH DELETE` para no alterar datos de otros participantes.
 
 ### Prueba sin servidor
 
 Desde la raíz del proyecto:
 
-\`\`\`bash
-python -m pytest tests/test_business_partner_events_cristian.py tests/test_business_partner_graph_cristian.py -q
-python -m src.business_partner_events_cristian
-python -m src.neo4j_business_partners_cristian --offline
-\`\`\`
+```bash
+python -m pytest Business-Partners/CristianGodinez/tests -q
+cd Business-Partners
+python -m CristianGodinez.business_partner_events_cristian
+python -m CristianGodinez.neo4j_business_partners_cristian --offline
+```
 
 ### Prueba con Neo4j
 
-Instalar dependencias:
+Desde la raíz del proyecto, instala las dependencias.
 
-\`\`\`bash
+```bash
 python -m pip install -r requirements.txt
-\`\`\`
+```
 
-Configurar en el **entorno local**, no en código ni Git, \`NEO4J_URI\`, \`NEO4J_USERNAME\`, \`NEO4J_PASSWORD\` y opcionalmente \`NEO4J_DATABASE\`:
+Configurar en el **entorno local**, no en código ni Git, `NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD` y opcionalmente `NEO4J_DATABASE`:
 
-\`\`\`bash
-python -m src.neo4j_business_partners_cristian
-\`\`\`
+```bash
+cd Business-Partners
+python -m CristianGodinez.neo4j_business_partners_cristian
+```
 
-El archivo \`.github/workflows/cristian_business_partners.yml\` ejecuta pruebas y crea un servicio Neo4j local para verificar la carga. No requiere credenciales de Neo4j Aura ni datos bancarios.
+El archivo `.github/workflows/cristian_business_partners.yml` ejecuta pruebas y crea un servicio Neo4j local para verificar la carga. No requiere credenciales de Neo4j Aura ni datos bancarios.
 
 ## 8. Integridad de datos y pruebas
 
@@ -157,14 +166,14 @@ El archivo \`.github/workflows/cristian_business_partners.yml\` ejecuta pruebas 
 | BP-PU02 | Registrar BP sin identificador fiscal | Rechazo |
 | BP-PU03 | Convertir Lead en Cliente | Datos asociados preservados |
 | BP-PU04 | Registrar contacto o dirección con ID repetido | Rechazo |
-| BP-PU05 | Crear orden con socio bloqueado | \`REJECTED / BLOCKED\` |
-| BP-PU06 | Crear orden de venta con Lead | \`REJECTED / PARTNER_TYPE\` |
-| BP-PU07 | Exceder límite de crédito | \`REJECTED / CREDIT_LIMIT\` |
-| BP-PU08 | Usar socio inactivo | \`REJECTED / INACTIVE\` |
+| BP-PU05 | Crear orden con socio bloqueado | `REJECTED / BLOCKED` |
+| BP-PU06 | Crear orden de venta con Lead | `REJECTED / PARTNER_TYPE` |
+| BP-PU07 | Exceder límite de crédito | `REJECTED / CREDIT_LIMIT` |
+| BP-PU08 | Usar socio inactivo | `REJECTED / INACTIVE` |
 | BP-PU09 | Intentar evento duplicado o fuera de orden | Rechazo |
 | BP-PU10 | Repetir carga Neo4j con MERGE | Sin duplicados de socios/eventos |
 
-La verificación de integridad en este ejercicio se realiza en la capa de validación de Python y en las restricciones de unicidad de Neo4j. No se presume la existencia de una tabla \`OCRD\` de SAP Business One ni de transacciones empresariales reales.
+La verificación de integridad en este ejercicio se realiza en la capa de validación de Python y en las restricciones de unicidad de Neo4j. No se presume la existencia de una tabla `OCRD` de SAP Business One ni de transacciones empresariales reales.
 
 ## 9. Conclusión
 

@@ -1,0 +1,60 @@
+name: Carga MongoDB - (184204)
+
+on:
+  push:
+    branches:
+      - creature/184204
+  workflow_dispatch:
+
+jobs:
+  cargar-mongodb:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar pymongo
+        run: pip install pymongo
+
+      - name: Cargar archivos JSON en MongoDB y verificar
+        run: |
+          python3 -c '
+          import json, os
+          from pymongo import MongoClient
+
+          client = MongoClient("mongodb://localhost:27017/")
+          db = client["erpdb"]
+          coleccion = db["AR_AP"]
+
+          archivos = [
+              "AR&AP/Eventos AR&AP ISA95.json",
+              "AR&AP/ISA 95.json",
+              "AR&AP/messages 181779.json"
+          ]
+
+          for ruta in archivos:
+              if os.path.exists(ruta):
+                  with open(ruta, "r", encoding="utf-8") as f:
+                      datos = json.load(f)
+                      if isinstance(datos, list):
+                          coleccion.insert_many(datos)
+                      else:
+                          coleccion.insert_one(datos)
+                  print(f"Cargado correctamente: {ruta}")
+
+          print("Total documentos en colección AR_AP:", coleccion.count_documents({}))
+          for doc in coleccion.find():
+              print(doc)
+          '

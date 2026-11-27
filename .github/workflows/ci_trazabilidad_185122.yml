@@ -1,0 +1,16 @@
+
+name: CI Agente de Trazabilidad
+
+on:
+  workflow_dispatch:
+    inputs:
+      evento_json:
+        description: "Datos del evento de trazabilidad"
+        required: true
+        default: '{"event_type":"CAPTURE_TRACEABILITY","item_code":"CPU001","received_qty":3,"item_rules":{"requires_lot":true,"requires_serial":true,"requires_expiry":true},"lot_id":"LOTE-001","expiry_date":"2027-12-31","serial_numbers":["CPU-001","CPU-002","CPU-003"],"location_code":"A-02-04-B","valid_locations":["A-02-04-B","B-01-01-A"]}'
+
+jobs:
+  ejecutar-agente:
+    uses: ./.github/workflows/agente_trazabilidad.yaml
+    with:
+      evento_json: ${{ inputs.evento_json }}

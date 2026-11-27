@@ -4,6 +4,7 @@ Alexis Israel Rivas Lara (184204)
 Mini ERP – A/R y A/P
 
 **Fuente principal:** `AR&AP/AR&AP-Req.md` y `AR&AP/Tablas-Alexis.sql`
+Se Cambio el archivo `AR&AP/AR&AP-Req.md` a `Requerimientos y Diagramas.md`
 
 ## 1. Arquitectura de Datos Maestros y Catálogos
 

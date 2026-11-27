@@ -1,0 +1,40 @@
+name: Agente de procedimientos transaccionales (184661)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  agente:
+    runs-on: ubuntu-latest
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7687:7687
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      MONGO_HOST: localhost
+      MONGO_PORT: 27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install neo4j pymongo
+
+      - name: Agente transaccional en Neo4j
+        run: python Integridad_de_las_transacciones/agente_transacciones_184661.py
+
+      - name: Cargar eventos JSON en MongoDB
+        run: python Integridad_de_las_transacciones/cargar_eventos_mongo_184661.py Integridad_de_las_transacciones

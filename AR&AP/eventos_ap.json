@@ -1,0 +1,95 @@
+[
+  {
+    "id": "P0",
+    "tipo": "inicio",
+    "nombre": "Necesidad de compra",
+    "descripcion": "Evento inicial que dispara el proceso cuando un área solicita mercancía",
+    "carril": "Compras y Pagos (A/P)",
+    "siguiente": "P1"
+  },
+  {
+    "id": "P1",
+    "tipo": "tarea",
+    "nombre": "Crear orden de compra",
+    "descripcion": "El área de compras genera la OC con artículos, cantidades y precios pactados",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P0",
+    "siguiente": "P2"
+  },
+  {
+    "id": "P2",
+    "tipo": "tarea",
+    "nombre": "Registrar recepción y subir inventario",
+    "descripcion": "Almacén recibe la mercancía y actualiza el inventario",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P1",
+    "siguiente": "P3"
+  },
+  {
+    "id": "P3",
+    "tipo": "tarea",
+    "nombre": "Registrar factura de proveedor",
+    "descripcion": "Contabilidad captura la factura fiscal del proveedor",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P2",
+    "siguiente": "PG1"
+  },
+  {
+    "id": "PG1",
+    "tipo": "compuerta",
+    "nombre": "3-way match: ¿OC, recepción y factura coinciden?",
+    "descripcion": "Validación de artículo, cantidad y precio",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P3",
+    "ramas": [
+      {"condicion": "No", "siguiente": "PE1"},
+      {"condicion": "Sí", "siguiente": "P4"}
+    ]
+  },
+  {
+    "id": "PE1",
+    "tipo": "fin",
+    "nombre": "Factura rechazada",
+    "descripcion": "Factura no cumple 3-way match",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "PG1"
+  },
+  {
+    "id": "P4",
+    "tipo": "tarea",
+    "nombre": "Registrar pago y asiento",
+    "descripcion": "Tesorería registra el pago y genera asiento contable",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "PG1",
+    "siguiente": "PG2"
+  },
+  {
+    "id": "PG2",
+    "tipo": "compuerta",
+    "nombre": "¿Saldo = 0?",
+    "descripcion": "Verifica si el pago liquidó la factura",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P4",
+    "ramas": [
+      {"condicion": "No", "siguiente": "P4"},
+      {"condicion": "Sí", "siguiente": "P5"}
+    ]
+  },
+  {
+    "id": "P5",
+    "tipo": "tarea",
+    "nombre": "Cerrar factura",
+    "descripcion": "Cambia estatus a Cerrado",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "PG2",
+    "siguiente": "PE2"
+  },
+  {
+    "id": "PE2",
+    "tipo": "fin",
+    "nombre": "Factura pagada",
+    "descripcion": "Evento final exitoso",
+    "carril": "Compras y Pagos (A/P)",
+    "anterior": "P5"
+  }
+]

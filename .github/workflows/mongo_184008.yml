@@ -1,0 +1,74 @@
+name: MongoDB Item - 184008
+
+on:
+  workflow_dispatch:
+
+env:
+  MONGO_HOST: localhost
+  MONGO_PORT: 27017
+  DB_NAME: erpdb
+
+jobs:
+  cargar-item:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Test MongoDB Port
+        run: |
+          nc -zv $MONGO_HOST $MONGO_PORT || true
+
+      - name: Crear colecciones y cargar eventos JSON de item/
+        run: |
+          mapfile -t archivos < <(find item -type f -name "*.json" | sort)
+
+          if [ ${#archivos[@]} -eq 0 ]; then
+            echo "Error: No se encontraron archivos .json en la carpeta item/"
+            exit 1
+          fi
+
+          for archivo in "${archivos[@]}"; do
+            # Extrae el nombre base sin ruta ni extensión (ej. item/BOM.json -> BOM)
+            tema=$(basename "$archivo" .json)
+            coleccion="coleccion.${tema}"
+
+            echo "Creando colección: $coleccion"
+            docker run --rm --network host mongo:7.0 \
+              mongosh "mongodb://${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}" --quiet --eval "
+                if (!db.getCollectionNames().includes('$coleccion')) {
+                  db.createCollection('$coleccion');
+                }
+              "
+
+            echo "Cargando eventos de $archivo en $coleccion..."
+            docker run --rm --network host -v "$GITHUB_WORKSPACE:/workspace" mongo:7.0 \
+              mongoimport \
+                --uri="mongodb://${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}" \
+                --collection="$coleccion" \
+                --file="/workspace/$archivo" \
+                --jsonArray || \
+            docker run --rm --network host -v "$GITHUB_WORKSPACE:/workspace" mongo:7.0 \
+              mongoimport \
+                --uri="mongodb://${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}" \
+                --collection="$coleccion" \
+                --file="/workspace/$archivo"
+
+            docker run --rm --network host mongo:7.0 \
+              mongosh "mongodb://${MONGO_HOST}:${MONGO_PORT}/${DB_NAME}" --quiet --eval "
+                print('Eventos cargados en $coleccion:', db.getCollection('$coleccion').countDocuments());
+              "
+          done

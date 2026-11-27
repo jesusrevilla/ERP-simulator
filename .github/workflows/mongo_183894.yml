@@ -1,0 +1,61 @@
+name: MongoDB Ingestion - AR&AP (183894)
+
+on:
+  push:
+    branches:
+      - 'feature/183894'
+  workflow_dispatch:
+
+jobs:
+  cargar-eventos-mongo:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar pymongo
+        run: pip install pymongo
+
+      - name: Leer JSON de AR&AP y cargar en MongoDB
+        run: |
+          python - << 'EOF'
+          import json
+          import glob
+          from pymongo import MongoClient
+
+          client = MongoClient("mongodb://localhost:27017/")
+          db = client["erp_simulator"]
+
+          collection_name = "AR&AP"
+          if collection_name not in db.list_collection_names():
+              db.create_collection(collection_name)
+          coleccion = db[collection_name]
+
+          archivos_json = glob.glob("AR&AP/*.json")
+          print(f"Archivos encontrados: {archivos_json}")
+
+          for ruta in archivos_json:
+              with open(ruta, "r", encoding="utf-8") as f:
+                  datos = json.load(f)
+
+              if isinstance(datos, list) and len(datos) > 0:
+                  resultado = coleccion.insert_many(datos)
+                  print(f"Insertados {len(resultado.inserted_ids)} documentos desde {ruta}")
+              elif isinstance(datos, dict):
+                  resultado = coleccion.insert_one(datos)
+                  print(f"Insertado 1 documento desde {ruta}")
+
+          print(f"Total de documentos en la colección '{collection_name}': {coleccion.count_documents({})}")
+          EOF

@@ -1,0 +1,104 @@
+name: BOM MRP Analytics Tests (184027 - Issue #269)
+
+on:
+  push:
+    branches: [feature/184027]
+    paths:
+      - 'BOM/BD/184027_mrp_analytics/**'
+      - 'BOM/BD/schema.sql'
+      - '.github/workflows/bom_184027_mrp.yml'
+  pull_request:
+    paths:
+      - 'BOM/BD/184027_mrp_analytics/**'
+      - 'BOM/BD/schema.sql'
+      - '.github/workflows/bom_184027_mrp.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-mrp-analytics:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: erp_user
+          POSTGRES_PASSWORD: erp_pass
+          POSTGRES_DB: erp_bom
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/erp_neo4j_pass
+        ports:
+          - 7474:7474
+          - 7687:7687
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          python -m pip install --upgrade pip
+          pip install psycopg2-binary neo4j pytest
+
+      - name: Load PostgreSQL schema, MRP analytics and seed data
+        env:
+          PGPASSWORD: erp_pass
+        run: |
+          psql -h localhost -U erp_user -d erp_bom -v ON_ERROR_STOP=1 -f BOM/BD/schema.sql
+          psql -h localhost -U erp_user -d erp_bom -v ON_ERROR_STOP=1 -f BOM/BD/184027_mrp_analytics/sql/01_mrp_schema_indexes.sql
+          psql -h localhost -U erp_user -d erp_bom -v ON_ERROR_STOP=1 -f BOM/BD/184027_mrp_analytics/sql/02_mrp_functions_views.sql
+          psql -h localhost -U erp_user -d erp_bom -v ON_ERROR_STOP=1 -f BOM/BD/184027_mrp_analytics/sql/03_seed_test_data.sql
+          psql -h localhost -U erp_user -d erp_bom -v ON_ERROR_STOP=1 -f BOM/BD/184027_mrp_analytics/sql/04_analytical_queries.sql
+
+      - name: Wait for Neo4j and load BOM Knowledge Graph
+        run: |
+          python - << 'PY'
+          import time
+          from pathlib import Path
+          from neo4j import GraphDatabase
+
+          uri = "bolt://localhost:7687"
+          auth = ("neo4j", "erp_neo4j_pass")
+
+          for _ in range(30):
+              try:
+                  with GraphDatabase.driver(uri, auth=auth) as driver:
+                      driver.verify_connectivity()
+                      cypher_text = Path("BOM/BD/184027_mrp_analytics/cypher/01_load_bom_graph.cypher").read_text(encoding="utf-8")
+                      for stmt in [s.strip() for s in cypher_text.split(";") if s.strip()]:
+                          driver.execute_query(stmt)
+                  print("Neo4j Knowledge Graph cargado correctamente.")
+                  break
+              except Exception:
+                  time.sleep(3)
+          else:
+              raise RuntimeError("Neo4j no estuvo disponible a tiempo.")
+          PY
+
+      - name: Run pytest parity and integrity suite
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: erp_bom
+          PGUSER: erp_user
+          PGPASSWORD: erp_pass
+          NEO4J_URI: bolt://localhost:7687
+          NEO4J_USER: neo4j
+          NEO4J_PASSWORD: erp_neo4j_pass
+        run: pytest -v BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py

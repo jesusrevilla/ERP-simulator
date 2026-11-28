@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.2, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/py-utils/venvs/pytest/bin/python
+cachedir: .pytest_cache
+rootdir: /workspaces/ERP-simulator
+configfile: pytest.ini
+plugins: platformdirs-4.14.0, anyio-4.15.1
+collecting ... collected 7 items
+
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_parity_pc001_agent_pg_neo4j PASSED [ 14%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_parity_pc_pro_scrap_and_uom PASSED [ 28%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_cost_rollup_parity_pg_neo4j PASSED [ 42%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_mrp_run_persistence_and_audit_trigger PASSED [ 57%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_rejection_without_active_version_pu08 PASSED [ 71%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_validation_rules_mp_parent_and_invalid_demand PASSED [ 85%]
+BOM/BD/184027_mrp_analytics/tests/test_mrp_parity.py::test_where_used_financial_sensitivity_neo4j PASSED [100%]
+
+============================== 7 passed in 11.28s ==============================

@@ -1,0 +1,91 @@
+ mp_sku  | uom_base_id | es_discreto | rutas_detectadas | cantidad_bruta_exacta | cantidad_requerida_final | costo_unitario | costo_total_estimado 
+---------+-------------+-------------+------------------+-----------------------+--------------------------+----------------+----------------------
+ GPU001  | PCS         | t           |                1 |                1.0000 |                   1.0000 |       500.0000 |               500.00
+ TORN-M3 | PCS         | t           |                2 |                0.8000 |                   1.0000 |         0.1000 |                 0.10
+(2 rows)
+
+  mp_sku   | uom_base_id | es_discreto | rutas_detectadas | cantidad_bruta_exacta | cantidad_requerida_final | costo_unitario | costo_total_estimado 
+-----------+-------------+-------------+------------------+-----------------------+--------------------------+----------------+----------------------
+ GPU001    | PCS         | t           |                1 |               10.0000 |                  10.0000 |       500.0000 |              5000.00
+ PASTA-TER | KG          | f           |                1 |                0.0625 |                   0.0625 |       120.0000 |                 7.50
+ TORN-M3   | PCS         | t           |                2 |               45.0000 |                  45.0000 |         0.1000 |                 4.50
+(3 rows)
+
+ parent_sku |          descripcion          | tipo_item | version_codigo | total_materias_primas | costo_exacto_sin_ceil | costo_estandar_rollup 
+------------+-------------------------------+-----------+----------------+-----------------------+-----------------------+-----------------------
+ PC001      | Gaming PC Estándar            | PT        | v1.0           |                     2 |              500.0800 |                500.10
+ PC-PRO     | Workstation Pro con Merma/UOM | PT        | v1.0           |                     3 |             1002.4000 |               1002.40
+ SE-CHASIS  | Subensamble Chasis Reforzado  | SE        | v1.0           |                     1 |                0.4000 |                  0.40
+ SE-COOL    | Subensamble Enfriamiento      | SE        | v1.0           |                     1 |                0.0400 |                  0.10
+(4 rows)
+
+ producto_padre | materia_prima_compartida | rutas_detectadas | cantidad_bruta_exacta | cantidad_requerida_final 
+----------------+--------------------------+------------------+-----------------------+--------------------------
+ PC001          | TORN-M3                  |                2 |                0.8000 |                   1.0000
+ PC-PRO         | TORN-M3                  |                2 |                9.0000 |                   9.0000
+(2 rows)
+
+    sku     |          descripcion          | tipo_item |      diagnostico_mrp       
+------------+-------------------------------+-----------+----------------------------
+ PT-SIN-VIG | Producto Sin Versión Activa   | PT        | SIN_VERSION_ACTIVA_VIGENTE
+ PC001      | Gaming PC Estándar            | PT        | OK
+ PC-PRO     | Workstation Pro con Merma/UOM | PT        | OK
+ SE-CHASIS  | Subensamble Chasis Reforzado  | SE        | OK
+ SE-COOL    | Subensamble Enfriamiento      | SE        | OK
+(5 rows)
+
+                                                                                                   QUERY PLAN                                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=196.90..196.93 rows=1 width=182) (actual time=0.065..0.068 rows=2 loops=1)
+   Group Key: bt.component_sku
+   Buffers: shared hit=9
+   CTE bom_tree
+     ->  Recursive Union  (cost=0.27..185.13 rows=22 width=304) (actual time=0.015..0.037 rows=4 loops=1)
+           Buffers: shared hit=8
+           ->  Nested Loop  (cost=0.27..16.34 rows=2 width=304) (actual time=0.014..0.018 rows=3 loops=1)
+                 Buffers: shared hit=4
+                 ->  Index Scan using no_traslape_versiones_activas on bom_cabecera bc  (cost=0.12..8.15 rows=1 width=144) (actual time=0.007..0.008 rows=1 loops=1)
+                       Index Cond: ((parent_sku)::text = 'PC001'::text)
+                       Filter: ((fecha_inicio <= '2026-11-10 08:00:00+00'::timestamp with time zone) AND ((fecha_fin IS NULL) OR ('2026-11-10 08:00:00+00'::timestamp with time zone < fecha_fin)))
+                       Buffers: shared hit=2
+                 ->  Index Only Scan using idx_bom_detalle_bom_comp_inc on bom_detalle bd  (cost=0.14..8.16 rows=1 width=156) (actual time=0.003..0.005 rows=3 loops=1)
+                       Index Cond: (bom_id = bc.bom_id)
+                       Heap Fetches: 3
+                       Buffers: shared hit=2
+           ->  Nested Loop  (cost=8.30..16.86 rows=2 width=304) (actual time=0.007..0.008 rows=0 loops=2)
+                 Join Filter: ((bd_1.component_sku)::text <> ALL (bt_1.ruta))
+                 Buffers: shared hit=4
+                 ->  Hash Join  (cost=8.16..8.64 rows=1 width=212) (actual time=0.004..0.005 rows=0 loops=2)
+                       Hash Cond: ((bt_1.component_sku)::text = (bc_1.parent_sku)::text)
+                       Buffers: shared hit=2
+                       ->  WorkTable Scan on bom_tree bt_1  (cost=0.00..0.40 rows=20 width=186) (actual time=0.000..0.000 rows=2 loops=2)
+                       ->  Hash  (cost=8.14..8.14 rows=1 width=144) (actual time=0.005..0.005 rows=4 loops=1)
+                             Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                             Buffers: shared hit=2
+                             ->  Index Scan using no_traslape_versiones_activas on bom_cabecera bc_1  (cost=0.12..8.14 rows=1 width=144) (actual time=0.003..0.004 rows=4 loops=1)
+                                   Filter: ((fecha_inicio <= '2026-11-10 08:00:00+00'::timestamp with time zone) AND ((fecha_fin IS NULL) OR ('2026-11-10 08:00:00+00'::timestamp with time zone < fecha_fin)))
+                                   Buffers: shared hit=2
+                 ->  Index Only Scan using idx_bom_detalle_bom_comp_inc on bom_detalle bd_1  (cost=0.14..8.16 rows=1 width=156) (actual time=0.002..0.002 rows=1 loops=1)
+                       Index Cond: (bom_id = bc_1.bom_id)
+                       Heap Fetches: 1
+                       Buffers: shared hit=2
+   ->  Sort  (cost=11.77..11.78 rows=1 width=150) (actual time=0.061..0.062 rows=3 loops=1)
+         Sort Key: bt.component_sku
+         Sort Method: quicksort  Memory: 25kB
+         Buffers: shared hit=9
+         ->  Hash Join  (cost=11.26..11.76 rows=1 width=150) (actual time=0.028..0.052 rows=3 loops=1)
+               Hash Cond: ((bt.component_sku)::text = (a.sku)::text)
+               Buffers: shared hit=9
+               ->  CTE Scan on bom_tree bt  (cost=0.00..0.44 rows=22 width=150) (actual time=0.015..0.038 rows=4 loops=1)
+                     Buffers: shared hit=8
+               ->  Hash  (cost=11.25..11.25 rows=1 width=118) (actual time=0.006..0.006 rows=3 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on articulos a  (cost=0.00..11.25 rows=1 width=118) (actual time=0.004..0.005 rows=3 loops=1)
+                           Filter: ((tipo_item)::text = 'MP'::text)
+                           Rows Removed by Filter: 5
+                           Buffers: shared hit=1
+ Planning Time: 0.417 ms
+ Execution Time: 0.106 ms
+(51 rows)
+

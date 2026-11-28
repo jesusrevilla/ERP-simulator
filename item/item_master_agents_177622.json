@@ -1,0 +1,173 @@
+{
+    "OperationsEvent": {
+        "@releaseID": "1",
+        "ApplicationArea": {
+            "CreationDateTime": "2026-11-17T18:30:00Z",
+            "Sender": {
+                "LogicalID": "Item-Master-Agents-177622"
+            }
+        },
+        "DataArea": {
+            "OperationsEventClass": {
+                "ID": "ITEM-MASTER-INTELLIGENT-AGENTS",
+                "Description": "Propuestas de agentes inteligentes para el Maestro de Artículos e Inventarios"
+            },
+            "OperationsEvent": [
+                {
+                    "ID": "AGT-03-01-TRANSFER-PLAN",
+                    "Description": "Agente #3 Warehouse Transfer Planner: Planificación de transferencias entre almacenes",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Almacén",
+                        "WorkCenter": "Control de Inventarios",
+                        "WorkCell": "Terminal-ERP-02"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Antes de que la regla de Cero Inventario Negativo bloquee una salida, el agente busca la secuencia de transferencias entre almacenes (tabla Inventory_Stock) que cubre la demanda sin bajar del SafetyStock de cada artículo."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "TransferPlanRequestedEvent: Una salida o transferencia no tiene stock suficiente en el almacén origen; el agente genera el plan con menos movimientos y menor costo."
+                            }
+                        },
+                        {
+                            "ID": "Algorithm",
+                            "Value": {
+                                "StringValue": "Planificación clásica tipo STRIPS (estados, acciones, precondiciones, efectos) + Búsqueda A* con heurística = piezas faltantes en el almacén de producción; Búsqueda de Costo Uniforme para comparar."
+                            }
+                        },
+                        {
+                            "ID": "Input",
+                            "Value": {
+                                "StringValue": "Inventory_Stock (ItemID, Warehouse, QuantityAvailable), Item_Master.SafetyStock, cantidad solicitada de la orden (ej. 30 Gaming PCs)."
+                            }
+                        },
+                        {
+                            "ID": "Output",
+                            "Value": {
+                                "StringValue": "Lista ordenada de transferencias (Item, AlmacenOrigen, AlmacenDestino, Cantidad)."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "AGT-03-02-PLAN-VALIDATION",
+                    "Description": "Agente #3 Warehouse Transfer Planner: Validación del plan y registro de movimientos",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Almacén",
+                        "WorkCenter": "Control de Inventarios",
+                        "WorkCell": "Terminal-ERP-02"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Verifica que ningún paso del plan deje un almacén en negativo o debajo del SafetyStock y que el almacén destino esté activo; si el plan es válido registra los movimientos."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "TransferPlanValidatedEvent: Se insertan los registros en Inventory_Movements e Inventory_Transaction (ADD/SUBTRACT) dentro de una transacción ACID."
+                            }
+                        },
+                        {
+                            "ID": "Algorithm",
+                            "Value": {
+                                "StringValue": "Verificación de restricciones sobre cada estado intermedio del plan."
+                            }
+                        },
+                        {
+                            "ID": "ImprovementProposal",
+                            "Value": {
+                                "StringValue": "Agregar la tabla Warehouse_Route (AlmacenOrigen, AlmacenDestino, TiempoTraslado, CostoTraslado) para que cada acción de transferencia tenga un costo real y A* calcule rutas óptimas."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "AGT-04-01-SKU-QUALITY",
+                    "Description": "Agente #4 SKU Data Steward: Clasificación y detección de duplicados en altas de artículos",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Ingeniería de Producto",
+                        "WorkCenter": "Oficina Central de Datos",
+                        "WorkCell": "Terminal-ERP-01"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Al crear o modificar un SKU, predice su ItemType y UnitOfMeasure a partir de Name y Description, detecta posibles duplicados (ej. 'RAM 16GB DDR5' vs 'Memoria DDR5 16 GB') y marca reglas incumplidas (ListPrice < StandardCost, SafetyStock = 0 en componente crítico)."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "ItemDataQualityCheckEvent: Se ejecuta antes de ItemCreatedEvent; si encuentra un problema, el alta queda pendiente de revisión."
+                            }
+                        },
+                        {
+                            "ID": "Algorithm",
+                            "Value": {
+                                "StringValue": "Clasificador Naive Bayes sobre el texto del artículo + k-NN (vecinos más cercanos) con similitud de texto para detectar duplicados."
+                            }
+                        },
+                        {
+                            "ID": "Input",
+                            "Value": {
+                                "StringValue": "Item_Master (ItemCode, Name, Description, ItemType, UnitOfMeasure, StandardCost, ListPrice, SafetyStock)."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ID": "AGT-04-02-SUBSTITUTE",
+                    "Description": "Agente #4 Substitute Recommender: Recomendación de componentes sustitutos en Neo4j",
+                    "HierarchyScope": {
+                        "Enterprise": "TechAssembly S.A.",
+                        "Site": "Planta San Luis Potosí",
+                        "Area": "Ingeniería de Producto",
+                        "WorkCenter": "Servidor Neo4j",
+                        "WorkCell": "Grafo de Compatibilidad"
+                    },
+                    "EventProperty": [
+                        {
+                            "ID": "ActivityDescription",
+                            "Value": {
+                                "StringValue": "Cuando un componente no tiene stock, recorre el grafo (:Item)-[:COMPATIBLE_WITH]->(:Item) y (:Item)-[:SUBSTITUTE_FOR]->(:Item) para encontrar el sustituto compatible más cercano que sí tenga existencias."
+                            }
+                        },
+                        {
+                            "ID": "EventDetail",
+                            "Value": {
+                                "StringValue": "SubstituteRecommendedEvent: Ej. si falta el SSD 1TB NVMe, propone otro SSD compatible con la Motherboard B650 con stock en Inventory_Stock."
+                            }
+                        },
+                        {
+                            "ID": "Algorithm",
+                            "Value": {
+                                "StringValue": "Búsqueda en anchura (BFS) sobre el grafo de Neo4j con consultas Cypher."
+                            }
+                        },
+                        {
+                            "ID": "ImprovementProposal",
+                            "Value": {
+                                "StringValue": "Agregar a Item_Master los campos Category (CPU, RAM, Almacenamiento, etc.) y SubstituteGroup, para entrenar el clasificador con una etiqueta clara y generar el grafo de sustitutos automáticamente con MERGE por grupo."
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

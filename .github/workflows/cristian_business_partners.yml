@@ -4,12 +4,17 @@ on:
   push:
     branches:
       - feature/cristian-business-partners
+      - feature/consolidar-business-partners
     paths:
-      - "Business-Partner/CristianGodinez_*"
-      - "src/business_partner_events_cristian.py"
-      - "src/neo4j_business_partners_cristian.py"
-      - "tests/test_business_partner_events_cristian.py"
-      - "tests/test_business_partner_graph_cristian.py"
+      - "Business-Partners/CristianGodinez/**"
+      - "Business-Partners/CristianGodinez_BP_events.json"
+      - ".github/workflows/cristian_business_partners.yml"
+  pull_request:
+    branches:
+      - development
+    paths:
+      - "Business-Partners/CristianGodinez/**"
+      - "Business-Partners/CristianGodinez_BP_events.json"
       - ".github/workflows/cristian_business_partners.yml"
   workflow_dispatch:
 
@@ -45,12 +50,13 @@ jobs:
 
       - name: Ejecutar pruebas unitarias del modulo
         run: |
-          python -m pytest tests/test_business_partner_events_cristian.py tests/test_business_partner_graph_cristian.py -q
+          python -m pytest Business-Partners/CristianGodinez/tests -q
 
       - name: Validar eventos BP sin servidor
+        working-directory: Business-Partners
         run: |
-          python -m src.business_partner_events_cristian
-          python -m src.neo4j_business_partners_cristian --offline
+          python -m CristianGodinez.business_partner_events_cristian
+          python -m CristianGodinez.neo4j_business_partners_cristian --offline
 
       - name: Esperar servicio Neo4j
         run: |
@@ -72,4 +78,5 @@ jobs:
           PY
 
       - name: Cargar Business Partners y comprobar MERGE
-        run: python -m src.neo4j_business_partners_cristian
+        working-directory: Business-Partners
+        run: python -m CristianGodinez.neo4j_business_partners_cristian

@@ -1,0 +1,47 @@
+name: Cargar JSONs a MongoDB - Item
+
+on:
+  push:
+    branches:
+      - development
+      - revision-erp-mrp
+  workflow_dispatch:
+
+jobs:
+  cargar-mongo:
+    runs-on: ubuntu-latest
+
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar Mongo Tools
+      run: |
+      echo "Descargando herramientas oficiales de MongoDB..."
+      wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb
+      sudo dpkg -i mongodb-database-tools-*.deb
+
+      
+      - name: Importar JSONs a colección item
+        run: |
+          echo "Buscando archivos JSON en la carpeta item..."
+          
+          for filepath in item/*.json; do
+            if [ -f "$filepath" ]; then
+              echo "Cargando archivo: $filepath"
+              # Se usa la base de datos 'erpdb' y la colección 'item'
+              mongoimport --host 127.0.0.1 --port 27017 --db erpdb --collection item --file "$filepath" --jsonArray
+            fi
+          done

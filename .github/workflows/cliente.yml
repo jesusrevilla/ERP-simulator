@@ -1,0 +1,36 @@
+name: ERP Cliente Test
+
+on:
+  push:
+    branches:
+      - main
+      - feature-cliente
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  cliente-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Mostrar archivos
+        run: |
+          ls -la
+
+      - name: Ejecutar prueba de cliente
+        run: |
+          python prueba_cliente.py

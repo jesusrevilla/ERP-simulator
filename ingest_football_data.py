@@ -1,5 +1,5 @@
 import pandas as pd
-import neo4j
+import neo4j_bk
 from dotenv import load_dotenv
 import os
 from tqdm import tqdm
@@ -28,7 +28,7 @@ user = os.getenv("NEO4J_USERNAME")
 password = os.getenv("NEO4J_PASSWORD")
 
 try:
-    driver = neo4j.GraphDatabase.driver(uri, auth=(user, password))
+    driver = neo4j_bk.GraphDatabase.driver(uri, auth=(user, password))
     print("Connected to Neo4j instance successfully!")
 except Exception as e:
     print(f"Failed to connect to Neo4j: {e}")

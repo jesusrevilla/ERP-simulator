@@ -1,0 +1,19 @@
+name: Flujo Recibos y Entregas (184661)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Llamar a ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --repo ${{ github.repository }} --ref ${{ github.ref_name }} -f order_quantity=30
+
+  agente:
+    needs: ci
+    uses: ./.github/workflows/agente_pedidos_184661.yml

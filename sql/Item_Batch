@@ -1,0 +1,13 @@
+CREATE TABLE Item_Batch (
+    BatchID SERIAL PRIMARY KEY,
+    ItemID INT NOT NULL,
+    BatchNumber VARCHAR(50) NOT NULL UNIQUE,
+    ManufacturingDate DATE,
+    ExpirationDate DATE,
+    Status VARCHAR(20) NOT NULL DEFAULT 'DISPONIBLE' CHECK (Status IN ('DISPONIBLE', 'BLOQUEADO', 'VENCIDO', 'AGOTADO')),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ 
+    CONSTRAINT fk_batch_item_master
+        FOREIGN KEY (ItemID)
+        REFERENCES Item_Master(ItemID)
+);

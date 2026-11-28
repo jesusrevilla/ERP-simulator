@@ -1,0 +1,101 @@
+# ==============================================================================
+# VARIANTE 1: BASE DE DATOS DE GRAFOS (NEO4J) - ALGORITMO DAG + DFS
+# Módulo: BOM (Bill of Materials) - Validación Estructural y Detección de Ciclos
+# ==============================================================================
+version: "1.0"
+database:
+  engine: neo4j
+  version: "5.20"
+  database_name: bom_graph_db
+  protocol: bolt
+
+algorithm_profile:
+  name: "DAG_DFS_Cycle_Detection"
+  category: "Graph Traversal & Structural Integrity"
+  complexity:
+    time: "O(V + E)"
+    space: "O(V)"
+  rules:
+    allow_self_loops: false
+    allow_cycles: false
+    max_explosion_depth: 15
+    enforce_effective_dates: true
+    state_tracking: ["UNVISITED", "VISITING", "VISITED"]
+
+schema:
+  constraints:
+    - name: uniq_material_sku
+      label: Material
+      property: sku
+      type: UNIQUE
+    - name: uniq_bom_header_code
+      label: BomHeader
+      property: bom_code
+      type: UNIQUE
+
+  indexes:
+    - name: idx_material_type
+      label: Material
+      properties: ["tipo_material", "activo"]
+    - name: idx_bom_vigencia
+      label: BomHeader
+      properties: ["vigente_desde", "vigente_hasta"]
+
+  nodes:
+    - label: BomHeader
+      sql_equivalent: bom_headers
+      properties:
+        bom_code: { type: string, required: true }
+        producto_padre_sku: { type: string, required: true }
+        version: { type: string, default: "1.0" }
+        estado: { type: string, enum: ["ACTIVO", "BORRADOR", "OBSOLETO"] }
+        vigente_desde: { type: date, required: true }
+        vigente_hasta: { type: date, required: false }
+
+    - label: Material
+      sql_equivalent: materials
+      properties:
+        sku: { type: string, required: true }
+        nombre: { type: string, required: true }
+        unidad_medida: { type: string, default: "PZA" }
+        tipo_material: { type: string, enum: ["PRODUCTO_TERMINADO", "SUBENSAMBLE", "MATERIA_PRIMA"] }
+        activo: { type: boolean, default: true }
+
+  relationships:
+    - type: TIENE_CABECERA
+      from: Material
+      to: BomHeader
+      properties:
+        es_principal: { type: boolean, default: true }
+
+    - type: COMPONENTE_DE
+      sql_equivalent: bom_items
+      from: BomHeader
+      to: Material
+      properties:
+        secuencia: { type: integer, required: true }
+        cantidad_base: { type: float, required: true }
+        factor_merma: { type: float, default: 0.0 }
+        nivel_arbol: { type: integer, required: true }
+
+seed_data:
+  materials:
+    - { sku: "PT-1000", nombre: "Ensamble Industrial Principal", tipo_material: "PRODUCTO_TERMINADO", activo: true }
+    - { sku: "SUB-200", nombre: "Módulo Electrónico de Control", tipo_material: "SUBENSAMBLE", activo: true }
+    - { sku: "MP-010", nombre: "Microcontrolador ARM", tipo_material: "MATERIA_PRIMA", activo: true }
+    - { sku: "MP-020", nombre: "Chasis Aluminio Anodizado", tipo_material: "MATERIA_PRIMA", activo: true }
+
+  bom_headers:
+    - { bom_code: "BOM-PT1000-V1", producto_padre_sku: "PT-1000", version: "1.0", estado: "ACTIVO", vigente_desde: "2026-01-01" }
+    - { bom_code: "BOM-SUB200-V1", producto_padre_sku: "SUB-200", version: "1.0", estado: "ACTIVO", vigente_desde: "2026-01-01" }
+
+  bom_items:
+    - { bom_code: "BOM-PT1000-V1", component_sku: "SUB-200", secuencia: 10, cantidad_base: 1.0, factor_merma: 0.02, nivel_arbol: 1 }
+    - { bom_code: "BOM-PT1000-V1", component_sku: "MP-020", secuencia: 20, cantidad_base: 1.0, factor_merma: 0.01, nivel_arbol: 1 }
+    - { bom_code: "BOM-SUB200-V1", component_sku: "MP-010", secuencia: 10, cantidad_base: 2.0, factor_merma: 0.05, nivel_arbol: 2 }
+
+validation_queries:
+  detect_cycles_cypher: >
+    MATCH (root:Material {sku: $sku})-[:TIENE_CABECERA]->(:BomHeader)-[:COMPONENTE_DE*1..15]->(child:Material)
+    WHERE child.sku = root.sku
+    RETURN root.sku AS ciclo_detectado

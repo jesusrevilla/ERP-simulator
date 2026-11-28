@@ -1,0 +1,19 @@
+Ortiz Castro Juan Daniel 175456
+
+El documento está bien en general. Tiene objetivo claro, parte de lo que el código hace hoy y separa lo que ya existe de lo que solo está propuesto, y esa separación es lo mejor del texto.
+
+Honestidad sobre el estado real: dices que sales_orders no guarda cliente ni estado, que no existen tablas de facturas o pagos, y que check_shortages.py es de materiales para producción y no valida pedidos de clientes. Eso muestra que revisaste el código y no solo los diagramas.
+Flujo completo: pedido → entrega → factura → cuenta por cobrar → pago es la cadena order-to-cash, y la tienes bien enlazada.
+Riesgos concretos: la lista de la sección 5 es práctica y se puede convertir directo en casos de prueba.
+Propuesta de pruebas: cerrar con casos como cliente bloqueado, crédito insuficiente o pago mayor al saldo es lo correcto.
+
+Qué le falta para ser más sólido
+
+Las propuestas son generales y no dicen cómo implementarlas. Por ejemplo, “evitar folios duplicados” podría aterrizarse como UNIQUE (partner_id, folio), “pago no mayor al saldo” como una validación o CHECK, y “un pago en la factura de otro cliente” como una llave foránea compuesta o una validación de que el cliente del pago coincide con el de la factura. Un par de ejemplos en SQL harían el documento mucho más fuerte.
+Faltan los términos técnicos de integridad: ACID, transacción (BEGIN/COMMIT/ROLLBACK), integridad referencial y bloqueo de filas. Tu punto de “que dos operaciones no descuenten las mismas existencias” se resuelve con SELECT ... FOR UPDATE o un nivel de aislamiento adecuado, y vale la pena nombrarlo.
+No hay máquina de estados del pedido. Hablas de “estado de aprobación o pago”, pero no defines los estados ni las transiciones válidas (borrador → aprobado → entregado → facturado → pagado / cancelado). Eso ayuda a impedir facturar un pedido cancelado, por ejemplo.
+Cómo se calcula el crédito disponible. “Crédito suficiente” no es solo el límite: normalmente es límite menos saldo pendiente de facturas menos pedidos abiertos aún no facturados. Conviene decirlo.
+Dinero: faltan tipo de dato (NUMERIC y no FLOAT), redondeo, impuestos (IVA) y moneda. Si es contexto mexicano, también el folio fiscal (UUID del CFDI), que es distinto del folio interno.
+Cancelaciones: la propuesta de guardar quién cancela y por qué es buena, pero conviene agregar que no se borran facturas ni pagos. Se corrigen con notas de crédito o movimientos inversos, para conservar la bitácora.
+Vínculo con contabilidad: una factura o pago debería generar su asiento (cargo/abono). Sin ese enlace, finanzas puede quedar descuadrada respecto a las cuentas por cobrar.
+Pagos: podrías mencionar la idempotencia, para que un mismo pago no se registre dos veces por un reintento, y qué pasa con pagos adelantados o saldos a favor.

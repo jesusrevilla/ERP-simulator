@@ -1,0 +1,56 @@
+name: 183435 - Lanzar CI manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_quantity:
+        description: "Cantidad solicitada para la validación del CI"
+        required: true
+        default: "30"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Preparar GitHub CLI
+        run: gh --version
+
+      - name: Ejecutar y esperar el CI existente
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          CI_REF: ${{ github.ref_name }}
+          ORDER_QUANTITY: ${{ inputs.order_quantity }}
+        run: |
+          set -euo pipefail
+          started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          echo "Solicitando ejecución manual de .github/workflows/ci.yml en $CI_REF"
+          gh workflow run ci.yml --ref "$CI_REF" -f "order_quantity=$ORDER_QUANTITY"
+
+          ci_run_id=""
+          for attempt in $(seq 1 60); do
+            ci_run_id="$(gh run list \
+              --workflow ci.yml \
+              --branch "$CI_REF" \
+              --event workflow_dispatch \
+              --json databaseId,createdAt \
+              --jq "[.[] | select(.createdAt >= \"$started_at\")] | first | .databaseId // empty")"
+            if [ -n "$ci_run_id" ]; then
+              break
+            fi
+            sleep 5
+          done
+
+          if [ -z "$ci_run_id" ]; then
+            echo "No se encontró la ejecución del CI iniciada."
+            exit 1
+          fi
+
+          echo "Esperando ejecución del CI $ci_run_id"
+          gh run watch "$ci_run_id" --interval 10 --exit-status

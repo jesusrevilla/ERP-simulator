@@ -1,0 +1,27 @@
+Documentación del Algoritmo: LeadTime-LLM-Orchestrator
+1. Descripción General
+El LeadTime-LLM-Orchestrator es un algoritmo de enrutamiento multi-agente diseñado para analizar el JSON de eventos de manufactura (TechAssembly S.A.). Su objetivo es separar las responsabilidades de planificación administrativa (Nivel 4 de ISA-95) de la ejecución en piso (Nivel 3) y calcular con precisión métricas clave como el Lead Time de Materiales y el Lead Time de Producción Interna.
+
+2. Entradas y Salidas
+Entrada (Input): Estructura de datos en formato JSON que contiene la demanda (30 PC001), los niveles de inventario (MRP), los eventos cronológicos (timestamp) y la clasificación ISA-95.
+
+Salida (Output): Código Python con la lógica matemática para calcular los Lead Times, y un orquestador que simula el flujo de información entre el ERP (Planeación) y el MES (Manufactura).
+
+3. Arquitectura del Algoritmo
+El algoritmo emplea un modelo de agentes especializados (Process.sequential) donde cada agente consume el JSON y ejecuta cálculos específicos basados en las reglas de negocio de la empresa.
+
+3.1. Nodos de Procesamiento (Agentes)
+Agente Analista ERP (Nivel 4): Lee la lista de materiales y el inventario. Calcula los faltantes (ej. 10 GPU RTX) y determina el tiempo exacto desde la orden de compra hasta que el material está disponible.
+
+Agente de Manufactura MES (Nivel 3): Monitorea los eventos de piso (desde ensamble_iniciado hasta producto_terminado_liberado) para calcular el tiempo real de producción.
+
+Agente Auditor ISA-95: Verifica que todos los eventos del JSON estén correctamente clasificados en los niveles 3 (MES/MOM) y 4 (ERP) y consolida el Lead Time Total.
+
+4. Flujo de Ejecución (Pipeline)
+Lectura del JSON maestro de TechAssembly S.A.
+
+El Agente ERP extrae los eventos de compras e inventario para calcular el Lead Time de Materiales.
+
+El Agente MES extrae los timestamps de ensamble y calidad para calcular el Lead Time de Producción.
+
+El Agente Auditor consolida los datos y genera el reporte final estructurado.
